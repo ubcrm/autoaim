@@ -2,3 +2,4 @@
 LED_match/venv/*
 LED_match/.idea/*
 LED_match/__pycache__/*
+LED_find/__pycache__/*
