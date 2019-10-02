@@ -12,5 +12,5 @@ led4 = Led("d", 80, 520, 35, (100, 690))
 
 perms = LedPerms("image_1.jpg", [led1, led2, led3, led4], [("a", "c")])
 
-with open(DIR + "\\data\\demo.json", "w") as file:
-    json.dump(perms.toDict(), file)
+with open(DIR + '/data/demo.json', 'w') as file:
+    json.dump(perms.toDict(), file, indent=2)

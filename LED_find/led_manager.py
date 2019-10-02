@@ -1,5 +1,5 @@
 import cv2
-from itertools import permutations
+from itertools import combinations
 
 
 class Led():
@@ -49,9 +49,9 @@ class LedPerms():
         self.generatePairs()
 
     def generatePairs(self):
-        perms = permutations(self.leds, 2)
-        for i, (led1, led2) in enumerate(perms):
-            isPanel = ((led1.id, led2.id) in self.panels or (led2.id, led1.id) in self.panels)
+        combs = combinations(self.leds, 2)
+        for i, (led1, led2) in enumerate(combs):
+            isPanel = int((led1.id, led2.id) in self.panels or (led2.id, led1.id) in self.panels)
             self.ledPairs += [LedPair(str(i), led1, led2, isPanel)]
 
     def toDict(self):

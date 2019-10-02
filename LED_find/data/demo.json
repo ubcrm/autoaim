@@ -1,1 +1,128 @@
-{"0": {"led1": {"width": 800, "height": 500, "angle": 67, "center": {"x": 200, "y": 750}}, "led2": {"width": 200, "height": 100, "angle": 0, "center": {"x": 350, "y": 340}}, "isPanel": false}, "1": {"led1": {"width": 800, "height": 500, "angle": 67, "center": {"x": 200, "y": 750}}, "led2": {"width": 450, "height": 90, "angle": 34, "center": {"x": 920, "y": 740}}, "isPanel": true}, "2": {"led1": {"width": 800, "height": 500, "angle": 67, "center": {"x": 200, "y": 750}}, "led2": {"width": 80, "height": 520, "angle": 35, "center": {"x": 100, "y": 690}}, "isPanel": false}, "3": {"led1": {"width": 200, "height": 100, "angle": 0, "center": {"x": 350, "y": 340}}, "led2": {"width": 800, "height": 500, "angle": 67, "center": {"x": 200, "y": 750}}, "isPanel": false}, "4": {"led1": {"width": 200, "height": 100, "angle": 0, "center": {"x": 350, "y": 340}}, "led2": {"width": 450, "height": 90, "angle": 34, "center": {"x": 920, "y": 740}}, "isPanel": false}, "5": {"led1": {"width": 200, "height": 100, "angle": 0, "center": {"x": 350, "y": 340}}, "led2": {"width": 80, "height": 520, "angle": 35, "center": {"x": 100, "y": 690}}, "isPanel": false}, "6": {"led1": {"width": 450, "height": 90, "angle": 34, "center": {"x": 920, "y": 740}}, "led2": {"width": 800, "height": 500, "angle": 67, "center": {"x": 200, "y": 750}}, "isPanel": true}, "7": {"led1": {"width": 450, "height": 90, "angle": 34, "center": {"x": 920, "y": 740}}, "led2": {"width": 200, "height": 100, "angle": 0, "center": {"x": 350, "y": 340}}, "isPanel": false}, "8": {"led1": {"width": 450, "height": 90, "angle": 34, "center": {"x": 920, "y": 740}}, "led2": {"width": 80, "height": 520, "angle": 35, "center": {"x": 100, "y": 690}}, "isPanel": false}, "9": {"led1": {"width": 80, "height": 520, "angle": 35, "center": {"x": 100, "y": 690}}, "led2": {"width": 800, "height": 500, "angle": 67, "center": {"x": 200, "y": 750}}, "isPanel": false}, "10": {"led1": {"width": 80, "height": 520, "angle": 35, "center": {"x": 100, "y": 690}}, "led2": {"width": 200, "height": 100, "angle": 0, "center": {"x": 350, "y": 340}}, "isPanel": false}, "11": {"led1": {"width": 80, "height": 520, "angle": 35, "center": {"x": 100, "y": 690}}, "led2": {"width": 450, "height": 90, "angle": 34, "center": {"x": 920, "y": 740}}, "isPanel": false}}
+{
+  "0": {
+    "led1": {
+      "width": 800,
+      "height": 500,
+      "angle": 67,
+      "center": {
+        "x": 200,
+        "y": 750
+      }
+    },
+    "led2": {
+      "width": 200,
+      "height": 100,
+      "angle": 0,
+      "center": {
+        "x": 350,
+        "y": 340
+      }
+    },
+    "isPanel": 0
+  },
+  "1": {
+    "led1": {
+      "width": 800,
+      "height": 500,
+      "angle": 67,
+      "center": {
+        "x": 200,
+        "y": 750
+      }
+    },
+    "led2": {
+      "width": 450,
+      "height": 90,
+      "angle": 34,
+      "center": {
+        "x": 920,
+        "y": 740
+      }
+    },
+    "isPanel": 1
+  },
+  "2": {
+    "led1": {
+      "width": 800,
+      "height": 500,
+      "angle": 67,
+      "center": {
+        "x": 200,
+        "y": 750
+      }
+    },
+    "led2": {
+      "width": 80,
+      "height": 520,
+      "angle": 35,
+      "center": {
+        "x": 100,
+        "y": 690
+      }
+    },
+    "isPanel": 0
+  },
+  "3": {
+    "led1": {
+      "width": 200,
+      "height": 100,
+      "angle": 0,
+      "center": {
+        "x": 350,
+        "y": 340
+      }
+    },
+    "led2": {
+      "width": 450,
+      "height": 90,
+      "angle": 34,
+      "center": {
+        "x": 920,
+        "y": 740
+      }
+    },
+    "isPanel": 0
+  },
+  "4": {
+    "led1": {
+      "width": 200,
+      "height": 100,
+      "angle": 0,
+      "center": {
+        "x": 350,
+        "y": 340
+      }
+    },
+    "led2": {
+      "width": 80,
+      "height": 520,
+      "angle": 35,
+      "center": {
+        "x": 100,
+        "y": 690
+      }
+    },
+    "isPanel": 0
+  },
+  "5": {
+    "led1": {
+      "width": 450,
+      "height": 90,
+      "angle": 34,
+      "center": {
+        "x": 920,
+        "y": 740
+      }
+    },
+    "led2": {
+      "width": 80,
+      "height": 520,
+      "angle": 35,
+      "center": {
+        "x": 100,
+        "y": 690
+      }
+    },
+    "isPanel": 0
+  }
+}
