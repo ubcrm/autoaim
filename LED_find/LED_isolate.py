@@ -9,6 +9,18 @@ def equalizeHistColor(frame):
     return cv2.cvtColor(img, cv2.COLOR_HSV2RGB)  # convert the HSV image back to RGB format
 
 
+def findRectangles(frame):
+    # puts rectangles on blobs
+    contours, hierarchy = cv2.findContours(result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    for cnt in contours:
+        rect = cv2.minAreaRect(cnt)
+        if max(rect[1]) > 20:
+            box = cv2.boxPoints(rect)
+            box = np.int0(box)
+            cv2.drawContours(frame, [box], 0, (0, 255, 0), 5)
+
+
 def findLEDFromImage(frame):
     # equalize the histogram of color image
     frame1 = equalizeHistColor(frame)
@@ -35,6 +47,7 @@ def findLEDFromImage(frame):
     return result
 
 
+# runs at 30 fps during testing
 if __name__ == '__main__':
 
     # some reference videos
@@ -51,8 +64,11 @@ if __name__ == '__main__':
     ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     # loop through frames in video
     while ret:
-
+        # get only the areas with an LED
         result = findLEDFromImage(frame)
+
+        # adds boxes around LEDs, while watching they blur to look round, but each frame is a normal rectangle
+        findRectangles(frame)
 
         # combines result with original image for easy visualization
         img = cv2.bitwise_and(frame, frame, mask=result)
