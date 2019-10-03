@@ -40,9 +40,9 @@ class LedPair():
         return data
 
 
-class LedPerms():
-    def __init__(self, file_name, leds, panels):
-        self.file_name = file_name
+class LedCombs():
+    def __init__(self, id, leds, panels):
+        self.id = str(id)
         self.leds = leds
         self.panels = panels
         self.ledPairs = []
