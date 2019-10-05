@@ -30,4 +30,8 @@ vision_video.py  ->  this script will be the optimized implementation of the rea
 ```
 ML: undetermined
 
-Note: Only finished code that is planned on being used should be merged in master branch. For this reason, the ML folder is currently empty. Should someone want to work on ML, they can branch off master or another teammates branch.
+*** Etiquette: 
+1. Only finished code should be merged in master branch. For this reason, the ML folder is currently empty. Should someone want to work on ML, they can branch off master or another teammates branch.
+
+2. Do not add unecessary files to your commits. A git ignore is included to help prevent this, but it is good practice to not even include these files in your commits.
+A run-time switch can be used to locate datasets and output directories on your local machine.
