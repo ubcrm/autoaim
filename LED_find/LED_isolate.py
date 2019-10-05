@@ -2,13 +2,6 @@ import numpy as np
 import cv2
 
 
-def equalizeHistColor(frame):
-    # equalize the histogram of color image
-    img = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)  # convert to HSV
-    img[:, :, 2] = cv2.equalizeHist(img[:, :, 2])  # equalize the histogram of the V channel
-    return cv2.cvtColor(img, cv2.COLOR_HSV2RGB)  # convert the HSV image back to RGB format
-
-
 def findRectangles(filtered, frame):
     # puts rectangles on blobs
     contours, hierarchy = cv2.findContours(filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -23,11 +16,8 @@ def findRectangles(filtered, frame):
 
 
 def findLEDFromImage(frame):
-    # equalize the histogram of color image
-    frame1 = equalizeHistColor(frame)
-
     # layer 1: Only high hue pixels using hsv color format
-    hsv = cv2.cvtColor(frame1, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     layer1 = cv2.inRange(hsv, (179 * 0, 0, 250), (179 * 0.5, 60, 255))
     kernel = np.ones((2, 2), np.uint8)
     layer1 = cv2.dilate(layer1, kernel, iterations=7)
@@ -38,7 +28,7 @@ def findLEDFromImage(frame):
     layer2 = cv2.dilate(layer2, kernel, iterations=10)
 
     # layer 3: only bright pixels
-    layer3 = cv2.inRange(frame1, (200, 200, 253), (255, 255, 255))
+    layer3 = cv2.inRange(frame, (200, 200, 253), (255, 255, 255))
     kernel = np.ones((3, 3), np.uint8)
     layer3 = cv2.dilate(layer3, kernel, iterations=2)
 
@@ -66,10 +56,10 @@ ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image 
 # loop through frames in video
 while ret:
     # get only the areas with an LED
-    result = findLEDFromImage(frame)
+    thresh = findLEDFromImage(frame)
 
     # adds boxes around LEDs, while watching they blur to look round, but each frame is a normal rectangle
-    result = findRectangles(result, frame)
+    result = findRectangles(thresh, frame)
 
     # Display the resulting image
     cv2.imshow('Press q to quit', result)
