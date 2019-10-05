@@ -9,16 +9,17 @@ def equalizeHistColor(frame):
     return cv2.cvtColor(img, cv2.COLOR_HSV2RGB)  # convert the HSV image back to RGB format
 
 
-def findRectangles(frame):
+def findRectangles(filtered, frame):
     # puts rectangles on blobs
-    contours, hierarchy = cv2.findContours(result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     for cnt in contours:
         rect = cv2.minAreaRect(cnt)
-        if max(rect[1]) > 20:
+        if min(rect[1]) > 10:
             box = cv2.boxPoints(rect)
             box = np.int0(box)
-            cv2.drawContours(frame, [box], 0, (0, 255, 0), 5)
+            cv2.drawContours(frame, [box], 0, (255, 0, 0), 3)
+    return frame
 
 
 def findLEDFromImage(frame):
@@ -46,42 +47,38 @@ def findLEDFromImage(frame):
     result = cv2.bitwise_and(result, layer3)
     return result
 
+    # runs at 30 fps during testing
 
-# runs at 30 fps during testing
-if __name__ == '__main__':
 
-    # some reference videos
-    vidA = "videos/robot1.MOV"
-    vidB = "videos/robot2.mp4"
-    vidC = "videos/robot3.MOV"  # no robot, just ceiling lights
-    vidD = "videos/robot4.MOV"
-    vidE = "videos/robot5.mp4"
+# some reference videos
+vidA = "videos/robot1.MOV"
+vidB = "videos/robot2.mp4"
+vidC = "videos/robot3.MOV"  # no robot, just ceiling lights
+vidD = "videos/robot4.MOV"
+vidE = "videos/robot5.mp4"
 
-    # load video
-    cap = cv2.VideoCapture(vidA)
+# load video
+cap = cv2.VideoCapture(vidA)
 
-    # Capture frame-by-frame
-    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
-    # loop through frames in video
-    while ret:
-        # get only the areas with an LED
-        result = findLEDFromImage(frame)
+# Capture frame-by-frame
+ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
 
-        # adds boxes around LEDs, while watching they blur to look round, but each frame is a normal rectangle
-        findRectangles(frame)
+# loop through frames in video
+while ret:
+    # get only the areas with an LED
+    result = findLEDFromImage(frame)
 
-        # combines result with original image for easy visualization
-        img = cv2.bitwise_and(frame, frame, mask=result)
-        img = cv2.addWeighted(frame, 0.1, img, 0.9, 0)
+    # adds boxes around LEDs, while watching they blur to look round, but each frame is a normal rectangle
+    result = findRectangles(result, frame)
 
-        # get next frame
-        ret, frame = cap.read()
+    # Display the resulting image
+    cv2.imshow('Press q to quit', result)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
 
-        # Display the resulting image
-        cv2.imshow('Press q to quit', img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-            break
+    # get next frame
+    ret, frame = cap.read()
 
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
