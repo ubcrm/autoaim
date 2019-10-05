@@ -2,12 +2,13 @@
   "mode": "webcam",
   "data_path": "data/data.json",
   "checkpoint_path": "checkpoints/",
-  "model_path": "model/model.save",
+  "model_path": "model\\model.save",
+  "log_dir": "logs\\fit",
   "train_test_ratio": 0.8,
   "learning": {
     "input_size": 5,
     "epochs": 50,
-    "learning_rate": 0.0001,
+    "learning_rate": 0.01,
     "iterations": 50
   }
 }
