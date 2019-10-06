@@ -32,8 +32,8 @@ threshVal = 250
 mask = bit_mask.gray_to_thresh(image, threshVal)
 
 # 3. Find quadrilaterals
-contours = shape_detector.find_contours(mask)
-quad_centers = shape_detector.find_quad_centers(contours, image)
+contours = detect_shape.find_contours(mask)
+quad_centers = detect_shape.find_quad_centers(contours, image)
 
 # 4. Match Quads
 target_leds = match_leds.slope_thresh(quad_centers, width)
