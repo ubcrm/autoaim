@@ -1,17 +1,4 @@
-''' 
-******************** Pipeline driving code ******************
-Run:
-
-python vision_image.py \
-	-i ../../datasets/RoboMasterLabelledImagesSet1/image-550.jpg \
-	--save ./output/
-
-'''
-
-from resource import Mask
-from resource import Shape
-from resource import MatchLEDs
-from resource import Target
+from resource import bitMask, shapeDetector, matchLEDs, findCenter
 import argparse
 import imutils
 import cv2
@@ -41,22 +28,18 @@ cv2.imshow('Resized',image)
 cv2.waitKey(0)
 
 # 2. Mask
-m = Mask()
-mask = m.grayToThresh(image)
+threshVal = 250
+mask = bitMask.grayToThresh(image, threshVal)
 
 # 3. Find quadrilaterals
-s = Shape()
-cnts = s.findContours(mask)
-quads = s.findQuads(cnts, image)
+contours = shapeDetector.findContours(mask)
+quads = shapeDetector.findQuads(contours, image)
 
-# 4. Match Rects
-match = MatchLEDs()
-targetLEDs = match.slopeThresh(quads, width)
-print(targetLEDs)
+# 4. Match Quads
+targetLEDs = matchLEDs.slopeThresh(quads, width)
 
 # 5. Compute Center
-t = Target()
-coords = t.findCenter(targetLEDs)
+coords = findCenter.findTargetCenter(targetLEDs)
 print('Center Coordinates: '+str(coords))
 
 # show coordinate on image
