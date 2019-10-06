@@ -1,4 +1,4 @@
 .idea/*
-LED_match/venv/*
+venv/*
 LED_match/.idea/*
 LED_match/__pycache__/*

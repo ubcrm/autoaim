@@ -16,8 +16,16 @@ Windows:
 ```
 pip install virtualenv
 virtualenv venv
+venv\Scripts\activate.bat
+pip install -r LED_match\requirements.txt
+```
+
+Linux/Mac:
+```
+pip install virtualenv
+virtualenv venv
 source venv/Scripts/activate
-pip install -r requirements.txt
+pip install -r LED_match/requirements.txt
 ```
 
 ## Maintenance
