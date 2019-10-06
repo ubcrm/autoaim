@@ -1,5 +1,5 @@
 """
-
+Will be refactored into the openCV module
 """
 
 import cv2
@@ -22,7 +22,7 @@ def run_webcam():
 
 
 if __name__ == "__main__":
-    settings = get_json_from_file("tensorflow_pipeline_settings.json")
+    settings = get_json_from_file("training_pipeline_settings.json")
     mode = settings["mode"]
     if mode == "webcam":
         run_webcam()
