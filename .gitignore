@@ -4,7 +4,6 @@ source/.idea/*
 source/__pycache__/*
 out/tensorflow_pipeline/logs/*
 assets/tensorflow_pipeline/data/
-assets/tensorflow_pipeline/model/*
 LED_find/__pycache__/*
 LED_find/videos/*
 

@@ -9,4 +9,4 @@ Using openCV to find LEDs
 Using (tensorflow?) to pair the LEDs and find panels
 
 ### Installation
-The installation document can be found [here](https://github.com/ubcrobomaster/robomaster-vision/blob/master/LED_match/README.md)
+The installation document can be found [here](https://github.com/ubcrobomaster/robomaster-vision/blob/master/source/tensorflow_pipeline/README.md)
