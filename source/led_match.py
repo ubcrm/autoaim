@@ -2,9 +2,8 @@
 
 """
 
-import tensorflow as tf
 import cv2
-from LED_match.train import get_json_from_file
+from source.tensorflow_pipeline.tensorflow_pipeline import get_json_from_file
 
 
 def get_leds_from_frame(frame):
@@ -23,7 +22,7 @@ def run_webcam():
 
 
 if __name__ == "__main__":
-    settings = get_json_from_file("settings.json")
+    settings = get_json_from_file("tensorflow_pipeline_settings.json")
     mode = settings["mode"]
     if mode == "webcam":
         run_webcam()

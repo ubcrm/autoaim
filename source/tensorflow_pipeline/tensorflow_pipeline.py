@@ -23,7 +23,7 @@ class TensorflowPipeline:
 
     def train_model(self, data_json="from_settings"):
         """
-        Trains, evaluates, and saves the model.
+        Trains and evaluates the model.
         :param data_json: JSON file containing training data. If no data is passed, it will use the file in settings.
         """
 
@@ -38,9 +38,7 @@ class TensorflowPipeline:
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
 
-        # evaluate and save model
-        self.evaluate_model(test_x, test_y)
-        self.save_model()
+        self.model.evaluate(test_x, test_y, verbose=1)
 
     def evaluate_model(self, x, y):
         """
@@ -50,7 +48,7 @@ class TensorflowPipeline:
         """
         try:
             print("Evaluating model")
-            self.model.evaluate(x, y)
+            # self.model.evaluate(x, y)
         except ValueError:
             print("Tried to evaluate model non-existent model. Either load or train a model first.")
 
@@ -102,8 +100,8 @@ class TensorflowPipeline:
         split_idx = int(len(data) * self.settings["train_test_ratio"])
         t_x = np.array(data_x[:split_idx])
         t_y = np.array(data_y[:split_idx])
-        te_x = np.array(data_x[:split_idx])
-        te_y = np.array(data_y[:split_idx])
+        te_x = np.array(data_x[split_idx:])
+        te_y = np.array(data_y[split_idx:])
         return t_x, t_y, te_x, te_y
 
     def create_layers(self):
@@ -138,4 +136,5 @@ class TensorflowPipeline:
 
 if __name__ == "__main__":
     pipeline = TensorflowPipeline(sys.argv[1])
-    pipeline.train_model("data\\data.json")
+    pipeline.train_model()
+    pipeline.save_model()

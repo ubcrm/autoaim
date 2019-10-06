@@ -1,9 +1,10 @@
 .idea/*
 venv/*
-LED_match/.idea/*
-LED_match/__pycache__/*
-LED_match/logs/*
-LED_match/data/*
-LED_match/model/*
+source/.idea/*
+source/__pycache__/*
+out/tensorflow_pipeline/logs/*
+assets/tensorflow_pipeline/data/
+assets/tensorflow_pipeline/model/*
 LED_find/__pycache__/*
 LED_find/videos/*
+
