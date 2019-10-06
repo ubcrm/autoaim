@@ -1,3 +1,6 @@
+import cv2
+
+
 def find_target_center(bounds):
     """
     finds the center of 2 rectangles

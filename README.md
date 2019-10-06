@@ -16,7 +16,7 @@ This approach uses a pipeline of computer vision algorithms to detect the center
 Using (tensorflow?) to pair the LEDs and find panels
 
 ### Installation
-The installation document can be found [here](https://github.com/ubcrobomaster/robomaster-vision/blob/master/LED_match/README.md)
+The installation document can be found [here](https://github.com/ubcrobomaster/robomaster-vision/blob/master/source/tensorflow_pipeline/README.md)
 
 ### Repo Structure
 

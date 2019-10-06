@@ -1,5 +1,6 @@
 import cv2
 
+from source.resource.find_center import center_panel
 
 def slope_thresh(quads, width):
     """
@@ -34,6 +35,7 @@ def get_panels(rectangles):
     :param: rectangles - an array of openCV
     :return: a list of pairs of rectangles in the form [(r1,r2),(r3,r4),...]
     """
+
     pairs = []
     for rect in rectangles:
         if (2 * rect[1][0] < rect[1][1]) or (rect[1][0] > 2 * rect[1][1]):
@@ -41,6 +43,7 @@ def get_panels(rectangles):
                 long_dim1 = 0
             elif rect[1][0] > 2 * rect[1][1]:
                 long_dim1 = 1
+
             box = cv2.boxPoints(rect)
             box2 = []
             min_angle = 10;
@@ -57,5 +60,4 @@ def get_panels(rectangles):
                 box_pair = (box, box2)
                 pairs.append(box_pair)
 
-    # function to get center of panel (located in find Center file)
     return pairs
