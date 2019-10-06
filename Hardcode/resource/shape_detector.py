@@ -32,7 +32,7 @@ def get_shape(c):
   return shape
 
 
-def find_quads(contours, image):
+def find_quad_centers(contours, image):
   quads = []
 
   for c in contours:

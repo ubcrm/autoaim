@@ -33,10 +33,10 @@ mask = bit_mask.gray_to_thresh(image, threshVal)
 
 # 3. Find quadrilaterals
 contours = shape_detector.find_contours(mask)
-quads = shape_detector.find_quads(contours, image)
+quad_centers = shape_detector.find_quad_centers(contours, image)
 
 # 4. Match Quads
-target_leds = match_leds.slope_thresh(quads, width)
+target_leds = match_leds.slope_thresh(quad_centers, width)
 
 # 5. Compute Center
 coords = find_center.find_target_center(target_leds)
