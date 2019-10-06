@@ -1,4 +1,4 @@
-from resource import bit_mask, detect_shape, match_leds, find_center
+from source.resource import bit_mask, detect_shape, match_leds, find_center
 import argparse
 import imutils
 import cv2

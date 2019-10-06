@@ -1,3 +1,9 @@
+.idea/*
+venv/*
+source/.idea/*
+source/__pycache__/*
+out/tensorflow_pipeline/logs/*
+assets/tensorflow_pipeline/data/
 *.jpg
 *__pycache__
 *.mov
