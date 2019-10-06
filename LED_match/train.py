@@ -1,6 +1,6 @@
 """
 Reads data from Data/ and trains the Neural network on this data.
-The network is then saved to be used in LED_match.py
+The network is then saved to be used in led_match.py
 """
 import datetime
 import math
@@ -123,10 +123,8 @@ class TensorflowPipeline:
 
     def create_model(self):
         """
-        Create the tensorflow model f
-        :param x:
-        :param y:
-        :return:
+        Create the tensorflow model specifying optimizer, loss, and metrics
+        :return: the tensorflow model
         """
         m = tf.keras.models.Sequential()
         for layer in self.create_layers():
@@ -136,7 +134,6 @@ class TensorflowPipeline:
             loss="categorical_crossentropy",
             metrics=['accuracy'])
         return m
-
 
 
 if __name__ == "__main__":
