@@ -22,7 +22,7 @@ Linux/Mac:
 ```
 pip install virtualenv
 virtualenv venv
-source venv/Scripts/activate
+source venv/bin/activate
 pip install -r LED_match/requirements.txt
 ``` 
 
