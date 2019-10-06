@@ -27,7 +27,6 @@ In its current form, it does not return, nor does center_panel, it outputs to fr
 Can be modified to return coordinates of center of panel using center_panel function.
 '''
 def get_panels(frame, rectangles):
-    #boxes = []
     pairs = []
     for rect in rectangles:
         if (2*rect[1][0] < rect[1][1]) or (rect[1][0] > 2*rect[1][1]):
@@ -50,8 +49,6 @@ def get_panels(frame, rectangles):
             if len(box2) != 0:
                 boxPair = (box, box2)
                 pairs.append(boxPair)
-
-            #boxes.append(box)
 
     #function to get center of panel (located in find Center file)
     center_panel(frame, pairs)
