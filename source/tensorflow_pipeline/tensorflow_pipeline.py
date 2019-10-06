@@ -36,6 +36,8 @@ class TensorflowPipeline:
         # train model, update tensorboard
         log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+        print(train_x.shape)
+        print(train_y.shape)
         self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
 
         self.model.evaluate(test_x, test_y, verbose=1)
