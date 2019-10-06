@@ -4,6 +4,7 @@ The network is then saved to be used in LED_match.py
 """
 import datetime
 import math
+
 import tensorflow as tf
 import numpy as np
 import json
@@ -18,18 +19,35 @@ def get_json_from_file(filename):
 class TensorflowPipeline:
     def __init__(self, settings_json):
         self.settings = get_json_from_file(settings_json)
-        self.model = None
-        tf.saved_model.save(self.model, self.settings["model_path"])
+        self.model = self.create_model()
 
     def train_model(self, data_json="from_settings"):
+        """
+        Trains, evaluates, and saves the model.
+        :param data_json: JSON file containing training data. If no data is passed, it will use the file in settings.
+        """
+
+        # load data from json
         data_path = data_json
         if data_json == "from_settings":
             data_path = self.settings["data_path"]
         train_x, train_y, test_x, test_y = self.create_data(data_path)
+
+        # train model, update tensorboard
+        log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+        self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
+
+        # evaluate and save model
         self.evaluate_model(test_x, test_y)
-        self.model = self.create_model(train_x, train_y)
+        self.save_model()
 
     def evaluate_model(self, x, y):
+        """
+        Evaluates the model.
+        :param x: Data input
+        :param y: Desired output
+        """
         try:
             print("Evaluating model")
             self.model.evaluate(x, y)
@@ -41,7 +59,21 @@ class TensorflowPipeline:
         tf.saved_model.save(self.model, self.settings["model_path"])
 
     @staticmethod
+    def load_model(path):
+        """
+        Loads the saved_model from path
+        :param path: path to the tensorflow saved_model
+        :return: The loaded Keras model
+        """
+        return tf.keras.models.load_model(path)
+
+    @staticmethod
     def create_nn_input(leds):
+        """
+        Creates one input for the network from leds
+        :param leds: One pair of LEDs represented as a python dictionary
+        :return: list of inputs for the neural network
+        """
         led_1 = leds[0]
         led_2 = leds[1]
         dw = abs(led_1["width"] - led_2["width"])
@@ -52,6 +84,11 @@ class TensorflowPipeline:
         return [dw, dh, da, dx, dy]
 
     def create_data(self, json_filename):
+        """
+        Parses a json file storing training data into network input
+        :param json_filename: path to training data
+        :return: numpy array of network input
+        """
         data = get_json_from_file(json_filename)  # nothing to parse until training data is made
         data_x = [self.create_nn_input((data[pair]["led1"], data[pair]["led2"])) for pair in data]
         data_y = [data[pair]["isPanel"] for pair in data]
@@ -61,6 +98,7 @@ class TensorflowPipeline:
             else:
                 data_y[i] = [0, 1]
 
+        # split into training and testing data
         split_idx = int(len(data) * self.settings["train_test_ratio"])
         t_x = np.array(data_x[:split_idx])
         t_y = np.array(data_y[:split_idx])
@@ -69,6 +107,12 @@ class TensorflowPipeline:
         return t_x, t_y, te_x, te_y
 
     def create_layers(self):
+        """
+        Generate the neural network layers.
+        Current structure: 3 dense layers of size 5, 3, 2
+        Output layer is a classifier of pair vs. not pair
+        :return: network layers as list
+        """
         i_size = self.settings["learning"]["input_size"]
         hidden_size = math.ceil((i_size + 1) / 2)
         return [
@@ -77,7 +121,13 @@ class TensorflowPipeline:
             tf.keras.layers.Dense(2, activation=tf.nn.softmax)
         ]
 
-    def create_model(self, x, y):
+    def create_model(self):
+        """
+        Create the tensorflow model f
+        :param x:
+        :param y:
+        :return:
+        """
         m = tf.keras.models.Sequential()
         for layer in self.create_layers():
             m.add(layer)
@@ -85,11 +135,10 @@ class TensorflowPipeline:
             optimizer='adam',
             loss="categorical_crossentropy",
             metrics=['accuracy'])
-        log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-        m.fit(x, y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
         return m
+
 
 
 if __name__ == "__main__":
     pipeline = TensorflowPipeline(sys.argv[1])
+    pipeline.train_model("data\\data.json")
