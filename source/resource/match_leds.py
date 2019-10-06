@@ -1,4 +1,14 @@
+import cv2
+
+
 def slope_thresh(quads, width):
+    """
+    returns a pair rectangles based on the slope between them
+
+    :param quads: the centers of rectangles in the form [x,y]
+    :param width: the width of the rectangles
+    :return: a pair of centers in the form [[x1,y1],[x2,y2]]
+    """
     i = 0
     while i < len(quads) - 1:
         # determine if two *adjacent* quads exist with a flat slope between them
@@ -17,38 +27,35 @@ def slope_thresh(quads, width):
         i += 1
 
 
-def angle_comparison():
-    return
+def get_panels(rectangles):
+    """
+    pairs rectangles the belong to the same panel
 
-'''
-Param: frame
-Param: rectangles - an array of rectangle objects
-In its current form, it does not return, nor does center_panel, it outputs to frame video.
-Can be modified to return coordinates of center of panel using center_panel function.
-'''
-def get_panels(frame, rectangles):
+    :param: rectangles - an array of openCV
+    :return: a list of pairs of rectangles in the form [(r1,r2),(r3,r4),...]
+    """
     pairs = []
     for rect in rectangles:
-        if (2*rect[1][0] < rect[1][1]) or (rect[1][0] > 2*rect[1][1]):
-            if 2*rect[1][0] < rect[1][1]:
-                longDim1 = 0
-            elif rect[1][0] > 2*rect[1][1]:
-                longDim1 = 1
+        if (2 * rect[1][0] < rect[1][1]) or (rect[1][0] > 2 * rect[1][1]):
+            if 2 * rect[1][0] < rect[1][1]:
+                long_dim1 = 0
+            elif rect[1][0] > 2 * rect[1][1]:
+                long_dim1 = 1
             box = cv2.boxPoints(rect)
             box2 = []
-            minAngle = 10;
+            min_angle = 10;
             for rect2 in rectangles:
-                if 2*rect[1][0] < rect[1][1]:
-                    longDim2 = 0
-                elif rect[1][0] > 2*rect[1][1]:
-                    longDim2 = 1
-                if (rect2 != rect) and (abs(rect[2]-rect2[2]) < minAngle) and (longDim1 == 1 and  longDim2 == 1):
+                if 2 * rect[1][0] < rect[1][1]:
+                    long_dim2 = 0
+                elif rect[1][0] > 2 * rect[1][1]:
+                    long_dim2 = 1
+                if (rect2 != rect) and (abs(rect[2] - rect2[2]) < min_angle) and (long_dim1 == 1 and long_dim2 == 1):
                     box2 = cv2.boxPoints(rect2)
-                    minAngle = abs(rect[2]-rect2[2])
+                    min_angle = abs(rect[2] - rect2[2])
 
             if len(box2) != 0:
-                boxPair = (box, box2)
-                pairs.append(boxPair)
+                box_pair = (box, box2)
+                pairs.append(box_pair)
 
-    #function to get center of panel (located in find Center file)
-    center_panel(frame, pairs)
+    # function to get center of panel (located in find Center file)
+    return pairs

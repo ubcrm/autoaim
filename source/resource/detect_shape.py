@@ -36,7 +36,7 @@ def get_shape(c):
     elif len(approx) == 4:
         (x, y, w, h) = cv2.boundingRect(approx)
         ar = w / float(h)
-        shape = "square" if ar >= 0.95 and ar <= 1.05 else "rectangle"
+        shape = "square" if 0.95 <= ar <= 1.05 else "rectangle"
 
     elif len(approx) == 5:
         shape = "pentagon"
