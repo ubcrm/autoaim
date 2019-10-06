@@ -1,5 +1,5 @@
 # LED Matching
-Using tensorflow to pair LEDs
+Using Tensorflow to pair LEDs
 
 ## Requirements
 

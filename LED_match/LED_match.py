@@ -4,7 +4,7 @@
 
 import tensorflow as tf
 import cv2
-from train import get_json_from_file
+from LED_match.train import get_json_from_file
 
 
 def get_leds_from_frame(frame):
