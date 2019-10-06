@@ -3,9 +3,12 @@ def find_target_center(bounds):
     targetcY = int((bounds[0][1] + bounds[1][1]) / 2.0)
     return [targetcX, targetcY]
 
-#pairs is an array of tuples: boxPairs
-#boxPairs, a tuple containing 2 boxes
-#box1 and box2 contains coordinates of 4 corners of each box
+'''
+Param: pairs is an array of tuples: boxPairs
+boxPairs, a tuple containing 2 boxes
+box1 and box2 contains coordinates of 4 corners of each box.
+Can be modified to return cX and cY, currently only outputs to frame video. 
+'''
 def center_panel(frame, pairs):
     for boxPair in pairs:
         box1 = boxPair[0]
