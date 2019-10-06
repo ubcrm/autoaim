@@ -1,8 +1,7 @@
 import imutils
 import cv2
 
-  
-def slopeThresh(quads, width):
+def slope_thresh(quads, width):
   i = 0
   while i < len(quads)-1:
     # determine if two *adjacent* quads exist with a flat slope between them
@@ -20,5 +19,5 @@ def slopeThresh(quads, width):
       return [quads[i], quads[i+1]]
     i+=1
 
-def angleComparison(self):
+def angle_comparison():
   return

@@ -1,13 +1,13 @@
 import imutils
 import cv2
   
-def findContours(thresh):
+def find_contours(thresh):
   cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
     cv2.CHAIN_APPROX_SIMPLE)
   cnts = imutils.grab_contours(cnts)
   return cnts
 
-def getShape(c):
+def get_shape(c):
   shape = "unidentified"
   peri = cv2.arcLength(c, True)
   approx = cv2.approxPolyDP(c, 0.04 * peri, True)
@@ -32,7 +32,7 @@ def getShape(c):
   return shape
 
 
-def findQuads(contours, image):
+def find_quads(contours, image):
   quads = []
 
   for c in contours:
@@ -44,7 +44,7 @@ def findQuads(contours, image):
       cX = int(M["m10"] / M["m00"])
       cY = int(M["m01"] / M["m00"])
 
-    shape = getShape(c)
+    shape = get_shape(c)
   
     if shape == "rectangle" or shape == "pentagon":
       c = c.astype("float")
