@@ -4,6 +4,12 @@ import numpy as np
 
 
 def find_contours(thresh):
+    """
+    gets areas of color from image
+
+    :param thresh: a binary image
+    :return: an array of openCV contours
+    """
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
                             cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
@@ -11,6 +17,12 @@ def find_contours(thresh):
 
 
 def get_shape(c):
+    """
+    finds shape of a contour
+
+    :param c: an openCV contour
+    :return: a string of the name of the shape
+    """
     shape = "unidentified"
     peri = cv2.arcLength(c, True)
     approx = cv2.approxPolyDP(c, 0.04 * peri, True)
@@ -35,7 +47,13 @@ def get_shape(c):
     return shape
 
 
-def find_quad_centers(contours, image):
+def find_quad_centers(contours):
+    """
+    finds centers of contours that have 4 sides
+
+    :param contours: a list of openCV contours
+    :return: a list of coordinates in the form [x,y]
+    """
     quads = []
 
     for c in contours:
@@ -58,14 +76,18 @@ def find_quad_centers(contours, image):
     return quads
 
 
-def find_rectangles(filtered, frame):
+def find_rectangles(filtered):
+    """
+    finds rectangles around leds
+
+    :param filtered: a binary image of suspected leds
+    :return: a list of rectangles in the format ((centerX,centerY),(width,height),(rotation))
+    """
     # puts rectangles on blobs
     contours, hierarchy = cv2.findContours(filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
+    rectangles = []
     for cnt in contours:
         rect = cv2.minAreaRect(cnt)
         if min(rect[1]) > 10:
-            box = cv2.boxPoints(rect)
-            box = np.int0(box)
-            cv2.drawContours(frame, [box], 0, (255, 0, 0), 3)
-    return frame
+            rectangles.append(rect)
+    return rectangles
