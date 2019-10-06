@@ -2,22 +2,29 @@ import cv2
 
 
 def find_target_center(bounds):
+    """
+    finds the center of 2 rectangles
+
+    :param bounds: 2 rectangles in the from [[x1,y1],[x2,y2]]
+    :return: the center in the form [x,y]
+    """
     targetcX = int((bounds[0][0] + bounds[1][0]) / 2.0)
     targetcY = int((bounds[0][1] + bounds[1][1]) / 2.0)
     return [targetcX, targetcY]
 
-'''
-Param: pairs is an array of tuples: boxPairs
-boxPairs, a tuple containing 2 boxes
-box1 and box2 contains coordinates of 4 corners of each box.
-Can be modified to return cX and cY, currently only outputs to frame video. 
-'''
-def center_panel(frame, pairs):
+
+def center_panel(pairs):
+    """
+    :return the center of all pairs of rectangles
+
+    :param pairs: a list of tuples containing openCV rectangles
+    :return: the coordinates of the center in the form [x,y]
+    """
     for boxPair in pairs:
         box1 = boxPair[0]
         box2 = boxPair[1]
 
-        #box number one
+        # box number one
         xa1 = box1[0, 0]
         ya1 = box1[0, 1]
         xb1 = box1[1, 0]
@@ -27,7 +34,7 @@ def center_panel(frame, pairs):
         xd1 = box1[3, 0]
         yd1 = box1[3, 1]
 
-        #box number two
+        # box number two
         xa2 = box2[0, 0]
         ya2 = box2[0, 1]
         xb2 = box2[1, 0]
@@ -37,9 +44,8 @@ def center_panel(frame, pairs):
         xd2 = box2[3, 0]
         yd2 = box2[3, 1]
 
-        #centerCoordinates
-        cX = int((xa1 + xb1 + xc1 + xd1 + xa2 + xb2 + xc2 + xd2)/8)
-        cY = int((ya1 + yb1 + yc1 + yd1 + ya2 + yb2 + yc2 + yd2)/8)
+        # centerCoordinates
+        cX = int((xa1 + xb1 + xc1 + xd1 + xa2 + xb2 + xc2 + xd2) / 8)
+        cY = int((ya1 + yb1 + yc1 + yd1 + ya2 + yb2 + yc2 + yd2) / 8)
 
-        cv2.circle(frame, (cX,cY), 3, (0,0,255), thickness=4, lineType=8, shift=0)
-
+        return [cX, cY]

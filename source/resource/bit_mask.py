@@ -3,6 +3,13 @@ import numpy as np
 
 
 def gray_to_thresh(image, thresh_val):
+    """
+    finds panel leds in an image using a black and white threshold
+
+    :param image: BGR image to find leds from
+    :param thresh_val: integer between 0 and 255 used as threshold value
+    :return: a binary image highlighting leds
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.threshold(blurred, thresh_val, 255, cv2.THRESH_BINARY)[1]
@@ -10,6 +17,13 @@ def gray_to_thresh(image, thresh_val):
 
 
 def saliency_to_thresh(image, threshold):
+    """
+    finds panel leds in an image using a saliency map
+
+    :param image: BGR image to find leds from
+    :param threshold: integer between 0 and 255 used as threshold value
+    :return: a binary image highlighting leds
+    """
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()
     _, saliency_map = saliency.computeSaliency(image)
     saliency_map = (saliency_map * 255).astype("uint8")
@@ -20,6 +34,14 @@ def saliency_to_thresh(image, threshold):
 
 
 def find_led_from_image(frame):
+    """
+    finds panel leds in an image using 3 thresholds
+
+    :param frame: the BGR image to find leds from
+    :return: a binary image highlighting leds
+    """
+
+
     # layer 1: Only high hue pixels using hsv color format
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     layer1 = cv2.inRange(hsv, (179 * 0, 0, 250), (179 * 0.5, 60, 255))
