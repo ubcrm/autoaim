@@ -32,6 +32,8 @@ class TensorflowPipeline:
         if data_json == "from_settings":
             data_path = self.settings["data_path"]
         train_x, train_y, test_x, test_y = self.create_data(data_path)
+        print(train_x.shape)
+        print(train_y.shape)
 
         # train model, update tensorboard
         log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -48,7 +50,7 @@ class TensorflowPipeline:
         """
         try:
             print("Evaluating model")
-            # self.model.evaluate(x, y)
+            self.model.evaluate(x, y)
         except ValueError:
             print("Tried to evaluate model non-existent model. Either load or train a model first.")
 
@@ -65,8 +67,7 @@ class TensorflowPipeline:
         """
         return tf.keras.models.load_model(path)
 
-    @staticmethod
-    def create_nn_input(leds):
+    def create_nn_input(self, leds):
         """
         Creates one input for the network from leds
         :param leds: One pair of LEDs represented as a python dictionary
@@ -74,11 +75,11 @@ class TensorflowPipeline:
         """
         led_1 = leds[0]
         led_2 = leds[1]
-        dw = abs(led_1["width"] - led_2["width"])
-        dh = abs(led_1["height"] - led_2["height"])
-        da = abs(led_1["angle"] - led_2["angle"])
-        dx = abs(led_1["center"]["x"] - led_2["center"]["x"])
-        dy = abs(led_1["center"]["y"] - led_2["center"]["y"])
+        dw = abs(led_1["width"] - led_2["width"]) / self.settings["video_dims"]["w"]
+        dh = abs(led_1["height"] - led_2["height"]) / self.settings["video_dims"]["h"]
+        da = abs(led_1["angle"] - led_2["angle"]) / 90
+        dx = abs(led_1["center"]["x"] - led_2["center"]["x"]) / self.settings["video_dims"]["w"]
+        dy = abs(led_1["center"]["y"] - led_2["center"]["y"]) / self.settings["video_dims"]["h"]
         return [dw, dh, da, dx, dy]
 
     def create_data(self, json_filename):
