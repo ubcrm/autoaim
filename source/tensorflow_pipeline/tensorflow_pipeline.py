@@ -19,6 +19,7 @@ def get_json_from_file(filename):
 class TensorflowPipeline:
     def __init__(self, settings_json):
         self.settings = get_json_from_file(settings_json)
+        self.shape = self.settings["learning"]["network_shape"]
         self.model = self.create_model()
 
     def train_model(self, data_json="from_settings"):
@@ -32,8 +33,6 @@ class TensorflowPipeline:
         if data_json == "from_settings":
             data_path = self.settings["data_path"]
         train_x, train_y, test_x, test_y = self.create_data(data_path)
-        print(train_x.shape)
-        print(train_y.shape)
 
         # train model, update tensorboard
         log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -55,17 +54,28 @@ class TensorflowPipeline:
             print("Tried to evaluate model non-existent model. Either load or train a model first.")
 
     def save_model(self):
+        """
+        Saves the model to the directory specified in settings
+        """
         print("Saving model")
         tf.saved_model.save(self.model, self.settings["model_path"])
+        self.model.save(self.settings["model_path"])
 
     @staticmethod
     def load_model(path):
         """
         Loads the saved_model from path
-        :param path: path to the tensorflow saved_model
-        :return: The loaded Keras model
+        :param path: path to the tensorflow checkpoint
+        :return: The loaded model
         """
         return tf.keras.models.load_model(path)
+
+    @staticmethod
+    def model_predict(model, model_input):
+        o = model.predict(model_input)
+        print(o)
+        return o.argmax()
+
 
     def create_nn_input(self, leds):
         """
@@ -79,7 +89,7 @@ class TensorflowPipeline:
         dh = abs(led_1["height"] - led_2["height"]) / self.settings["video_dims"]["h"]
         da = abs(led_1["angle"] - led_2["angle"]) / 90
         dx = abs(led_1["center"]["x"] - led_2["center"]["x"]) / self.settings["video_dims"]["w"]
-        dy = abs(led_1["center"]["y"] - led_2["center"]["y"]) / self.settings["video_dims"]["h"]
+        dy = abs(led_1["center"]["x"] - led_2["center"]["y"]) / self.settings["video_dims"]["h"]
         return [dw, dh, da, dx, dy]
 
     def create_data(self, json_filename):
@@ -112,11 +122,9 @@ class TensorflowPipeline:
         Output layer is a classifier of pair vs. not pair
         :return: network layers as list
         """
-        i_size = self.settings["learning"]["input_size"]
-        hidden_size = math.ceil((i_size + 1) / 2)
         return [
-            tf.keras.layers.Dense(i_size, activation=tf.nn.relu),
-            tf.keras.layers.Dense(hidden_size),
+            tf.keras.layers.Dense(self.shape[0], activation=tf.nn.relu),
+            tf.keras.layers.Dense(self.shape[1]),
             tf.keras.layers.Dense(2, activation=tf.nn.softmax)
         ]
 
@@ -139,3 +147,7 @@ if __name__ == "__main__":
     pipeline = TensorflowPipeline(sys.argv[1])
     pipeline.train_model()
     pipeline.save_model()
+
+    m = TensorflowPipeline.load_model("..\\assets\\tensorflow_pipeline\\model\\saves")
+    training_x, training_y, testing_x, testing_y = m.create_data("..\\assets\\tensorflow_pipeline\\data\\train.json")
+    print(TensorflowPipeline.model_predict(m, training_x[0]))
