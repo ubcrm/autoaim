@@ -76,7 +76,7 @@ def find_quad_centers(contours):
     return quads
 
 
-def convert_rectangle(rect):
+def reformat_cv_rectangle(rect):
     """
     converts from an openCV rectangle to a dict style rectangle
 
