@@ -7,7 +7,7 @@ sys.path.insert(1, DIR + '/../../source/resource')
 from bit_mask import find_led_from_image
 from detect_shape import find_rectangles
 
-DATA_OUT = '/data/pair_data.json'
+DATA_OUT = '/data/train.json'
 LABELS_IN = '/data/image_labels.json'
 IMAGE_IN = '/data/images/%d.jpg'
 

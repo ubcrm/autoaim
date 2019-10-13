@@ -5,6 +5,10 @@
   "model_path": "..\\assets\\tensorflow_pipeline\\model\\",
   "log_dir": "..\\out\\tensorflow_pipeline\\logs\\fit",
   "train_test_ratio": 0.8,
+  "video_dims": {
+    "w": 1920,
+    "h": 1080
+  },
   "learning": {
     "input_size": 5,
     "epochs": 10,

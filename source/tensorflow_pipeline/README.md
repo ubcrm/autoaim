@@ -4,7 +4,7 @@ Using Tensorflow to pair LEDs
 ## Requirements
 
 ```
-python==3.6
+python==3.7.4
 ```
 
 ## Installation
@@ -15,7 +15,7 @@ Windows:
 pip install virtualenv
 virtualenv venv
 venv\Scripts\activate.bat
-pip install -r LED_match\requirements.txt
+pip install -r requirements.txt
 ```
 
 Linux/Mac:
@@ -23,7 +23,7 @@ Linux/Mac:
 pip install virtualenv
 virtualenv venv
 source venv/bin/activate
-pip install -r LED_match/requirements.txt
+pip install -r requirements.txt
 ``` 
 
 ## Maintenance
