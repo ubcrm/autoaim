@@ -7,7 +7,16 @@ sys.path.insert(1, DIR + '/../../source/resource')
 from bit_mask import find_led_from_image
 from detect_shape import find_rectangles
 
-#------------------------- FUNCTION DEFINITIONS -------------------------
+DATA_OUT = '/data/pair_data.json'
+LABELS_IN = '/data/image_labels.json'
+IMAGE_IN = '/data/images/%d.jpg'
+
+IMAGE_CNT = 655
+DELAY_MS = 0
+SHOW_FEED = False
+PRINT_TO_TERMINAL = True
+
+
 def show_feed(labels, rects, image):
     for label in labels.values():
         x1, y1 = label.get('x1'), label.get('y1')
@@ -24,6 +33,7 @@ def show_feed(labels, rects, image):
 
     cv2.imshow('Feed', image)
     cv2.waitKey(DELAY_MS)
+
 
 def find_panel_pairs(leds, labels):
     panel_pairs = []
@@ -43,18 +53,6 @@ def find_panel_pairs(leds, labels):
     return panel_pairs
 
 
-#------------------------- CONSTANTS -------------------------
-DATA_OUT = '/data/pair_training_data.json'
-LABELS_IN = '/data/image_labels_edited.json'
-IMAGE_IN = '/data/images/%d.jpg'
-
-IMAGE_CNT = 655
-DELAY_MS = 0
-SHOW_FEED = False
-PRINT_TO_TERMINAL = True
-
-
-#------------------------- MAIN BODY -------------------------
 with open(DIR + LABELS_IN, 'r') as f:
     labels_dict = json.load(f)
 
@@ -63,11 +61,10 @@ pair_cnt = 0
 
 for image_index in range(0, IMAGE_CNT):
     if PRINT_TO_TERMINAL:
-        print('Processing %d of %d' % (image_index + 1, IMAGE_CNT))
+        print('Processing %d.jpg/%d.jpg' % (image_index, IMAGE_CNT - 1))
 
     image = cv2.imread(DIR + IMAGE_IN % image_index)
-    mask = find_led_from_image(image)
-    rects = find_rectangles(mask)
+    rects = find_rectangles(find_led_from_image(image))
     labels = labels_dict['%d.jpg' % image_index]
 
     leds = [Led(rect_index, *rect) for rect_index, rect in enumerate(rects)]
@@ -81,8 +78,9 @@ for image_index in range(0, IMAGE_CNT):
         pair_data[str(pair_cnt)] = pair_info
         pair_cnt += 1
 
+
 with open(DIR + DATA_OUT, 'w') as f:
     json.dump(pair_data, f, indent=4)
 
 if PRINT_TO_TERMINAL:
-    print('Pair training data saved.')
+    print('Pair data generated and saved successfully.')

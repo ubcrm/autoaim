@@ -11,12 +11,15 @@ class Led():
         self.angle = int(angle)
 
     def toDict(self):
+        cntr = {
+            "x": self.center[0],
+            "y": self.center[1]
+            }
         data = {
             "width": self.width,
             "height": self.height,
             "angle": self.angle,
-            "x_center": self.center[0],
-            "y_center": self.center[1]
+            "center": cntr
             }
         return data
 

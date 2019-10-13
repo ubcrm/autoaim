@@ -76,20 +76,6 @@ def find_quad_centers(contours):
     return quads
 
 
-def convert_rectangle(rect):
-    """
-    converts from an openCV rectangle to a dict style rectangle
-
-    :param rect: an openCV rectangle
-    :return: a dictionary rectangle
-    """
-    rect_dict = {"width": rect[1][0], "height": rect[1][1],
-                 "x_center": rect[0][0], "y_center": rect[0][1],
-                 "angle": rect[2]}
-
-    return rect_dict
-
-
 def find_rectangles(filtered):
     """
     finds rectangles around leds
