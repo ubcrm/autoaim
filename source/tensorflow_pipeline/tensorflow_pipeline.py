@@ -78,8 +78,8 @@ class TensorflowPipeline:
         dw = abs(led_1["width"] - led_2["width"]) / self.settings["video_dims"]["w"]
         dh = abs(led_1["height"] - led_2["height"]) / self.settings["video_dims"]["h"]
         da = abs(led_1["angle"] - led_2["angle"]) / 90
-        dx = abs(led_1["center"]["x"] - led_2["center"]["x"]) / self.settings["video_dims"]["w"]
-        dy = abs(led_1["center"]["y"] - led_2["center"]["y"]) / self.settings["video_dims"]["h"]
+        dx = abs(led_1["x_center"] - led_2["x_center"]) / self.settings["video_dims"]["w"]
+        dy = abs(led_1["y_center"] - led_2["y_center"]) / self.settings["video_dims"]["h"]
         return [dw, dh, da, dx, dy]
 
     def create_data(self, json_filename):
