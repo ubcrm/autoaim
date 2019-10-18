@@ -1,0 +1,1 @@
+python3 ../source/vision_image.py -i ~/code/robomaster/datasets/RoboMasterLabelledImagesSet1/image-550.jpg

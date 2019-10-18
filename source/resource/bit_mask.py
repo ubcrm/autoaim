@@ -41,7 +41,6 @@ def find_led_from_image(frame):
     :return: a binary image highlighting leds
     """
 
-
     # layer 1: Only high hue pixels using hsv color format
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     layer1 = cv2.inRange(hsv, (179 * 0, 0, 250), (179 * 0.5, 60, 255))

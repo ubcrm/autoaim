@@ -21,9 +21,9 @@ pip install -r requirements.txt
 Linux/Mac:
 ```
 pip3 install virtualenv
-virtualenv venv
+virtualenv -p python3 venv
 source venv/bin/activate
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --no-cache-dir
 ``` 
 
 ## Maintenance

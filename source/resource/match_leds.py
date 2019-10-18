@@ -1,6 +1,5 @@
+from resource.find_center import center_panel
 import cv2
-
-from source.resource.find_center import center_panel
 
 def slope_thresh(quads, width):
     """
