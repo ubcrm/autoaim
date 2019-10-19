@@ -33,14 +33,13 @@ def saliency_to_thresh(image, threshold):
     return thresh
 
 
-def find_led_from_image(frame):
+def over_exposed_threshold(frame):
     """
-    finds panel leds in an image using 3 thresholds
+    finds panel leds in an image using 3 thresholds assuming the leds are washed out
 
     :param frame: the BGR image to find leds from
     :return: a binary image highlighting leds
     """
-
 
     # layer 1: Only high hue pixels using hsv color format
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -49,7 +48,7 @@ def find_led_from_image(frame):
     layer1 = cv2.dilate(layer1, kernel, iterations=7)
 
     # layer 2: Everything near bright red
-    layer2 = cv2.inRange(frame, (0, 0, 250), (150, 150, 255))
+    layer2 = cv2.inRange(frame, (100, 0, 230), (200, 130, 255))
     kernel = np.ones((4, 4), np.uint8)
     layer2 = cv2.dilate(layer2, kernel, iterations=10)
 
@@ -61,4 +60,12 @@ def find_led_from_image(frame):
     # final image: only the overlap of all 3 layers
     result = cv2.bitwise_and(layer1, layer2)
     result = cv2.bitwise_and(result, layer3)
-    return result
+    return layer1
+
+
+def under_exposed_threshold(frame):
+    #     print(round(frame.shape[1] / 384), round(frame.shape[0] / 54))
+    blurred = cv2.blur(frame, (round(frame.shape[1] / 384), round(frame.shape[0] / 54)))
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    thresh = cv2.inRange(hsv, (0, 0, 240), (255, 255, 255))
+    return thresh
