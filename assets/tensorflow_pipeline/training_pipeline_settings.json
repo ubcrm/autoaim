@@ -2,7 +2,7 @@
   "mode": "webcam",
   "data_path": "..\\assets\\tensorflow_pipeline\\data\\train.json",
   "checkpoint_path": "..\\assets\\tensorflow_pipeline\\model\\checkpoints",
-  "model_path": "..\\assets\\tensorflow_pipeline\\model\\saves",
+  "model_path": "..\\assets\\tensorflow_pipeline\\model\\saves\\model.hdf5",
   "meta_graph_path": "..\\assets\\tensorflow_pipeline\\model\\checkpoints",
   "log_dir": "..\\out\\tensorflow_pipeline\\logs\\fit",
   "train_test_ratio": 0.8,

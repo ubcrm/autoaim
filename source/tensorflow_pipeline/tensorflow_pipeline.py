@@ -1,6 +1,8 @@
 """
 Reads data from Data/ and trains the Neural network on this data.
 The network is then saved to be used in led_match.py
+
+
 """
 
 import tensorflow as tf
@@ -57,7 +59,7 @@ class TensorflowPipeline:
         Saves the model to the directory specified in settings
         """
         print("Saving model")
-        tf.saved_model.save(self.model, self.settings["model_path"])
+        # tf.saved_model.save(self.model, self.settings["model_path"])
         self.model.save(self.settings["model_path"])
 
     @staticmethod
@@ -75,17 +77,18 @@ class TensorflowPipeline:
         print(o)
         return o.argmax()
 
-
-    def create_nn_input(self, leds):
+    @staticmethod
+    def create_nn_input(leds, video_dims):
         """
         Creates one input for the network from leds
         :param leds: One pair of LEDs represented as a python dictionary
+        :param video_dims: Tuple of video dimensions (w, h)
         :return: list of inputs for the neural network
         """
         led_1 = leds[0]
         led_2 = leds[1]
-        dw = abs(led_1["width"] - led_2["width"]) / self.settings["video_dims"]["w"]
-        dh = abs(led_1["height"] - led_2["height"]) / self.settings["video_dims"]["h"]
+        dw = abs(led_1["width"] - led_2["width"]) / video_dims[0]
+        dh = abs(led_1["height"] - led_2["height"]) / video_dims[1]
         da = abs(led_1["angle"] - led_2["angle"]) / 90
         dx = abs(led_1["x_center"] - led_2["x_center"]) / self.settings["video_dims"]["w"]
         dy = abs(led_1["y_center"] - led_2["y_center"]) / self.settings["video_dims"]["h"]
@@ -97,14 +100,21 @@ class TensorflowPipeline:
         :param json_filename: path to training data
         :return: numpy array of network input
         """
-        data = self.data
-        data_x = [self.create_nn_input((data[pair]['led1'], data[pair]['led2'])) for pair in data]
+        data = get_json_from_file(json_filename)  # nothing to parse until training data is made
+
+        video_dims = (self.settings["video_dims"]["w"], self.settings["video_dims"]["h"])
+        data_x = []
+        for pair in data:
+            led_1 = data[pair]["led1"]
+            led_2 = data[pair]["led2"]
+            data_x.append(TensorflowPipeline.create_nn_input((led_1, led_2), video_dims))
+
         data_y = [data[pair]["isPanel"] for pair in data]
         for i in range(len(data_y)):
             if data_y[i] == 1:
-                data_y[i] = [1, 0]
-            else:
                 data_y[i] = [0, 1]
+            else:
+                data_y[i] = [1, 0]
 
         # split into training and testing data
         split_idx = int(len(data) * self.settings["train_test_ratio"])
@@ -152,6 +162,12 @@ if __name__ == "__main__":
     pipeline.train_model()
     pipeline.save_model()
 
-    m = TensorflowPipeline.load_model(model_path)
-    training_x, training_y, testing_x, testing_y = m.create_data(training_data)
-    print(TensorflowPipeline.model_predict(m, training_x[0]))
+    m = TensorflowPipeline.load_model("..\\assets\\tensorflow_pipeline\\model\\saves\\model.hdf5")
+
+    # worth noting that an indivual input can be achieved using the static method create_nn_input
+    data_path = "..\\assets\\tensorflow_pipeline\\data\\train.json"
+    training_x, training_y, testing_x, testing_y = pipeline.create_data(data_path)
+
+    network_input = np.asarray([training_x[0], training_x[1]])
+    print("The model predicts:", TensorflowPipeline.model_predict(m, network_input))
+    print("The actual value is:", training_y[0].argmax())
