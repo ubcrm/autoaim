@@ -10,6 +10,7 @@
     "h": 1080
   },
   "learning": {
+    "network_shape": [5,3,2],
     "input_size": 5,
     "epochs": 10,
     "learning_rate": 0.004,
