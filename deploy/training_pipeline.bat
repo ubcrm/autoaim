@@ -1,2 +1,2 @@
-python ..\source\tensorflow_pipeline\tensorflow_pipeline.py ..\assets\tensorflow_pipeline\training_pipeline_settings.json
+python ..\source\tensorflow_pipeline\tensorflow_pipeline.py ..\\assets\\tensorflow_pipeline\\model\\saves ..\\assets\\tensorflow_pipeline\\training_pipeline_settings.json ..\\assets\\tensorflow_pipeline\\data\\pair_training_data.json
 PAUSE
