@@ -1,11 +1,11 @@
-from manage_leds import Led, LedCombs
+from assets.label_tools.manage_leds import Led, LedCombs
 import cv2, os, json, sys
 import numpy as np
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(1, DIR + '/../../source/resource')
-from bit_mask import find_led_from_image
-from detect_shape import find_rectangles
+from source.resource.bit_mask import find_led_from_image
+from source.resource.detect_shape import find_rectangles
 
 #------------------------- FUNCTION DEFINITIONS -------------------------
 def show_feed(labels, rects, image):

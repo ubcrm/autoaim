@@ -1,8 +1,6 @@
 {
   "mode": "webcam",
-  "data_path": "..\\assets\\tensorflow_pipeline\\data\\train.json",
-  "checkpoint_path": "checkpoints/",
-  "model_path": "..\\assets\\tensorflow_pipeline\\model\\",
+  "checkpoint_path": "..\\assets\\tensorflow_pipeline\\model\\checkpoints",
   "log_dir": "..\\out\\tensorflow_pipeline\\logs\\fit",
   "train_test_ratio": 0.8,
   "video_dims": {
@@ -10,6 +8,7 @@
     "h": 1080
   },
   "learning": {
+    "network_shape": [5,3,2],
     "input_size": 5,
     "epochs": 10,
     "learning_rate": 0.004,
