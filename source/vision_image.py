@@ -27,12 +27,12 @@ print('[INFO] starting frames per second counter...')
 fps = FPS().start()
 
 # 1. Preprocess image/frame
-#frame = imutils.resize(image, width=400)
+#image = imutils.resize(image, width=400)
 cv2.imshow('image', image)
 cv2.waitKey(0)
 
 # 2. Mask LEDs
-mask = bit_mask.over_exposed_threshold(image)
+mask = bit_mask.under_exposed_threshold(image)
 print('\n'+'[INFO] mask:'+'\n')
 print(mask)
 cv2.imshow('mask', mask)
@@ -44,33 +44,34 @@ print('\n'+'[INFO] rectangles:'+'\n')
 print(rectangles)
 
 # 4. Match pairing LEDs
-led = []
+leds = []
 inputs = []
 
 for r in rectangles:
 	reformat = detect_shape.reformat_cv_rectangle(r)
-	led.append(reformat)
+	leds.append(reformat)
 
-for i in range(len(led)):
-	for j in range(len(led)):
+print(leds)
+centers = {}
+
+for i in range(len(leds)):
+	for j in range(len(leds)):
 		if i == j:
 			continue
-		leds = (led[i], led[j])
 		video_dims = (1920, 1080)
-		res = TensorflowPipeline.create_nn_input(leds, video_dims)
-		inputs.append([res])
 
+		first_bound = (leds[i]['x_center'],leds[i]['y_center'])
+		second_bound = (leds[j]['x_center'],leds[j]['y_center'])
+		center = find_center.find_target_center((first_bound, second_bound))
+
+		res = TensorflowPipeline.create_nn_input((leds[i], leds[j]), video_dims)
+		inputs.append([res])
+		centers[res[3]] = center
 
 print('\n'+'[INFO] inputs:'+'\n')
 for i in inputs:
 	print(i)
 print("------")
-
-# print('\n'+'[INFO] inputs as np array:'+'\n')
-# print(data_x)
-# print('\n')
-
-confidences = []
 
 best_input = inputs[0]
 highest_confidence = 0
@@ -80,15 +81,15 @@ for i in np.asarray(inputs):
 	if prediction[0][1] > highest_confidence:
 		best_input = i
 		highest_confidence = prediction[0][1]
-	# confidences.append(prediction)
 
+print('\n'+'[INFO] best input and confidence:')
 print(best_input, highest_confidence)
 
-
-print('\n'+'[INFO] confidences:')
-print(confidences)
-
 # 5. Locate Target Center Coordinates
+center_coordinates = centers[best_input[0][3]]
+cv2.circle(image, (center_coordinates[0], center_coordinates[1]), 3, (0, 255, 0), -1)
+cv2.imshow("Center", image)
+cv2.waitKey(0)
 
 fps.stop()
 print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
