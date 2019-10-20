@@ -1,8 +1,6 @@
 {
   "mode": "webcam",
-  "data_path": "../assets/tensorflow_pipeline/training_pipeline_settings_unix.json",
   "checkpoint_path": "checkpoints/",
-  "model_path": "../assets/tensorflow_pipeline/model/saves/",
   "log_dir": "../out/tensorflow_pipeline/logs/fit",
   "train_test_ratio": 0.8,
   "video_dims": {

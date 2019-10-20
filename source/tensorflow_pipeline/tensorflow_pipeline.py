@@ -20,19 +20,20 @@ def get_json_from_file(filename):
 
 
 class TensorflowPipeline:
-    def __init__(self, settings_json, data_json):
-        self.settings = get_json_from_file(settings_json)
-        self.data = get_json_from_file(data_json)
+    def __init__(self, settings_path, data_path, model_path):
+        self.settings = get_json_from_file(settings_path)
+        self.data = get_json_from_file(data_path)
         self.shape = self.settings["learning"]["network_shape"]
         self.model = self.create_model()
 
     def train_model(self):
         """
-        Trains and evaluates the model.
-        :param data_json: JSON file containing training data. If no data is passed, it will use the file in settings.
+        Trains the model.
+        :return text_x and text_y paramters, which can be fed into
+         evaluate_model()
         """
 
-        # load data from json
+        # load data from json file
         train_x, train_y, test_x, test_y = self.create_data()
 
         # train model, update tensorboard
@@ -40,7 +41,7 @@ class TensorflowPipeline:
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
 
-        self.model.evaluate(test_x, test_y, verbose=1)
+        return test_x, test_y
 
     def evaluate_model(self, x, y):
         """
@@ -50,17 +51,16 @@ class TensorflowPipeline:
         """
         try:
             print("Evaluating model")
-            self.model.evaluate(x, y)
+            self.model.evaluate(x, y, verbose=1)
         except ValueError:
             print("Tried to evaluate model non-existent model. Either load or train a model first.")
 
     def save_model(self):
         """
-        Saves the model to the directory specified in settings
+        Saves the model to the directory specified deploy script
         """
         print("Saving model")
-        # tf.saved_model.save(self.model, self.settings["model_path"])
-        self.model.save(self.settings["model_path"])
+        self.model.save(model_path)
 
     @staticmethod
     def load_model(path):
@@ -90,17 +90,16 @@ class TensorflowPipeline:
         dw = abs(led_1["width"] - led_2["width"]) / video_dims[0]
         dh = abs(led_1["height"] - led_2["height"]) / video_dims[1]
         da = abs(led_1["angle"] - led_2["angle"]) / 90
-        dx = abs(led_1["x_center"] - led_2["x_center"]) / self.settings["video_dims"]["w"]
-        dy = abs(led_1["y_center"] - led_2["y_center"]) / self.settings["video_dims"]["h"]
+        dx = abs(led_1["x_center"] - led_2["x_center"]) / video_dims[0]
+        dy = abs(led_1["y_center"] - led_2["y_center"]) / video_dims[1]
         return [dw, dh, da, dx, dy]
 
     def create_data(self):
         """
         Parses a json file storing training data into network input
-        :param json_filename: path to training data
         :return: numpy array of network input
         """
-        data = get_json_from_file(json_filename)  # nothing to parse until training data is made
+        data = self.data
 
         video_dims = (self.settings["video_dims"]["w"], self.settings["video_dims"]["h"])
         data_x = []
@@ -154,19 +153,19 @@ class TensorflowPipeline:
 
 if __name__ == "__main__":
 
-    model_path = sys.argv[1]
-    settings = sys.argv[2]
-    training_data = sys.argv[3]
+    settings_path = sys.argv[1]
+    data_path = sys.argv[2]
+    model_path = sys.argv[3]
 
-    pipeline = TensorflowPipeline(settings, training_data)
-    pipeline.train_model()
+    pipeline = TensorflowPipeline(settings_path, data_path, model_path)
+
+    test_x, test_y = pipeline.train_model()
+    pipeline.evaluate_model(test_x, test_y)
     pipeline.save_model()
 
-    m = TensorflowPipeline.load_model("..\\assets\\tensorflow_pipeline\\model\\saves\\model.hdf5")
+    m = TensorflowPipeline.load_model(model_path)
 
-    # worth noting that an indivual input can be achieved using the static method create_nn_input
-    data_path = "..\\assets\\tensorflow_pipeline\\data\\train.json"
-    training_x, training_y, testing_x, testing_y = pipeline.create_data(data_path)
+    training_x, training_y, testing_x, testing_y = pipeline.create_data()
 
     network_input = np.asarray([training_x[0], training_x[1]])
     print("The model predicts:", TensorflowPipeline.model_predict(m, network_input))
