@@ -62,7 +62,7 @@ def over_exposed_threshold(frame):
     # final image: only the overlap of all 3 layers
     result = cv2.bitwise_and(layer1, layer2)
     result = cv2.bitwise_and(result, layer3)
-    return result
+    return layer1
 
 
 def under_exposed_threshold(frame):

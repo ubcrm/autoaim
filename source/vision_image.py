@@ -58,7 +58,7 @@ for i in range(len(led)):
 		leds = (led[i], led[j])
 		video_dims = (1920, 1080)
 		res = TensorflowPipeline.create_nn_input(leds, video_dims)
-		inputs.append(res)
+		inputs.append([res])
 
 
 print('\n'+'[INFO] inputs:'+'\n')
@@ -66,17 +66,24 @@ for i in inputs:
 	print(i)
 print("------")
 
-data_x = np.array(inputs)
 # print('\n'+'[INFO] inputs as np array:'+'\n')
 # print(data_x)
 # print('\n')
 
 confidences = []
 
-for x in data_x:
-	nn_input = np.asarray([data_x[0], data_x[1]])
-	prediction = TensorflowPipeline.model_predict(model, nn_input)
-	confidences.append(prediction)
+best_input = inputs[0]
+highest_confidence = 0
+
+for i in np.asarray(inputs):
+	prediction = TensorflowPipeline.model_predict(model, i)
+	if prediction[0][1] > highest_confidence:
+		best_input = i
+		highest_confidence = prediction[0][1]
+	# confidences.append(prediction)
+
+print(best_input, highest_confidence)
+
 
 print('\n'+'[INFO] confidences:')
 print(confidences)
