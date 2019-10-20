@@ -4,7 +4,7 @@ import numpy as np
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(1, DIR + '/../../source/resource')
-from source.resource.bit_mask import find_led_from_image
+from source.resource.bit_mask import over_exposed_threshold
 from source.resource.detect_shape import find_rectangles
 
 #------------------------- FUNCTION DEFINITIONS -------------------------
@@ -66,7 +66,7 @@ for image_index in range(0, IMAGE_CNT):
         print('Processing %d of %d' % (image_index + 1, IMAGE_CNT))
 
     image = cv2.imread(DIR + IMAGE_IN % image_index)
-    mask = find_led_from_image(image)
+    mask = over_exposed_threshold(image)
     rects = find_rectangles(mask)
     labels = labels_dict['%d.jpg' % image_index]
 

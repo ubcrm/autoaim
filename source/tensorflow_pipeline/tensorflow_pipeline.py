@@ -39,7 +39,9 @@ class TensorflowPipeline:
         # train model, update tensorboard
         log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-        self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
+        self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback],
+                       class_weight={0: 1.,
+                                     1: 20.})
 
         return test_x, test_y
 
@@ -152,7 +154,6 @@ class TensorflowPipeline:
 
 
 if __name__ == "__main__":
-
     settings_path = sys.argv[1]
     data_path = sys.argv[2]
     model_path = sys.argv[3]
@@ -167,6 +168,6 @@ if __name__ == "__main__":
 
     training_x, training_y, testing_x, testing_y = pipeline.create_data()
 
-    network_input = np.asarray([training_x[0], training_x[1]])
+    network_input = np.asarray([training_x[5]])
     print("The model predicts:", TensorflowPipeline.model_predict(m, network_input))
     print("The actual value is:", training_y[0].argmax())

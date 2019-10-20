@@ -1,5 +1,5 @@
 from resource import bit_mask, detect_shape, match_leds, find_center
-from tensorflow_pipeline import tensorflow_pipeline as tp
+from tensorflow_pipeline.tensorflow_pipeline import TensorflowPipeline
 from imutils.video import FPS
 import tensorflow as tf
 import numpy as np
@@ -17,7 +17,7 @@ args = vars(ap.parse_args())
 # Load model from disk
 print('[INFO] loading model from disk...')
 model_path = args['model']
-model = tp.TensorflowPipeline.load_model(model_path)
+model = TensorflowPipeline.load_model(model_path)
 
 print('\n'+'[INFO] loading image from disk...')
 image = cv2.imread(args['image'])
@@ -32,7 +32,7 @@ cv2.imshow('image', image)
 cv2.waitKey(0)
 
 # 2. Mask LEDs
-mask = bit_mask.find_led_from_image(image)
+mask = bit_mask.over_exposed_threshold(image)
 print('\n'+'[INFO] mask:'+'\n')
 print(mask)
 cv2.imshow('mask', mask)
@@ -51,25 +51,31 @@ for r in rectangles:
 	reformat = detect_shape.reformat_cv_rectangle(r)
 	led.append(reformat)
 
-for j in range(len(led)-1):
-	leds = (led[j], led[j+1])
-	video_dims = (1920, 1080)
-	res = tp.TensorflowPipeline.create_nn_input(leds, video_dims)
-	inputs.append(res)
+for i in range(len(led)):
+	for j in range(len(led)):
+		if i == j:
+			continue
+		leds = (led[i], led[j])
+		video_dims = (1920, 1080)
+		res = TensorflowPipeline.create_nn_input(leds, video_dims)
+		inputs.append(res)
+
 
 print('\n'+'[INFO] inputs:'+'\n')
-print(inputs)
+for i in inputs:
+	print(i)
+print("------")
 
 data_x = np.array(inputs)
-print('\n'+'[INFO] inputs as np array:'+'\n')
-print(data_x)
-print('\n')
+# print('\n'+'[INFO] inputs as np array:'+'\n')
+# print(data_x)
+# print('\n')
 
 confidences = []
 
 for x in data_x:
 	nn_input = np.asarray([data_x[0], data_x[1]])
-	prediction = tp.TensorflowPipeline.model_predict(model, nn_input)
+	prediction = TensorflowPipeline.model_predict(model, nn_input)
 	confidences.append(prediction)
 
 print('\n'+'[INFO] confidences:')
