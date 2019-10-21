@@ -38,6 +38,7 @@ def main():
     model = TensorflowPipeline.load_model(model_path)
     avg = []
     video_dims = frame.shape[:2]
+    past_panel = detect_shape.reformat_cv_rectangle(((video_dims[0] / 2, video_dims[1] / 2), tuple(video_dims), 0))
 
     fourcc = cv2.VideoWriter_fourcc(*'MP4V')
     videoOut = cv2.VideoWriter("output.mp4", fourcc, 30, video_dims)
@@ -64,8 +65,13 @@ def main():
                     confidence = predict_leds(leds[i], leds[j], video_dims, model)
                     if confidence > best_pair[2]:
                         best_pair = (leds[i], leds[j], confidence)
-            panel_rectangle = combined_panel(best_pair[0], best_pair[1])
-            cv2.circle(frame, (panel_rectangle["x_center"], panel_rectangle["y_center"]), 3, (0, 255, 0), -1)
+            print(best_pair[2])
+            if best_pair[2] > 0.7:
+                panel_rectangle = combined_panel(best_pair[0], best_pair[1])
+                past_panel = panel_rectangle
+                cv2.circle(frame, (panel_rectangle["x_center"], panel_rectangle["y_center"]), 3, (0, 255, 0), -1)
+            else:
+                cv2.circle(frame, (past_panel["x_center"], past_panel["y_center"]), 3, (0, 0, 255), -1)
 
         avg.append(time.time() - start)
 
@@ -75,7 +81,7 @@ def main():
             break
 
         # save frame
-        videoOut.write(frame)
+        # videoOut.write(frame)
 
         # get next frame
         ret, frame = cap.read()
