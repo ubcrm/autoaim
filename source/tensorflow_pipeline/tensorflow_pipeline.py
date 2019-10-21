@@ -76,7 +76,7 @@ class TensorflowPipeline:
     @staticmethod
     def model_predict(model, model_input):
         o = model.predict(model_input)
-        print(o, o.argmax())
+        # print(o, o.argmax())
         return o
 
     @staticmethod
@@ -89,9 +89,9 @@ class TensorflowPipeline:
         """
         led_1 = leds[0]
         led_2 = leds[1]
-        dw = abs(led_1["width"] - led_2["width"]) / video_dims[0] # width change
-        dh = abs(led_1["height"] - led_2["height"]) / video_dims[1] # height change
-        da = abs(led_1["angle"] - led_2["angle"]) / 90 # angle change
+        dw = abs(led_1["width"] - led_2["width"]) / video_dims[0]  # width change
+        dh = abs(led_1["height"] - led_2["height"]) / video_dims[1]  # height change
+        da = abs(led_1["angle"] - led_2["angle"]) / 90  # angle change
         dx = abs(led_1["x_center"] - led_2["x_center"]) / video_dims[0]
         dy = abs(led_1["y_center"] - led_2["y_center"]) / video_dims[1]
         return [dw, dh, da, dx, dy]

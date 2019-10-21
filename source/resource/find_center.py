@@ -10,7 +10,19 @@ def find_target_center(bounds):
     """
     targetcX = int((bounds[0][0] + bounds[1][0]) / 2.0)
     targetcY = int((bounds[0][1] + bounds[1][1]) / 2.0)
-    return (targetcX, targetcY)
+    return targetcX, targetcY
+
+
+def find_dict_center(bounds):
+    """
+        finds the center of 2 rectangles
+
+        :param bounds: 2 rectangles in the dictionary form
+        :return: the center in the form [x,y]
+        """
+    targetcX = int((bounds[0]["x_center"] + bounds[1]["x_center"]) / 2.0)
+    targetcY = int((bounds[0]["y_center"] + bounds[1]["y_center"]) / 2.0)
+    return targetcX, targetcY
 
 
 def center_panel(pairs):
