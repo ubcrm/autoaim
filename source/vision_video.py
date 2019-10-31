@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
-from source.resource import bit_mask, detect_shape, match_leds, find_center
-from source.tensorflow_pipeline.tensorflow_pipeline import TensorflowPipeline
+from resource import bit_mask, detect_shape, match_leds, find_center
+from tensorflow_pipeline.tensorflow_pipeline import TensorflowPipeline
 import time
 
 

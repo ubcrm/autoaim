@@ -1,54 +1,92 @@
-from source.resource import bit_mask, detect_shape, match_leds, find_center
-from source.tensorflow_pipeline import tensorflow_pipeline
-import tensorflow as tf
-import argparse
-import imutils
+
+from resource import bit_mask, detect_shape, match_leds, find_center
+from tensorflow_pipeline.tensorflow_pipeline import TensorflowPipeline
+from imutils.video import VideoStream
+import numpy as np
+import time
 import cv2
 
-# Load model from disk
-print('[INFO] loading model from disk...')
 
-# model_path = '../assets/tensorflow_pipeline/model/saved_model.pb'
+def predict_leds(ledA, ledB, video_dims, model):
+    first_bound = (ledA['x_center'], ledA['y_center'])
+    second_bound = (ledB['x_center'], ledB['y_center'])
+    center = find_center.find_target_center((first_bound, second_bound))
 
-# settings_json = '../assets/tensorflow_pipeline/training_pipeline_settings_unix.json'
+    res = np.array([TensorflowPipeline.create_nn_input((ledA, ledB), video_dims)])
+    prediction = TensorflowPipeline.model_predict(model, res)[0][1]
+    return prediction
 
-# Tf = tensorflow_pipeline.TensorflowPipeline(settings_json)
 
-# model = Tf.load_model(model_path)
+def combined_panel(rectA, rectB):
+    center = find_center.find_dict_center([rectA, rectB])
+    width = abs(rectA["x_center"] - rectB["x_center"]) + (rectA["width"] + rectB["width"]) / 2
+    height = abs(rectA["y_center"] - rectB["y_center"]) + (rectA["height"] + rectB["height"]) / 2
+    angle = (rectA["angle"] + rectB["angle"]) / 2
+    new_rect = {"x_center": center[0], "y_center": center[1], "width": width, "height": height, "angle": angle}
 
-image_path = '~/code/robomaster/datasets/RoboMasterLabelledImagesSet1/image-550.jpg'
-image = cv2.imread(image_path)
-cv2.imshow('image', image)
-cv2.waitKey(0)
+    return new_rect
 
-# initialize the video stream, allow the camera sensor to warmup
-# print("[INFO] starting video stream...")
-# vs = VideoStream(src=0).start()
-# time.sleep(1.0)
 
-# print('[INFO] beginning detector')
+def main():
 
-# start frames per second counter
-# fps = FPS().start()
+    print('Loading model...')
+    model_path = "../assets/tensorflow_pipeline/model/saves/model.hdf5"
+    model = TensorflowPipeline.load_model(model_path)
 
-# while True:
-# frame = vs.read()
+    print('Initializing video stream...')
+    vs = VideoStream(src=0).start()
+    time.sleep(1.0)
 
-# 1. Preprocess image/frame
-frame = imutils.resize(image, width=400)
-cv2.imshow('image', frame)
+    num_frames = 0
+    start = time.time()
 
-# 2. Mask LEDs
-mask = over_exposed_threshold(frame)
-print(mask)
+    # begin detection loop
+    while(1):
+        frame = vs.read()
 
-# 3. Locate LEDs
-rectangles = find_rectangles(mask)
-print(rectangles)
+        video_dims = frame.shape[:2]
+        past_panel = detect_shape.reformat_cv_rectangle(((video_dims[0] / 2, video_dims[1] / 2), tuple(video_dims), 0))
+        mask = bit_mask.under_exposed_threshold(frame)
+        rectangles = detect_shape.find_rectangles(mask)
 
-# 4. Match pairing LEDs
-# prediction = tf.keras.predict(rectangles)
+        leds = []
+        inputs = []
 
-# print(prediction)
+        for r in rectangles:
+            reformat = detect_shape.reformat_cv_rectangle(r)
+            leds.append(reformat)
 
-# 5. Locate Target Center Coordinates
+        if len(leds) > 1:
+            best_pair = (leds[0], leds[1], predict_leds(leds[0], leds[1], video_dims, model))
+
+            for i in range(1, len(leds)):
+                for j in range(i + 1, len(leds)):
+                    confidence = predict_leds(leds[i], leds[j], video_dims, model)
+                    if confidence > best_pair[2]:
+                        best_pair = (leds[i], leds[j], confidence)
+            print(best_pair[2])
+            if best_pair[2] > 0.7:
+                panel_rectangle = combined_panel(best_pair[0], best_pair[1])
+                past_panel = panel_rectangle
+                cv2.circle(frame, (int(panel_rectangle["x_center"]),int( panel_rectangle["y_center"])), 3, (0, 255, 0), -1)
+            else:
+                cv2.circle(frame, (int(past_panel["x_center"]), int(past_panel["y_center"])), 3, (0, 0, 255), -1)
+
+        num_frames += 1
+
+        # Display the resulting image
+        cv2.imshow('Press q to quit', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+           break
+
+    stop = time.time()
+    fps = num_frames / (stop-start)
+
+    print('[INFO] FPS is: {:2f}'.format(fps))
+    print("[INFO] elasped time: {:.2f}".format(stop-start))
+
+    cv2.destroyAllWindows()
+    vs.stop()
+
+if __name__ == "__main__":
+    main()
