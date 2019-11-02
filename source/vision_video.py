@@ -1,10 +1,8 @@
-
+import numpy as np
+import cv2
 from resource import bit_mask, detect_shape, match_leds, find_center
 from tensorflow_pipeline.tensorflow_pipeline import TensorflowPipeline
-from imutils.video import VideoStream
-import numpy as np
 import time
-import cv2
 
 
 def predict_leds(ledA, ledB, video_dims, model):
@@ -28,24 +26,27 @@ def combined_panel(rectA, rectB):
 
 
 def main():
+    vid = "videos/robot3.mp4"  # relative path of downloaded video
 
-    print('Loading model...')
+    # load video
+    cap = cv2.VideoCapture(vid)
+
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
+
     model_path = "../assets/tensorflow_pipeline/model/saves/model.hdf5"
     model = TensorflowPipeline.load_model(model_path)
+    avg = []
+    video_dims = frame.shape[:2]
+    past_panel = detect_shape.reformat_cv_rectangle(((video_dims[0] / 2, video_dims[1] / 2), tuple(video_dims), 0))
 
-    print('Initializing video stream...')
-    vs = VideoStream(src=0).start()
-    time.sleep(1.0)
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    videoOut = cv2.VideoWriter("output.mp4", fourcc, 30, video_dims)
 
-    num_frames = 0
-    start = time.time()
+    # loop through frames in video
+    while ret:
+        start = time.time()
 
-    # begin detection loop
-    while(1):
-        frame = vs.read()
-
-        video_dims = frame.shape[:2]
-        past_panel = detect_shape.reformat_cv_rectangle(((video_dims[0] / 2, video_dims[1] / 2), tuple(video_dims), 0))
         mask = bit_mask.under_exposed_threshold(frame)
         rectangles = detect_shape.find_rectangles(mask)
 
@@ -68,25 +69,29 @@ def main():
             if best_pair[2] > 0.7:
                 panel_rectangle = combined_panel(best_pair[0], best_pair[1])
                 past_panel = panel_rectangle
-                cv2.circle(frame, (int(panel_rectangle["x_center"]),int( panel_rectangle["y_center"])), 3, (0, 255, 0), -1)
+                cv2.circle(frame, (panel_rectangle["x_center"], panel_rectangle["y_center"]), 3, (0, 255, 0), -1)
             else:
-                cv2.circle(frame, (int(past_panel["x_center"]), int(past_panel["y_center"])), 3, (0, 0, 255), -1)
+                cv2.circle(frame, (past_panel["x_center"], past_panel["y_center"]), 3, (0, 0, 255), -1)
 
-        num_frames += 1
+        avg.append(time.time() - start)
 
         # Display the resulting image
         cv2.imshow('Press q to quit', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-           break
+            break
 
-    stop = time.time()
-    fps = num_frames / (stop-start)
+        # save frame
+        # videoOut.write(frame)
 
-    print('[INFO] FPS is: {:2f}'.format(fps))
-    print("[INFO] elasped time: {:.2f}".format(stop-start))
-
+        # get next frame
+        ret, frame = cap.read()
+    else:
+        print("last frame reached")
+    print(1 / (sum(avg) / len(avg)), "fps")
+    # When everything done, release the capture
+    cap.release()
     cv2.destroyAllWindows()
-    vs.stop()
+
 
 if __name__ == "__main__":
     main()

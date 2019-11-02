@@ -2,7 +2,10 @@ __pycache__/
 .idea/
 venv/
 out/tensorflow_pipeline/logs/
+.vscode/
 
 *.jpg
 *.mov
 *.mp4
+*.pyc
+

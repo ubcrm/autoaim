@@ -1,12 +1,15 @@
 """
 Reads data from Data/ and trains the Neural network on this data.
 The network is then saved to be used in led_match.py
+
+
 """
-import datetime
-import math
 
 import tensorflow as tf
 import numpy as np
+import datetime
+import argparse
+import math
 import json
 import sys
 
@@ -17,30 +20,30 @@ def get_json_from_file(filename):
 
 
 class TensorflowPipeline:
-    def __init__(self, settings_json):
-        self.settings = get_json_from_file(settings_json)
+    def __init__(self, settings_path, data_path, model_path):
+        self.settings = get_json_from_file(settings_path)
+        self.data = get_json_from_file(data_path)
+        self.shape = self.settings["learning"]["network_shape"]
         self.model = self.create_model()
 
-    def train_model(self, data_json="from_settings"):
+    def train_model(self):
         """
-        Trains and evaluates the model.
-        :param data_json: JSON file containing training data. If no data is passed, it will use the file in settings.
+        Trains the model.
+        :return text_x and text_y paramters, which can be fed into
+         evaluate_model()
         """
 
-        # load data from json
-        data_path = data_json
-        if data_json == "from_settings":
-            data_path = self.settings["data_path"]
-        train_x, train_y, test_x, test_y = self.create_data(data_path)
-        print(train_x.shape)
-        print(train_y.shape)
+        # load data from json file
+        train_x, train_y, test_x, test_y = self.create_data()
 
         # train model, update tensorboard
         log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-        self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback])
+        self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback],
+                       class_weight={0: 1.,
+                                     1: 7.})
 
-        self.model.evaluate(test_x, test_y, verbose=1)
+        return test_x, test_y
 
     def evaluate_model(self, x, y):
         """
@@ -50,52 +53,69 @@ class TensorflowPipeline:
         """
         try:
             print("Evaluating model")
-            self.model.evaluate(x, y)
+            self.model.evaluate(x, y, verbose=1)
         except ValueError:
             print("Tried to evaluate model non-existent model. Either load or train a model first.")
 
     def save_model(self):
+        """
+        Saves the model to the directory specified deploy script
+        """
         print("Saving model")
-        tf.saved_model.save(self.model, self.settings["model_path"])
+        self.model.save(model_path)
 
     @staticmethod
     def load_model(path):
         """
         Loads the saved_model from path
-        :param path: path to the tensorflow saved_model
-        :return: The loaded Keras model
+        :param path: path to the tensorflow checkpoint
+        :return: The loaded model
         """
         return tf.keras.models.load_model(path)
 
-    def create_nn_input(self, leds):
+    @staticmethod
+    def model_predict(model, model_input):
+        o = model.predict(model_input)
+        # print(o, o.argmax())
+        return o
+
+    @staticmethod
+    def create_nn_input(leds, video_dims):
         """
         Creates one input for the network from leds
         :param leds: One pair of LEDs represented as a python dictionary
+        :param video_dims: Tuple of video dimensions (w, h)
         :return: list of inputs for the neural network
         """
         led_1 = leds[0]
         led_2 = leds[1]
-        dw = abs(led_1["width"] - led_2["width"]) / self.settings["video_dims"]["w"]
-        dh = abs(led_1["height"] - led_2["height"]) / self.settings["video_dims"]["h"]
-        da = abs(led_1["angle"] - led_2["angle"]) / 90
-        dx = abs(led_1["x_center"] - led_2["x_center"]) / self.settings["video_dims"]["w"]
-        dy = abs(led_1["y_center"] - led_2["y_center"]) / self.settings["video_dims"]["h"]
+        dw = abs(led_1["width"] - led_2["width"]) / video_dims[0]  # width change
+        dh = abs(led_1["height"] - led_2["height"]) / video_dims[1]  # height change
+        da = abs(led_1["angle"] - led_2["angle"]) / 90  # angle change
+        dx = abs(led_1["x_center"] - led_2["x_center"]) / video_dims[0]
+        dy = abs(led_1["y_center"] - led_2["y_center"]) / video_dims[1]
         return [dw, dh, da, dx, dy]
 
-    def create_data(self, json_filename):
+    def create_data(self):
         """
         Parses a json file storing training data into network input
-        :param json_filename: path to training data
         :return: numpy array of network input
         """
-        data = get_json_from_file(json_filename)  # nothing to parse until training data is made
-        data_x = [self.create_nn_input((data[pair]["led1"], data[pair]["led2"])) for pair in data]
+        data = self.data
+
+        video_dims = (self.settings["video_dims"]["w"], self.settings["video_dims"]["h"])
+        data_x = []
+        for pair in data:
+            led_1 = data[pair]["led1"]
+            led_2 = data[pair]["led2"]
+            data_x.append(TensorflowPipeline.create_nn_input((led_1, led_2), video_dims))
+
         data_y = [data[pair]["isPanel"] for pair in data]
         for i in range(len(data_y)):
             if data_y[i] == 1:
-                data_y[i] = [1, 0]
-            else:
                 data_y[i] = [0, 1]
+            else:
+                data_y[i] = [1, 0]
 
         # split into training and testing data
         split_idx = int(len(data) * self.settings["train_test_ratio"])
@@ -112,11 +132,9 @@ class TensorflowPipeline:
         Output layer is a classifier of pair vs. not pair
         :return: network layers as list
         """
-        i_size = self.settings["learning"]["input_size"]
-        hidden_size = math.ceil((i_size + 1) / 2)
         return [
-            tf.keras.layers.Dense(i_size, activation=tf.nn.relu),
-            tf.keras.layers.Dense(hidden_size),
+            tf.keras.layers.Dense(self.shape[0], activation=tf.nn.relu),
+            tf.keras.layers.Dense(self.shape[1]),
             tf.keras.layers.Dense(2, activation=tf.nn.softmax)
         ]
 
@@ -136,6 +154,20 @@ class TensorflowPipeline:
 
 
 if __name__ == "__main__":
-    pipeline = TensorflowPipeline(sys.argv[1])
-    pipeline.train_model()
+    settings_path = sys.argv[1]
+    data_path = sys.argv[2]
+    model_path = sys.argv[3]
+
+    pipeline = TensorflowPipeline(settings_path, data_path, model_path)
+
+    test_x, test_y = pipeline.train_model()
+    pipeline.evaluate_model(test_x, test_y)
     pipeline.save_model()
+
+    m = TensorflowPipeline.load_model(model_path)
+
+    training_x, training_y, testing_x, testing_y = pipeline.create_data()
+
+    network_input = np.asarray([training_x[0]])
+    print("The model predicts:", TensorflowPipeline.model_predict(m, network_input))
+    print("The actual value is:", training_y[0].argmax())

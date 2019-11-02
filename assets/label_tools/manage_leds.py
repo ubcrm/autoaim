@@ -41,7 +41,7 @@ class LedCombs():
     def __init__(self, id, leds, panels):
         self.id = str(id)
         self.leds = leds
-        self.panels = panels
+        self.panels = [(str(pair[0]), str(pair[1])) for pair in panels]
         self.ledPairs = []
         self.generatePairs()
 
