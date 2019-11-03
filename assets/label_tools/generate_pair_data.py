@@ -77,7 +77,7 @@ for image_index in range(0, IMAGE_CNT):
         show_feed(labels, rects, image)
 
     combs = LedCombs(image_index, leds, panel_pairs)
-    for pair_info in combs.toDict().values():
+    for pair_info in combs.to_dict().values():
         pair_data[str(pair_cnt)] = pair_info
         pair_cnt += 1
 

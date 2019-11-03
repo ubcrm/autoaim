@@ -1,8 +1,9 @@
 from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
 from source.panel_finder.led_finder.led_finder import LEDFinder
 from source.common.instance import get_json_from_file
-from .find_center import find_target_center, find_dict_center
+from source.panel_finder.find_center import find_target_center, find_dict_center
 from pathlib import Path
+import os
 
 
 def combined_panel(rect_a, rect_b):
@@ -19,7 +20,8 @@ class PanelFinder:
     def __init__(self, state=None):
         if state is None:
             state = {}
-        self.properties = get_json_from_file(Path("settings.json"))
+        settings_path = os.path.dirname(os.path.abspath(__file__))
+        self.properties = get_json_from_file(Path(settings_path) / "settings.json")
         self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
         self.classifier = PanelClassifier()
         self.led_finder = LEDFinder()
