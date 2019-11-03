@@ -2,7 +2,6 @@ import cv2, os
 import numpy as np
 from pathlib import Path
 
-from assets.label_tools.generate_pair_data import find_panel_pairs
 from source.common.instance import get_json_from_file
 from source.common.bit_mask import over_exposed_threshold, under_exposed_threshold
 from source.common.detect_shape import find_rectangles, find_contours, find_quad_centers
@@ -67,7 +66,7 @@ class DataLabeler:
             labels = labels['%d.jpg' % image_index]
 
             leds = [Led(rect_index, *rect) for rect_index, rect in enumerate(rects)]
-            panel_pairs = find_panel_pairs(leds, labels)
+            panel_pairs = self.find_panel_pairs(leds, labels)
 
             if self.properties["show_feed"]:
                 self.show_feed(labels, rects, image)
