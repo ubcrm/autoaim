@@ -4,6 +4,7 @@ venv/
 out/tensorflow_pipeline/logs/
 .vscode/
 
+*.png
 *.jpg
 *.mov
 *.mp4
