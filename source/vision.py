@@ -7,24 +7,24 @@ import time
 import cv2
 
 
-def predict_leds(ledA, ledB, video_dims, model):
-    first_bound = (ledA['x_center'], ledA['y_center'])
-    second_bound = (ledB['x_center'], ledB['y_center'])
-    center = find_center.find_target_center((first_bound, second_bound))
-
-    res = np.array([TensorflowPipeline.create_nn_input((ledA, ledB), video_dims)])
-    prediction = TensorflowPipeline.model_predict(model, res)[0][1]
-    return prediction
-
-
-def combined_panel(rectA, rectB):
-    center = find_center.find_dict_center([rectA, rectB])
-    width = abs(rectA["x_center"] - rectB["x_center"]) + (rectA["width"] + rectB["width"]) / 2
-    height = abs(rectA["y_center"] - rectB["y_center"]) + (rectA["height"] + rectB["height"]) / 2
-    angle = (rectA["angle"] + rectB["angle"]) / 2
-    new_rect = {"x_center": center[0], "y_center": center[1], "width": width, "height": height, "angle": angle}
-
-    return new_rect
+# def predict_leds(ledA, ledB, video_dims, model):
+#     first_bound = (ledA['x_center'], ledA['y_center'])
+#     second_bound = (ledB['x_center'], ledB['y_center'])
+#     center = find_center.find_target_center((first_bound, second_bound))
+#
+#     res = np.array([TensorflowPipeline.create_nn_input((ledA, ledB), video_dims)])
+#     prediction = TensorflowPipeline.model_predict(model, res)[0][1]
+#     return prediction
+#
+#
+# def combined_panel(rectA, rectB):
+#     center = find_center.find_dict_center([rectA, rectB])
+#     width = abs(rectA["x_center"] - rectB["x_center"]) + (rectA["width"] + rectB["width"]) / 2
+#     height = abs(rectA["y_center"] - rectB["y_center"]) + (rectA["height"] + rectB["height"]) / 2
+#     angle = (rectA["angle"] + rectB["angle"]) / 2
+#     new_rect = {"x_center": center[0], "y_center": center[1], "width": width, "height": height, "angle": angle}
+#
+#     return new_rect
 
 
 def main():
