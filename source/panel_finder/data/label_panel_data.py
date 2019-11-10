@@ -1,11 +1,10 @@
 import cv2
 import json
 import os
-import sys
 import time
 import numpy as np
-from assets.label_tools.manage_leds import Led, LedCombs
-from source.resource import bit_mask, detect_shape
+from source.panel_finder.data.leds import Led, LedCombs
+from source.common import bit_mask, detect_shape
 
 leds = []
 pairs = []
@@ -109,7 +108,7 @@ def main():
         pair_indexes = [(i, j) for i, j in zip(pair_indexes[::2], pair_indexes[1::2])]
 
         combs = LedCombs(image_index, leds_obj, [tuple(pair_indexes)])
-        for pair_info in combs.toDict().values():
+        for pair_info in combs.to_dict().values():
             pair_data[str(pair_cnt)] = pair_info
             pair_cnt += 1
             print(pair_info["isPanel"])

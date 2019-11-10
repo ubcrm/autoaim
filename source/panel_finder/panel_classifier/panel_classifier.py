@@ -1,30 +1,49 @@
 """
 Reads data from Data/ and trains the Neural network on this data.
 The network is then saved to be used in led_match.py
-
-
 """
 
 import tensorflow as tf
 import numpy as np
 import datetime
-import argparse
-import math
-import json
-import sys
+from pathlib import Path
+import os
+
+from source.instance import get_json_from_path, ROOT_DIR
 
 
-def get_json_from_file(filename):
-    with open(filename, 'r') as json_file:
-        return json.load(json_file)
+def find_ratio(a, b):
+    """
+    Compares two numbers by finding the ratio between them. The result is between 0 and 1.
+    When using this function, please the numbers passed have the same sign.
+
+    1 means they are identical
+    0 means one is infinitely larger than the other
+    :param a: first number to compare
+    :param b: second number to compare
+    :return: ratio between them, between 0 and 1
+    """
+    if a == 0 or b == 0:  # prevent div by 0
+        return 0
+    return a / b if a < b else b / a
 
 
-class TensorflowPipeline:
-    def __init__(self, settings_path, data_path, model_path):
-        self.settings = get_json_from_file(settings_path)
-        self.data = get_json_from_file(data_path)
-        self.shape = self.settings["learning"]["network_shape"]
-        self.model = self.create_model()
+class PanelClassifier:
+    def __init__(self, state=None):
+        if state is None:
+            state = {"mode": "train"}
+
+        working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        self.properties = get_json_from_path(working_dir / "settings.json")
+        self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
+
+        if self.properties["mode"] == "train":
+            self.data = get_json_from_path(ROOT_DIR / self.properties["data_path"])
+            self.shape = self.properties["learning"]["network_shape"]
+            self.model = self.create_model()
+            self.train_model()
+        elif self.properties["mode"] == "load":
+            self.model = PanelClassifier.load_model(self.properties["model_path"])
 
     def train_model(self):
         """
@@ -37,9 +56,11 @@ class TensorflowPipeline:
         train_x, train_y, test_x, test_y = self.create_data()
 
         # train model, update tensorboard
-        log_dir = self.settings["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = log_dir.replace("/", os.path.sep)
+        print(os.path.sep)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-        self.model.fit(train_x, train_y, epochs=self.settings["learning"]["epochs"], callbacks=[tensorboard_callback],
+        self.model.fit(train_x, train_y, epochs=self.properties["learning"]["epochs"], callbacks=[tensorboard_callback],
                        class_weight={0: 1.,
                                      1: 7.})
 
@@ -57,20 +78,24 @@ class TensorflowPipeline:
         except ValueError:
             print("Tried to evaluate model non-existent model. Either load or train a model first.")
 
-    def save_model(self):
+    def save_model(self, path=None):
         """
         Saves the model to the directory specified deploy script
         """
         print("Saving model")
-        self.model.save(model_path)
+        if path is None:
+            path = self.properties["model_path"]
+        self.model.save(path)
 
-    @staticmethod
-    def load_model(path):
+    def load_model(self, path=None):
         """
         Loads the saved_model from path
         :param path: path to the tensorflow checkpoint
         :return: The loaded model
         """
+
+        if path is None:
+            path = self.properties["model_path"]
         return tf.keras.models.load_model(path)
 
     @staticmethod
@@ -89,26 +114,29 @@ class TensorflowPipeline:
         """
         led_1 = leds[0]
         led_2 = leds[1]
-        dw = abs(led_1["width"] - led_2["width"]) / video_dims[0]  # width change
-        dh = abs(led_1["height"] - led_2["height"]) / video_dims[1]  # height change
+        dw = find_ratio(led_1["width"], led_2["width"])  # width diff
+        dh = find_ratio(led_1["height"], led_2["height"])  # height diff
         da = abs(led_1["angle"] - led_2["angle"]) / 90  # angle change
-        dx = abs(led_1["x_center"] - led_2["x_center"]) / video_dims[0]
-        dy = abs(led_1["y_center"] - led_2["y_center"]) / video_dims[1]
+        dx = find_ratio(led_1["x_center"], led_2["x_center"])  # x pos diff
+        dy = find_ratio(led_1["y_center"], led_2["y_center"])  # y pos diff
         return [dw, dh, da, dx, dy]
 
-    def create_data(self):
+    def create_data(self, data=None, video_dims=None):
         """
         Parses a json file storing training data into network input
         :return: numpy array of network input
         """
-        data = self.data
 
-        video_dims = (self.settings["video_dims"]["w"], self.settings["video_dims"]["h"])
+        if data is None:
+            data = self.data
+
+        if video_dims is None:
+            video_dims = (self.properties["video_dims"]["w"], self.properties["video_dims"]["h"])
         data_x = []
         for pair in data:
             led_1 = data[pair]["led1"]
             led_2 = data[pair]["led2"]
-            data_x.append(TensorflowPipeline.create_nn_input((led_1, led_2), video_dims))
+            data_x.append(PanelClassifier.create_nn_input((led_1, led_2), video_dims))
 
         data_y = [data[pair]["isPanel"] for pair in data]
         for i in range(len(data_y)):
@@ -118,7 +146,7 @@ class TensorflowPipeline:
                 data_y[i] = [1, 0]
 
         # split into training and testing data
-        split_idx = int(len(data) * self.settings["train_test_ratio"])
+        split_idx = int(len(data) * self.properties["train_test_ratio"])
         t_x = np.array(data_x[:split_idx])
         t_y = np.array(data_y[:split_idx])
         te_x = np.array(data_x[split_idx:])
@@ -144,30 +172,19 @@ class TensorflowPipeline:
         :return: the tensorflow model
         """
         m = tf.keras.models.Sequential()
+        o = tf.keras.optimizers.Adam(
+            learning_rate=self.properties["learning"]["learning_rate"]
+        )
+
         for layer in self.create_layers():
             m.add(layer)
         m.compile(
-            optimizer='adam',
-            loss="categorical_crossentropy",
+            optimizer=o,
+            loss="binary_crossentropy",
             metrics=['accuracy'])
         return m
 
+    def process(self, leds, frame_dims):
+        formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
+        return self.model.predict(formatted_input).argmax()
 
-if __name__ == "__main__":
-    settings_path = sys.argv[1]
-    data_path = sys.argv[2]
-    model_path = sys.argv[3]
-
-    pipeline = TensorflowPipeline(settings_path, data_path, model_path)
-
-    test_x, test_y = pipeline.train_model()
-    pipeline.evaluate_model(test_x, test_y)
-    pipeline.save_model()
-
-    m = TensorflowPipeline.load_model(model_path)
-
-    training_x, training_y, testing_x, testing_y = pipeline.create_data()
-
-    network_input = np.asarray([training_x[0]])
-    print("The model predicts:", TensorflowPipeline.model_predict(m, network_input))
-    print("The actual value is:", training_y[0].argmax())

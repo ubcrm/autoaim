@@ -1,4 +1,3 @@
-from resource.find_center import center_panel
 import cv2
 
 def slope_thresh(quads, width):
