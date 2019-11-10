@@ -1,7 +1,6 @@
 import cv2
 import json
 import os
-import sys
 import time
 import numpy as np
 from source.panel_finder.data.leds import Led, LedCombs

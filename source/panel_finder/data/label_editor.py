@@ -1,4 +1,4 @@
-from source.common.instance import get_json_from_file
+from source.instance import get_json_from_file
 import cv2
 
 
