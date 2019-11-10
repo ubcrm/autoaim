@@ -10,6 +10,7 @@ from pathlib import Path
 import os
 
 from source.instance import get_json_from_path, ROOT_DIR
+from keras import backend as K
 
 
 def find_ratio(a, b):
@@ -33,8 +34,8 @@ class PanelClassifier:
         if state is None:
             state = {"mode": "train"}
 
-        working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        self.properties = get_json_from_path(working_dir / "settings.json")
+        self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        self.properties = get_json_from_path(self.working_dir / "settings.json")
         self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
 
         if self.properties["mode"] == "train":
@@ -42,8 +43,11 @@ class PanelClassifier:
             self.shape = self.properties["learning"]["network_shape"]
             self.model = self.create_model()
             self.train_model()
+            self.save_model()
+            # self.save_to_tensorflow()
+
         elif self.properties["mode"] == "load":
-            self.model = PanelClassifier.load_model(self.properties["model_path"])
+            self.model = self.load_model(self.properties["model_path"])
 
     def train_model(self):
         """
@@ -85,7 +89,41 @@ class PanelClassifier:
         print("Saving model")
         if path is None:
             path = self.properties["model_path"]
-        self.model.save(path)
+        self.model.save(ROOT_DIR / path)
+
+    def save_to_tensorflow(self):
+        frozen_graph = self.freeze_session(output_names=[out.op.name for out in self.model.outputs])
+        tf.compat.v1.train.write_graph(frozen_graph, str(self.working_dir), "my_model.pb", as_text=False)
+
+    def freeze_session(self, keep_var_names=None, output_names=None, clear_devices=True):
+        """
+        Freezes the state of a session into a pruned computation graph.
+
+        Creates a new computation graph where variable nodes are replaced by
+        constants taking their current value in the session. The new graph will be
+        pruned so subgraphs that are not necessary to compute the requested
+        outputs are removed.
+        @param session The TensorFlow session to be frozen.
+        @param keep_var_names A list of variable names that should not be frozen,
+                              or None to freeze all the variables in the graph.
+        @param output_names Names of the relevant graph outputs.
+        @param clear_devices Remove the device directives from the graph for better portability.
+        @return The frozen graph definition.
+        """
+
+        session = tf.compat.v1.keras.backend.get_session()
+        graph = session.graph
+        with graph.as_default():
+            freeze_var_names = list(set(v.op.name for v in tf.compat.v1.global_variables()).difference(keep_var_names or []))
+            output_names = output_names or []
+            output_names += [v.op.name for v in tf.compat.v1.global_variables()]
+            input_graph_def = graph.as_graph_def()
+            if clear_devices:
+                for node in input_graph_def.node:
+                    node.device = ""
+            frozen_graph = tf.compat.v1.graph_util.convert_variables_to_constants(
+                session, input_graph_def, output_names, freeze_var_names)
+            return frozen_graph
 
     def load_model(self, path=None):
         """
@@ -93,10 +131,10 @@ class PanelClassifier:
         :param path: path to the tensorflow checkpoint
         :return: The loaded model
         """
-
         if path is None:
             path = self.properties["model_path"]
-        return tf.keras.models.load_model(path)
+
+        return tf.keras.models.load_model(ROOT_DIR / path)
 
     @staticmethod
     def model_predict(model, model_input):
@@ -187,4 +225,3 @@ class PanelClassifier:
     def process(self, leds, frame_dims):
         formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
         return self.model.predict(formatted_input).argmax()
-
