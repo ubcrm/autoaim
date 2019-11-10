@@ -23,7 +23,7 @@ class PanelFinder:
         working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         self.properties = get_json_from_file(working_dir / "settings.json")
         self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
-        self.classifier = PanelClassifier()
+        self.classifier = PanelClassifier(state={"mode": "load"})
         self.led_finder = LEDFinder()
         self.panel = None
 
