@@ -66,8 +66,7 @@ def over_exposed_threshold(frame):
 
 
 def under_exposed_threshold(frame):
-    # print(round(frame.shape[1] / 384), round(frame.shape[0] / 54))
-    blurred = cv2.blur(frame, (round(frame.shape[1] / 384), round(frame.shape[0] / 54)))
+    blurred = cv2.blur(frame, (round(frame.shape[1] / 500), round(frame.shape[0] / 54)))
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    thresh = cv2.inRange(hsv, (0, 0, 240), (255, 255, 255))
-    return thresh
+    bright = cv2.inRange(hsv, (150, 0, 200), (200, 255, 250))
+    return bright

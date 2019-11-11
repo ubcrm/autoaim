@@ -66,7 +66,7 @@ def main():
     image_index = 0
 
     DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_OUT = '/pair_training_data.json'
+    DATA_OUT = '/pair_training_data_old.json'
 
     vid = "videos/robot3.mp4"  # relative path of downloaded video
 

@@ -23,30 +23,28 @@ class PanelFinder:
         working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         self.properties = get_json_from_file(working_dir / "settings.json")
         self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
-        self.classifier = PanelClassifier(state={"mode": "load"})
+        self.classifier = PanelClassifier(state={"mode": "train"})
         self.led_finder = LEDFinder()
         self.panel = None
 
     def predict_leds(self, led_a, led_b, frame_dims):
-        first_bound = (led_a['x_center'], led_a['y_center'])
-        second_bound = (led_b['x_center'], led_b['y_center'])
-        center = find_target_center((first_bound, second_bound))
-
         return self.classifier.process((led_a, led_b), frame_dims)
 
     def process(self, frame):
         frame_dims = frame.shape
         leds = self.led_finder.process(frame)
+        leds = sorted(leds, key=lambda x: x['angle'])
 
         if len(leds) > 1:
             best_pair = (leds[0], leds[1], self.predict_leds(leds[0], leds[1], frame_dims))
 
-            for i in range(1, len(leds)):
-                for j in range(i + 1, len(leds)):
+            for i in range(1, len(leds) - 1):
+                for j in range(i, len(leds)):
                     confidence = self.predict_leds(leds[i], leds[j], frame_dims)
+                    print(confidence)
                     if confidence > best_pair[2]:
                         best_pair = (leds[i], leds[j], confidence)
-            if best_pair[2] > 0.7:
-                self.panel = combined_panel(best_pair[0], best_pair[1])
 
+            if best_pair[2] > 0.5:
+                self.panel = combined_panel(best_pair[0], best_pair[1])
         return self.panel

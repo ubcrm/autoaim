@@ -16,8 +16,14 @@ class LEDFinder:
     def process(self, frame):
         mask = under_exposed_threshold(frame)
         rectangles = find_rectangles(mask)
-        leds = []
+        import cv2
+        import numpy as np
+        for rect in rectangles:
+            box = cv2.boxPoints(rect)
+            box = np.int0(box)
+            cv2.drawContours(frame, [box], 0, (255, 0, 0), 3)
 
+        leds = []
         for r in rectangles:
             reformat = reformat_cv_rectangle(r)
             leds.append(reformat)
