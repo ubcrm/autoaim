@@ -24,7 +24,6 @@ from settings import *
 
 
 
-
 class Panels():
     def __init__(self, first_angle, first_lumin, rot_dir):
         self.time_init = time.time()
@@ -61,13 +60,13 @@ class Panels():
 
 
 class Capture():
-    def __init__(self, src, src_dims, crop_cntr, crop_dim, src_clr):
+    def __init__(self, src, crop_cntr, crop_dim, src_clr='BGR'):
         self.src = src
-        self.src_dims = src_dims
+        self.src_dims = (int(get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)), int(get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)))
         self.src_clr = src_clr
 
-        self.frame = None
-        self.frame_clr = None
+        self.frame_bw = None
+        self.frame_bgr = None
         self.crop_dim = crop_dim
         self.crop_tl = (round(crop_cntr[0] - crop_dim/2), round(crop_cntr[1] - crop_dim/2))
         self.crop_br = (round(crop_cntr[0] + crop_dim/2), round(crop_cntr[1] + crop_dim/2))
@@ -80,42 +79,42 @@ class Capture():
         self.crop_br = (self.crop_br[0] + crop_cntr_dx, self.crop_br[1] + crop_cntr_dy)
 
     def update_bw(self):
-        read, self.frame = self.src.read()
-        self.frame_clr = self.src_clr
+        read, self.frame_bw = self.src.read()
+        self.frame_bgr = self.src_clr
         if read:
             self.crop_and_resize()
             self.convert_color('BW')
         return read
 
     def crop_and_resize(self):
-        self.frame = self.frame[self.crop_tl[1]: self.crop_br[1], self.crop_tl[0]: self.crop_br[0]]
-        self.frame = cv2.resize(self.frame, (FRAME_DIM, FRAME_DIM))
+        self.frame_bw = self.frame_bw[self.crop_tl[1]: self.crop_br[1], self.crop_tl[0]: self.crop_br[0]]
+        self.frame_bw = cv2.resize(self.frame_bw, (FRAME_DIM, FRAME_DIM))
 
     def convert_color(self, clr):
-        if self.frame_clr != clr:
+        if self.frame_bgr != clr:
             if clr == 'BW':
                 self.convert_color('GRAY')
-                _, self.frame = cv2.threshold(self.frame, LUM_THRESH_BW,
+                cont_recntr=Falseself.frame_bw = cv2.threshold(self.frame_bw, LUM_THRESH_BW,
                                                 LUM_MAX, cv2.THRESH_BINARY)
-            elif self.frame_clr == 'BW':
+            elif self.frame_bgr == 'BW':
                 conversion = eval('cv2.COLOR_' + 'GRAY' + '2' + clr)
-                self.frame = cv2.cvtColor(self.frame, conversion)
+                self.frame_bw = cv2.cvtColor(self.frame_bw, conversion)
             else:
-                conversion = eval('cv2.COLOR_' + self.frame_clr + '2' + clr)
-                self.frame = cv2.cvtColor(self.frame, conversion)
-            self.frame_clr = clr
+                conversion = eval('cv2.COLOR_' + self.frame_bgr + '2' + clr)
+                self.frame_bw = cv2.cvtColor(self.frame_bw, conversion)
+            self.frame_bgr = clr
 
     def draw_circ(self, cntr, rad, clr, thickness=2):
-        cv2.circle(self.frame, (round(cntr[0]), round(cntr[1])),
+        cv2.circle(self.frame_bw, (round(cntr[0]), round(cntr[1])),
                     round(rad), clr, thickness)
 
     def draw_sqr(self, coords_cntr, dim, clr, thickness=1):
         x_tl, y_tl = coords_cntr
         points = np.array([[round(x_tl-dim/2), round(y_tl-dim/2)], [round(x_tl+dim/2), round(y_tl-dim/2)], [round(x_tl+dim/2), round(y_tl+dim/2)], [round(x_tl-dim/2), round(y_tl+dim/2)]], dtype=np.int32)
-        cv2.polylines(self.frame, [points], True, clr, thickness=thickness)
+        cv2.polylines(self.frame_bw, [points], True, clr, thickness=thickness)
 
     def show(self, title, delay_ms):
-        cv2.imshow(title, self.frame)
+        cv2.imshow(title, self.frame_bw)
         cv2.waitKey(delay_ms)
 
 
@@ -123,29 +122,26 @@ class Capture():
 
 
 class WheelVision():
-    def __init__(self, src, src_dims, crop_cntr, crop_dims, src_clr='BGR'):
-        self.cap = Capture(src, src_dims, crop_cntr, crop_dims, src_clr)
+    def __init__(self, src, crop_cntr, crop_dim, src_clr='BGR'):
+        self.cap = Capture(src, crop_cntr, crop_dim, src_clr)
         self.panels = None
-        self.rotDir = None  # ±1 indicates CW/CCW wheel rotation
 
-        # TODO: REMOVE THESE OPTIONS IN THE FINAL VERSION OF THE CODE
         self.show_disp = None
         self.show_plot = None
-        self.timeStart = None
-        self.timeSetup = None
-        self.timeStop = None
-        self.cntFrames = 0
+        self.time_start = None
+        self.time_stop = None
+        self.cnt_frames = 0
 
     # ---------- HANDLING DIFFERENT MODES OF EXECUTION ---------- #
-    def run(self, mode_calib=False, show_disp=True, show_plot=False, cont_recntr=False):
+    def run(self, mode_calib=False, show_disp=True, show_plot=False):
         self.time_start = time.time()
+        self.cnt_frames = 0
         self.show_disp = show_disp
         self.show_plot = show_plot
 
-        if not cont_recntr and self.cap.update_bw():
+        if self.cap.update_bw():
             self.recntr_cap()
         self.init_panels()
-        self.time_setup = time.time()
 
         if mode_calib:
             mode_func = self.calib
@@ -178,17 +174,15 @@ class WheelVision():
             if self.wheel_status == STAGE_SHOOT:
                 angle_target = self.panel_activating_angle * DEG_TO_RAD
                 coords_target = (round(WHEEL_CNTR[0] + TARGET_RAD * sin(angle_target)), round(WHEEL_CNTR[1] - TARGET_RAD * cos(angle_target)))
-                cv2.circle(self.frame, coords_target, 5, RED, -1)
-            cv2.imshow('Bare', self.frame)
+                cv2.circle(self.frame_bw, coords_target, 5, RED, -1)
+            cv2.imshow('Bare', self.frame_bw)
             cv2.waitKey(50)
 
     # ---------- FOR DEBUGGING AND OPTIMIZATION PURPOSES ---------- #
     def print_time(self):
-        setup_time = self.time_setup - self.time_start
         total_time = self.time_stop - self.time_start
         print('Frame Processing Rate: {:.3} fps'
               .format(self.cnt_frames / (total_time - setup_time)))
-        print('Setup Time: {:.3} s'.format(setup_time))
         print('Total Execution Time: {:.3} s'.format(total_time))
 
     def plot(self, lumin_vals):
@@ -274,7 +268,7 @@ class WheelVision():
         for y in range(round(coords_tl[1]), round(coords_tl[1] + dim)):
             for x in range(round(coords_tl[0]), round(coords_tl[0] + dim)):
                 cnt_pixels += 1
-                if self.cap.frame[y][x]:
+                if self.cap.frame_bw[y][x]:
                     cnt_whites += 1
         return round(LUM_MAX * cnt_whites / cnt_pixels)
 
