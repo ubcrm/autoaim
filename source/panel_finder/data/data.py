@@ -1,6 +1,6 @@
-from source.instance import get_json_from_file
 from .data_labeler import DataLabeler
 from .label_editor import LabelEditor
+from source.common.module import Module
 from pathlib import Path
 import os
 
@@ -10,13 +10,10 @@ out: json file
 """
 
 
-class Data:
+class Data(Module):
     def __init__(self, state=None):
-        if state is None:
-            state = {}
-        working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        self.properties = get_json_from_file(working_dir / "settings.json")
-        self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
+        self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        super().__init__(self.working_dir, state=state)
         self.label_editor = LabelEditor(self.properties)
         self.data_labeler = DataLabeler(self.properties)
         self.process(self.properties["data_json"])
