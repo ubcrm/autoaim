@@ -7,7 +7,7 @@ from source.rune.predict_target.predict_target import PredictTarget
 def display_target(frame, point):
     # Display the resulting image
     if point is not None:
-        cv2.circle(frame, (point[0], point[1]), 3, (0, 0, 255), -1)
+        cv2.circle(frame, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
     cv2.imshow('Press q to quit', frame)
 
 

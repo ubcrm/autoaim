@@ -15,7 +15,5 @@ class Preprocess(Module):
         bottom = dims[0] - top
         left = round((dims[1] * (1 - self.properties["x_scaling"])) / 2)
         right = dims[1] - left
-        print(dims)
-        print(top, bottom, left, right)
         crop_img = frame[top:bottom, left:right]
         return crop_img

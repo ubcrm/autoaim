@@ -1,1 +1,5 @@
-{}
+{
+  "tracking_frames": 2,
+  "frames_ahead": 1,
+  "arm_length": 0.4
+}
