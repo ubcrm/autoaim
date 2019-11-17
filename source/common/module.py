@@ -4,7 +4,10 @@ from source.instance import Instance
 
 class Module:
     def __init__(self, wd, state=None, default=None):
-        self.properties = get_json_from_path(wd / "settings.json")
+        try:
+            self.properties = get_json_from_path(wd / "settings.json")
+        except FileNotFoundError:
+            self.properties = {}
         self.instance = Instance.state
         if state:
             # merges static settings and dynamically passed state. States override settings.

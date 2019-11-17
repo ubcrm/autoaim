@@ -56,9 +56,8 @@ class PanelClassifier(Module):
         train_x, train_y, test_x, test_y = self.create_data()
 
         # train model, update tensorboard
-        log_dir = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        log_dir = log_dir.replace("/", os.path.sep)
-        print(os.path.sep)
+        log_append = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = Path(self.working_dir / log_append)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         self.model.fit(train_x, train_y, epochs=self.properties["learning"]["epochs"], callbacks=[tensorboard_callback],
                        class_weight={0: 1.,
