@@ -1,20 +1,24 @@
 import sys
+import argparse
 
 from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
 
 if __name__ == "__main__":
+
     classifierState = {"mode": sys.argv[1]}
-    if len(sys.argv) > 2:
-        classifierState["data_path"] = sys.argv[2]
-    if len(sys.argv) > 3:
-        classifierState["model_path"] = sys.argv[3]
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--data', action='store_true',
+                        help="Specifies the path to the data file to train the model")
+    parser.add_argument('-m', '--model', action='store_true',
+                        help="Specifies the path to the data file to store or load the trained model")
+
+    args = parser.parse_args()
+
+    if args.data:
+        classifierState["data_path"] = args.data
+
+    if args.model:
+        classifierState["model_path"] = args.model
+
     classifier = PanelClassifier(state=classifierState)
-
-    # test_x, test_y = pipeline.train_model()
-    # pipeline.evaluate_model(test_x, test_y)
-    # pipeline.save_model()
-    # m = PanelClassifier.load_model(model_path)
-
-    # training_x, training_y, testing_x, testing_y = classifier.create_data()
-    # print("The model predicts:", classifier.process(training_x[0], (1920, 1080)))
-    # print("The actual value is:", training_y[0].argmax())
