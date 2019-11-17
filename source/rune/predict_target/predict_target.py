@@ -19,11 +19,11 @@ class PredictTarget(Module):
             self.frames_calculated += 1
             return None
         else:
-            angles = self.assign_panels.process(image, state=True)
-            speed = self.calculate_rotational_velocity(list(self.angles[-1].keys()), list(angles.keys()))
+            self.angles.append(self.assign_panels.process(image, state=True))
+            speed = self.calculate_rotational_velocity(self.angles)
             target_arm = None
-            for angle in list(angles.keys()):
-                if angles[angle] == "target":
+            for angle, value in self.angles[-1].items():
+                if value == "target":
                     target_arm = angle
             target_angle = target_arm + speed * self.properties["frames_ahead"]
             target_point = (image.shape[0] * self.properties["arm_length"] * np.cos(target_angle) + image.shape[0] / 2,
@@ -32,5 +32,12 @@ class PredictTarget(Module):
             return target_point
 
     @staticmethod
-    def calculate_rotational_velocity(angles1, angles2):
-        return (sum(np.subtract(angles1, angles2))) / len(angles1)
+    def calculate_rotational_velocity(angles_list):
+        if len(angles_list) == 1:
+            return 0
+        avg_speed = 0
+        for i in range(len(angles_list) - 1):
+            angles1 = angles_list[i].keys()
+            angles2 = angles_list[i + 1].keys()
+            avg_speed += (sum(np.subtract(angles1, angles2))) / len(angles1)
+        return avg_speed / (len(angles_list) - 1)
