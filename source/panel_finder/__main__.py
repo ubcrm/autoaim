@@ -2,7 +2,6 @@ from imutils.video import VideoStream
 from source.panel_finder.panel_finder import PanelFinder
 import cv2
 import sys
-import numpy as np
 
 
 def display_frame(frame, panel=None):

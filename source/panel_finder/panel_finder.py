@@ -20,7 +20,7 @@ class PanelFinder(Module):
     def __init__(self, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, state=state)
-        self.classifier = PanelClassifier(state={"mode": "train"})
+        self.classifier = PanelClassifier(state={"mode": "load"})
         self.led_finder = LEDFinder()
         self.panel = None
 
