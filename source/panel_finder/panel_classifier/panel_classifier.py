@@ -3,11 +3,11 @@ Reads data from Data/ and trains the Neural network on this data.
 The network is then saved to be used in led_match.py
 """
 
-import tensorflow as tf
-import numpy as np
 import datetime
 import os
 from pathlib import Path
+import numpy as np
+import tensorflow as tf
 
 from source.instance import get_json_from_path, ROOT_DIR
 from source.common.module import Module
@@ -221,4 +221,4 @@ class PanelClassifier(Module):
 
     def process(self, leds, frame_dims):
         formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
-        return self.model.predict(formatted_input).argmax()
+        return self.model.predict(formatted_input)[0][0]-self.model.predict(formatted_input)[0][1]

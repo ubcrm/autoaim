@@ -103,5 +103,7 @@ def find_rectangles(filtered):
     for cnt in contours:
         rect = cv2.minAreaRect(cnt)
         if max(rect[1]) > round(filtered.shape[0] / 35) and max(rect[1]) > 2 * min(rect[1]):
+            if rect[1][0] > rect[1][1] and rect[2] > -45:
+                rect = ((rect[0][0], rect[0][1]), (rect[1][1], rect[1][0]), rect[2]-90)
             rectangles.append(rect)
     return rectangles
