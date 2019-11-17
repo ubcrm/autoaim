@@ -1,9 +1,11 @@
 from source.instance import get_json_from_path
+from source.instance import Instance
 
 
 class Module:
     def __init__(self, wd, state=None, default=None):
         self.properties = get_json_from_path(wd / "settings.json")
+        self.instance = Instance.state
         if state:
             # merges static settings and dynamically passed state. States override settings.
             self.properties.update(state)

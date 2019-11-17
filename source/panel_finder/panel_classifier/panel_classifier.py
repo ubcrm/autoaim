@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import tensorflow as tf
 
-from source.instance import get_json_from_path, ROOT_DIR
+from source.instance import get_json_from_path
 from source.common.module import Module
 
 
@@ -35,7 +35,7 @@ class PanelClassifier(Module):
         super().__init__(self.working_dir, state, default={"mode": "train"})
 
         if self.properties["mode"] == "train":
-            self.data = get_json_from_path(ROOT_DIR / self.properties["data_path"])
+            self.data = get_json_from_path(self.instance["root_dir"] / self.properties["data_path"])
             self.shape = self.properties["learning"]["network_shape"]
             self.model = self.create_model()
             self.train_model()
@@ -85,7 +85,7 @@ class PanelClassifier(Module):
         print("Saving model")
         if path is None:
             path = self.properties["model_path"]
-        self.model.save(ROOT_DIR / path)
+        self.model.save(self.instance["root_dir"] / path)
 
     def save_to_tensorflow(self):
         frozen_graph = self.freeze_session(output_names=[out.op.name for out in self.model.outputs])
@@ -131,7 +131,7 @@ class PanelClassifier(Module):
         if path is None:
             path = self.properties["model_path"]
 
-        return tf.keras.models.load_model(ROOT_DIR / path)
+        return tf.keras.models.load_model(self.instance["root_dir"] / path)
 
     @staticmethod
     def model_predict(model, model_input):
