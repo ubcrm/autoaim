@@ -13,8 +13,10 @@ class LEDFinder(Module):
     def process(self, frame):
         mask = under_exposed_threshold(frame)
         rectangles = find_rectangles(mask)
-        leds = []
+        import cv2
+        import numpy as np
 
+        leds = []
         for r in rectangles:
             reformat = reformat_cv_rectangle(r)
             leds.append(reformat)
