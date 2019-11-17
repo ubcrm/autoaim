@@ -1,5 +1,5 @@
 from source.common.module import Module
-from source.rune.assign_panels.assign_panels import AssignPanels
+from rune.predict_target.assign_panels import AssignPanels
 from pathlib import Path
 import os
 import numpy as np
