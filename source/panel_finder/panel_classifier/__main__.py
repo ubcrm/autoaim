@@ -16,12 +16,8 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    if not args["mode"]:
-        print("Missing mode. Exiting.")
-        exit(1)
-
-    classifierState["mode"] = args["mode"]
-
+    if args["mode"]:
+        classifierState["mode"] = args["mode"]
     if args["data"]:
         classifierState["data_path"] = args["data"]
     if args["model"]:

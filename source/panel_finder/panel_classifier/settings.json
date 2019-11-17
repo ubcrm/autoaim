@@ -1,8 +1,8 @@
 {
-  "mode": "webcam",
+  "mode": "train",
   "checkpoint_path": "checkpoints/",
-  "data_path": "assets/panel_finder/panel_classifier/data/pair_training_data.json",
-  "model_path": "assets/panel_finder/panel_classifier/model/saves/model.hdf5",
+  "data_path": "assets/data/pair_training_data.json",
+  "model_path": "assets/model/saves/model.hdf5",
   "log_dir": "out/logs/",
   "train_test_ratio": 0.8,
   "video_dims": {

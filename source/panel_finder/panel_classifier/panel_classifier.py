@@ -35,7 +35,7 @@ class PanelClassifier(Module):
         super().__init__(self.working_dir, state, default={"mode": "train"})
 
         if self.properties["mode"] == "train":
-            self.data = get_json_from_path(self.instance["root_dir"] / self.properties["data_path"])
+            self.data = get_json_from_path(self.working_dir / self.properties["data_path"])
             self.shape = self.properties["learning"]["network_shape"]
             self.model = self.create_model()
             self.train_model()
@@ -130,7 +130,7 @@ class PanelClassifier(Module):
         if path is None:
             path = self.properties["model_path"]
 
-        return tf.keras.models.load_model(self.instance["root_dir"] / path)
+        return tf.keras.models.load_model(self.working_dir / path)
 
     @staticmethod
     def model_predict(model, model_input):

@@ -1,4 +1,4 @@
-from source.common.detect_shape import ShapeFinder
+from source.common.shape_finder import ShapeFinder
 from source.common.bit_mask import Bitmask
 from source.common.module import Module
 from pathlib import Path

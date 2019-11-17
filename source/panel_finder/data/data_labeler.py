@@ -4,7 +4,7 @@ from pathlib import Path
 
 from source.instance import get_json_from_file
 from source.common.bit_mask import over_exposed_threshold
-from source.common.detect_shape import find_rectangles
+from source.common.shape_finder import find_rectangles
 from source.common.module import Module
 from source.panel_finder.data.leds import Led, LedCombs
 

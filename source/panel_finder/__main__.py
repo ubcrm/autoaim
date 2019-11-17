@@ -1,3 +1,5 @@
+import argparse
+
 from imutils.video import VideoStream
 from source.panel_finder.panel_finder import PanelFinder
 import cv2
@@ -48,7 +50,17 @@ def run_webcam():
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == "video":
-        run_video(sys.argv[2])
-    elif sys.argv[1] in ["webcam", "pi", "camera"]:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--mode',
+                        help="Sets the mode of the classifier. Options: video, webcam")
+    parser.add_argument("-v" "--video", help="Runs the panel finder on a video")
+
+    args = vars(parser.parse_args())
+
+    if args["mode"] == "video" and args["video"]:
+        run_video(args["video"])
+    elif args["mode"] in ["webcam", "pi", "camera"]:
         run_webcam()
+    else:
+        print("No valid mode specified, Exiting.")
+        exit(1)
