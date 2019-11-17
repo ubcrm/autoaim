@@ -17,7 +17,11 @@ def run_video(video_path):
     cap = cv2.VideoCapture(video_path)  # load video
     ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
+<<<<<<< HEAD
+        raise FileNotFoundError("video at video_path not found")
+=======
         raise FileNotFoundError("video at " + str(video_path) + " not found")
+>>>>>>> 12420e99915bdb464dee36b93cf00eabe6f22153
     while ret:
         panel = panel_finder.process(frame)
         display_frame(frame, panel)
