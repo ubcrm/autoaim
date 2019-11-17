@@ -1,5 +1,6 @@
 import cv2
 
+
 def slope_thresh(quads, width):
     """
     returns a pair rectangles based on the slope between them

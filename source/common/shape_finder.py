@@ -1,6 +1,9 @@
+from pathlib import Path
+from .module import Module
+
 import imutils
 import cv2
-import numpy as np
+import os
 
 
 def find_contours(thresh):
@@ -103,5 +106,22 @@ def find_rectangles(filtered):
     for cnt in contours:
         rect = cv2.minAreaRect(cnt)
         if max(rect[1]) > round(filtered.shape[0] / 35) and max(rect[1]) > 2 * min(rect[1]):
+            if rect[1][0] > rect[1][1] and rect[2] > -45:
+                rect = ((rect[0][0], rect[0][1]), (rect[1][1], rect[1][0]), rect[2] - 90)
             rectangles.append(rect)
     return rectangles
+
+
+class ShapeFinder(Module):
+    def __init__(self):
+        self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        super().__init__(self.working_dir)
+
+    def process(self, mask):
+        rectangles = find_rectangles(mask)
+
+        leds = []
+        for r in rectangles:
+            reformat = reformat_cv_rectangle(r)
+            leds.append(reformat)
+        return leds

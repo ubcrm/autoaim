@@ -3,14 +3,14 @@ Reads data from Data/ and trains the Neural network on this data.
 The network is then saved to be used in led_match.py
 """
 
-import tensorflow as tf
-import numpy as np
 import datetime
-from pathlib import Path
 import os
+from pathlib import Path
+import numpy as np
+import tensorflow as tf
 
-from source.instance import get_json_from_path, ROOT_DIR
-from keras import backend as K
+from source.instance import get_json_from_path
+from source.common.module import Module
 
 
 def find_ratio(a, b):
@@ -29,17 +29,13 @@ def find_ratio(a, b):
     return a / b if a < b else b / a
 
 
-class PanelClassifier:
+class PanelClassifier(Module):
     def __init__(self, state=None):
-        if state is None:
-            state = {"mode": "train"}
-
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        self.properties = get_json_from_path(self.working_dir / "settings.json")
-        self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
+        super().__init__(self.working_dir, state, default={"mode": "train"})
 
         if self.properties["mode"] == "train":
-            self.data = get_json_from_path(ROOT_DIR / self.properties["data_path"])
+            self.data = get_json_from_path(self.working_dir / self.properties["data_path"])
             self.shape = self.properties["learning"]["network_shape"]
             self.model = self.create_model()
             self.train_model()
@@ -60,9 +56,8 @@ class PanelClassifier:
         train_x, train_y, test_x, test_y = self.create_data()
 
         # train model, update tensorboard
-        log_dir = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        log_dir = log_dir.replace("/", os.path.sep)
-        print(os.path.sep)
+        log_append = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = Path(self.working_dir / log_append)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         self.model.fit(train_x, train_y, epochs=self.properties["learning"]["epochs"], callbacks=[tensorboard_callback],
                        class_weight={0: 1.,
@@ -89,7 +84,7 @@ class PanelClassifier:
         print("Saving model")
         if path is None:
             path = self.properties["model_path"]
-        self.model.save(ROOT_DIR / path)
+        self.model.save(self.instance["root_dir"] / path)
 
     def save_to_tensorflow(self):
         frozen_graph = self.freeze_session(output_names=[out.op.name for out in self.model.outputs])
@@ -114,7 +109,8 @@ class PanelClassifier:
         session = tf.compat.v1.keras.backend.get_session()
         graph = session.graph
         with graph.as_default():
-            freeze_var_names = list(set(v.op.name for v in tf.compat.v1.global_variables()).difference(keep_var_names or []))
+            freeze_var_names = list(
+                set(v.op.name for v in tf.compat.v1.global_variables()).difference(keep_var_names or []))
             output_names = output_names or []
             output_names += [v.op.name for v in tf.compat.v1.global_variables()]
             input_graph_def = graph.as_graph_def()
@@ -134,7 +130,7 @@ class PanelClassifier:
         if path is None:
             path = self.properties["model_path"]
 
-        return tf.keras.models.load_model(ROOT_DIR / path)
+        return tf.keras.models.load_model(self.working_dir / path)
 
     @staticmethod
     def model_predict(model, model_input):
@@ -224,4 +220,4 @@ class PanelClassifier:
 
     def process(self, leds, frame_dims):
         formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
-        return self.model.predict(formatted_input).argmax()
+        return self.model.predict(formatted_input)[0][0]-self.model.predict(formatted_input)[0][1]

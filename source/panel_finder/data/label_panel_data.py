@@ -4,7 +4,7 @@ import os
 import time
 import numpy as np
 from source.panel_finder.data.leds import Led, LedCombs
-from source.common import bit_mask, detect_shape
+from source.common import bit_mask, shape_finder
 
 leds = []
 pairs = []
@@ -66,7 +66,7 @@ def main():
     image_index = 0
 
     DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_OUT = '/pair_training_data.json'
+    DATA_OUT = '/pair_training_data_old.json'
 
     vid = "videos/robot3.mp4"  # relative path of downloaded video
 
@@ -84,7 +84,7 @@ def main():
         start = time.time()
 
         mask = bit_mask.under_exposed_threshold(frame)
-        leds = detect_shape.find_rectangles(mask)
+        leds = shape_finder.find_rectangles(mask)
         draw_rectangles(leds)
         guess_past(past_pairs, leds)
 
