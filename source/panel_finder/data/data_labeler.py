@@ -5,15 +5,15 @@ from pathlib import Path
 from source.instance import get_json_from_file
 from source.common.bit_mask import over_exposed_threshold
 from source.common.detect_shape import find_rectangles
+from source.common.module import Module
 from source.panel_finder.data.leds import Led, LedCombs
 
 
-class DataLabeler:
+class DataLabeler(Module):
     def __init__(self, settings, state=None):
-        if state is None:
-            state = {}
-        self.properties = settings
-        self.properties.update(state)
+        self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        super().__init__(self.working_dir, state=state)
+        super(state, self.working_dir)
 
     def show_feed(self, labels, rects, image):
         for label in labels.values():
