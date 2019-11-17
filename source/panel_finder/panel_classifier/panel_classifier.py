@@ -6,11 +6,11 @@ The network is then saved to be used in led_match.py
 import datetime
 import os
 from pathlib import Path
-
 import numpy as np
 import tensorflow as tf
 
 from source.instance import get_json_from_path, ROOT_DIR
+from source.common.module import Module
 
 
 def find_ratio(a, b):
@@ -29,14 +29,10 @@ def find_ratio(a, b):
     return a / b if a < b else b / a
 
 
-class PanelClassifier:
+class PanelClassifier(Module):
     def __init__(self, state=None):
-        if state is None:
-            state = {"mode": "train"}
-
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        self.properties = get_json_from_path(self.working_dir / "settings.json")
-        self.properties.update(state)  # merges static settings and dynamically passed state. States override settings.
+        super().__init__(self.working_dir, state, default={"mode": "train"})
 
         if self.properties["mode"] == "train":
             self.data = get_json_from_path(ROOT_DIR / self.properties["data_path"])
@@ -114,7 +110,8 @@ class PanelClassifier:
         session = tf.compat.v1.keras.backend.get_session()
         graph = session.graph
         with graph.as_default():
-            freeze_var_names = list(set(v.op.name for v in tf.compat.v1.global_variables()).difference(keep_var_names or []))
+            freeze_var_names = list(
+                set(v.op.name for v in tf.compat.v1.global_variables()).difference(keep_var_names or []))
             output_names = output_names or []
             output_names += [v.op.name for v in tf.compat.v1.global_variables()]
             input_graph_def = graph.as_graph_def()
