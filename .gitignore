@@ -1,7 +1,7 @@
 __pycache__/
 .idea/
 venv/
-out/tensorflow_pipeline/logs/
+source/panel_finder/panel_classifier/out
 .vscode/
 
 *.png
@@ -9,3 +9,4 @@ out/tensorflow_pipeline/logs/
 *.mov
 *.mp4
 *.pyc
+*.jpgs

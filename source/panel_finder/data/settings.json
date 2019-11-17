@@ -1,0 +1,13 @@
+{
+  "labels_in": "../../assets/label_tools/data/image_labels_edited.json",
+  "labels_out": "../../assets/label_tools/data/image_labels_edited.json",
+  "image_in": "../../assets/label_tools/data/images/image-%d.jpg",
+  "image_out": "../../assets/label_tools/data/images/image_labels_edited.jpg",
+  "labels_in": "../../assets/label_tools/data/images/.json",
+  "data_out": "",
+  "image_count": 655,
+  "delay": 0,
+  "logging": true,
+  "show_feed": false,
+  "convert_images": false
+}
