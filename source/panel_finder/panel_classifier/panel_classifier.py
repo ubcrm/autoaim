@@ -85,10 +85,8 @@ class PanelClassifier(Module):
         print("Saving model")
         if path is None:
             model_path = self.properties["model_path"]
-            weights_path = self.properties["model_weights_path"]
 
         self.model.save(self.working_dir / model_path)
-        self.model.save_weights(str(self.working_dir / weights_path)) # stringify Posix path
 
     def save_to_tensorflow(self):
         frozen_graph = self.freeze_session(output_names=[out.op.name for out in self.model.outputs])

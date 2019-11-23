@@ -15,7 +15,7 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 
 ### Set-up the virtual environment
 ```
-cd robobomaster-vision
+cd robobomaster-vision/requirements
 virtualenv -p python3 venv
 source venv/bin/activate
 pip install requirements.txt
@@ -40,7 +40,7 @@ to do this if we want to use OpenCV DNN*
 
 ### Set up Tensorflow 1.14 virtual environment
 ```
-cd robomaster-vision/
+cd robomaster-vision/requirements
 virtualenv -p python3 tf114
 source tf114/bin/activate
 pip install requirements_convert.txt

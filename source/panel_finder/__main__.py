@@ -48,25 +48,6 @@ def run_live(inference):
     cap.release()
     cv2.destroyAllWindows()
 
-'''
-def run_pi():
-    panel_finder = PanelFinder(state={"classifier": "opencv"})  # this panel finder needs no additional properties
-    cap = VideoStream(src=0).start()
-    frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
-
-    while True:
-        panel = panel_finder.process(frame)
-        #print(panel)
-        display_frame(frame, panel)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-            break
-        # get next frame
-        frame = cap.read()
-
-    cap.release()
-    cv2.destroyAllWindows()
-'''
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -82,8 +63,6 @@ if __name__ == "__main__":
         run_video(video_path=args["video"], inference=args["inference"])
     elif args["mode"] in ["webcam", "camera"]:
         run_live(inference=args["inference"])
-    #elif args["mode"] == "pi":
-    #    run_pi()
     else:
         print("No valid mode specified, Exiting.")
         exit(1)

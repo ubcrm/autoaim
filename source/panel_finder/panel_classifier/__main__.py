@@ -1,3 +1,4 @@
+from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
 import argparse
 
 if __name__ == "__main__":
@@ -14,12 +15,6 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    #if args["mode"] == "pi":
-        #from source.panel_finder.panel_classifier.inference_opencv import InferencePi
-        #classifier = InferencePi()
-
-    #else:
-    from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
     if args["mode"]:
         classifierState["mode"] = args["mode"]
     if args["data"]:
