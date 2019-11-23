@@ -37,7 +37,7 @@ class Inference(Module):
             model = self.properties["load_tf_model"]
             #proto = self.properties["load_tf_model_txt"]
 
-        return cv2.dnn.readNetFromTensorflow(bufferModel=self.working_dir / model) #, self.working_dir / proto)
+        return cv2.dnn.readNetFromTensorflow(str(self.working_dir / model)) #, self.working_dir / proto)
 
     @staticmethod
     def model_predict(net, input):

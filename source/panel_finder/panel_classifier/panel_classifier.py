@@ -39,7 +39,6 @@ class PanelClassifier(Module):
             self.model = self.create_model()
             self.train_model()
             self.save_model()
-            # self.save_to_tensorflow()
 
         elif self.properties["mode"] == "load" or self.properties["mode"] == "convert":
             self.model = self.load_model(self.properties["model_path"])
@@ -85,15 +84,15 @@ class PanelClassifier(Module):
         """
         print("Saving model")
         if path is None:
-            #path = self.properties["model_path"]
-            path = self.properties["model_weights_path"]
-        #self.model.save(self.working_dir / path)
-        self.model.save_weights(str(self.working_dir / path))
+            model_path = self.properties["model_path"]
+            weights_path = self.properties["model_weights_path"]
+
+        self.model.save(self.working_dir / model_path)
+        self.model.save_weights(str(self.working_dir / weights_path)) # stringify Posix path
 
     def save_to_tensorflow(self):
         frozen_graph = self.freeze_session(output_names=[out.op.name for out in self.model.outputs])
         tf.compat.v1.train.write_graph(frozen_graph, str(self.working_dir / self.properties["create_tf_model_path"]), "model.pb", as_text=False)
-        tf.compat.v1.train.write_graph(frozen_graph, str(self.working_dir / self.properties["create_tf_model_path"]), "model.pbtxt", as_text=True)
 
     def freeze_session(self, keep_var_names=None, output_names=None, clear_devices=True):
         """
@@ -140,7 +139,6 @@ class PanelClassifier(Module):
     @staticmethod
     def model_predict(model, model_input):
         o = model.predict(model_input)
-        # print(o, o.argmax())
         return o
 
     @staticmethod
@@ -211,7 +209,6 @@ class PanelClassifier(Module):
         :return: the tensorflow model
         """
         m = tf.keras.models.Sequential()
-        #m.add(tf.keras.layers.Flatten())
         o = tf.keras.optimizers.Adam(
             learning_rate=self.properties["learning"]["learning_rate"]
         )
@@ -227,4 +224,4 @@ class PanelClassifier(Module):
     def process(self, leds, frame_dims):
         formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
         prediction = self.model.predict(formatted_input)
-        return prediction[0][0] #-prediction[0][1]
+        return prediction[0][0]
