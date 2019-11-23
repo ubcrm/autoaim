@@ -3,6 +3,11 @@
   "checkpoint_path": "checkpoints/",
   "data_path": "assets/data/pair_training_data.json",
   "model_path": "assets/model/saves/model.hdf5",
+  "model_weights_path": "assets/model/saves/model_w.h5",
+  "tf114_model_path": "assets/model/saves/tf114_m.h5",
+  "create_tf_model_path": "assets/model/saves",
+  "load_tf_model": "assets/model/saves/model.pb",
+  "load_tf_model_txt": "assets/model/saves/model.pbtxt",
   "log_dir": "out/logs/",
   "train_test_ratio": 0.8,
   "video_dims": {
