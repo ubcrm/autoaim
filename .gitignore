@@ -1,8 +1,11 @@
 __pycache__/
 .idea/
+*/logs/
 venv/
+tf114/
 source/panel_finder/panel_classifier/out
 .vscode/
+out/
 
 *.jpgs
 *.mov

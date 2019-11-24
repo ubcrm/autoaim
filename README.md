@@ -1,6 +1,6 @@
 # robomaster-vision
 
-### Armour Panel Detection
+## Armour Panel Detection
 
 This approach uses a pipeline of computer vision and machine learning algorithms to detect the center of the panels. At a high level, the pipeline goes as follows:
 ```
@@ -11,34 +11,56 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 5. Compute center of panel
 ```
 
-Step 4 involves passing a list of rectangles into a convolutional neural network and obtaining the predictions of target led pairs.
+## Training the model with Keras + Tensorflow 2.0 and performing inference of the model
 
-### Installation
-The installation document can be found [here](https://github.com/ubcrobomaster/robomaster-vision/blob/master/source/tensorflow_pipeline/README.md)
-
-### Raspberry Pi Set-Up (3b+ with USB camera)
-
-1. Install Raspbian 9.0+ 
-2. Update and upgrade packages
+### Set-up the virtual environment
 ```
-sudo apt update
-sudo apt upgrade
-```
-3. Install necessary system packages
-```
-sudo apt install libatlas-base-dev
-sudo pip install --upgrade pip
-```
-4. Git clone or download the repository
-5. Create a virtual environment and install python packages
-```
-sudo pip3 install virtualenv
+cd robobomaster-vision/requirements
 virtualenv -p python3 venv
 source venv/bin/activate
-pip3 install -r requirements_rpi.txt
+pip install requirements.txt
 ```
-6. Run the deploy script
+
+### Training
 ```
-cd deploy
-./run.sh
+cd robomaster-vision/source/panel_finder/
+python panel_classifier/ --mode train
+```
+
+### Inference
+```
+cd robomaster-vision/source
+python panel_finder --mode {video/webcam} --video {video_path}
+```
+
+## Converting the Keras model to a frozen Tensorflow graph
+*Tensorflow 2.0 has no longer supports the freezing of
+tensorflow graphs to .pb files. We need to downgrade in order
+to do this if we want to use OpenCV DNN*
+
+### Set up Tensorflow 1.14 virtual environment
+```
+cd robomaster-vision/requirements
+virtualenv -p python3 tf114
+source tf114/bin/activate
+pip install requirements_convert.txt
+```
+
+### Convert 
+```
+cd source/panel_finder/
+python panel_classifier/ --mode convert
+```
+
+## Inference (Laptop or Raspberry Pi)
+
+### Virtual Environments
+
+- For Raspberry Pi follow the guide in the raspberrypi_setup directory
+- For laptops you can the *venv* virtual environment
+
+### Inference
+```
+cd robomaster-vision/source
+python panel_finder/ --mode {video/webcam} --vide {video_path} --framework opencv
 ```

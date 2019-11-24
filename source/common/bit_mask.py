@@ -17,5 +17,5 @@ class Bitmask(Module):
         super().__init__(self.working_dir, state=state)
 
     def process(self, frame):
-        under_exposed_threshold(frame)
+        return under_exposed_threshold(frame)
 
