@@ -1,8 +1,9 @@
+import os
+from pathlib import Path
+
+from source.common.module import Module
 from .data_labeler import DataLabeler
 from .label_editor import LabelEditor
-from source.common.module import Module
-from pathlib import Path
-import os
 
 """
 in: vala's labels (json file)

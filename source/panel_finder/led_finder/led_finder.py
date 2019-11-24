@@ -1,8 +1,9 @@
-from source.common.detect_shape import find_rectangles, reformat_cv_rectangle
-from source.common.bit_mask import under_exposed_threshold
-from source.common.module import Module
-from pathlib import Path
 import os
+from pathlib import Path
+
+from source.common.bit_mask import under_exposed_threshold
+from source.common.detect_shape import find_rectangles, reformat_cv_rectangle
+from source.common.module import Module
 
 
 class LEDFinder(Module):
@@ -13,8 +14,6 @@ class LEDFinder(Module):
     def process(self, frame):
         mask = under_exposed_threshold(frame)
         rectangles = find_rectangles(mask)
-        import cv2
-        import numpy as np
 
         leds = []
         for r in rectangles:

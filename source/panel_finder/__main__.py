@@ -1,8 +1,9 @@
-from imutils.video import VideoStream
-from source.panel_finder.panel_finder import PanelFinder
-import cv2
 import sys
-import numpy as np
+
+import cv2
+from imutils.video import VideoStream
+
+from source.panel_finder.panel_finder import PanelFinder
 
 
 def display_frame(frame, panel=None):
@@ -15,20 +16,17 @@ def display_frame(frame, panel=None):
 def run_video(video_path):
     panel_finder = PanelFinder()  # this panel finder needs no additional properties
     cap = cv2.VideoCapture(video_path)  # load video
-    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame_bw is the image in blue, green, red
     if not ret:
-<<<<<<< HEAD
-        raise FileNotFoundError("video at video_path not found")
-=======
         raise FileNotFoundError("video at " + str(video_path) + " not found")
->>>>>>> 12420e99915bdb464dee36b93cf00eabe6f22153
+
     while ret:
         panel = panel_finder.process(frame)
         display_frame(frame, panel)
 
         if cv2.waitKey(0) & 0xFF == ord('q'):  # press q to quit
             break
-        # get next frame
+        # get next frame_bw
         ret, frame = cap.read()
     cap.release()
     cv2.destroyAllWindows()
@@ -37,7 +35,7 @@ def run_video(video_path):
 def run_webcam():
     panel_finder = PanelFinder()  # this panel finder needs no additional properties
     cap = VideoStream(src=0).start()
-    frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
+    frame = cap.read()  # ret = 1 if the video is captured; frame_bw is the image in blue, green, red
     while True:
         panel = panel_finder.process(frame)
         if panel:
@@ -45,7 +43,7 @@ def run_webcam():
 
         if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
-        # get next frame
+        # get next frame_bw
         frame = cap.read()
 
     cap.release()

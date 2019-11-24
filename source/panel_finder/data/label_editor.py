@@ -1,8 +1,10 @@
-from source.instance import get_json_from_file
-from source.common.module import Module
-from pathlib import Path
-import cv2
 import os
+from pathlib import Path
+
+import cv2
+
+from source.common.module import Module
+from source.instance import get_json_from_file
 
 
 class LabelEditor(Module):

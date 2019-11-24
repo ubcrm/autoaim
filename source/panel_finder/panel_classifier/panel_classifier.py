@@ -6,11 +6,12 @@ The network is then saved to be used in led_match.py
 import datetime
 import os
 from pathlib import Path
+
 import numpy as np
 import tensorflow as tf
 
-from source.instance import get_json_from_path, ROOT_DIR
 from source.common.module import Module
+from source.instance import get_json_from_path, ROOT_DIR
 
 
 def find_ratio(a, b):

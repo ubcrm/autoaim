@@ -1,7 +1,9 @@
 import sys
+
 import cv2
-from source.rune.preprocess.preprocess import Preprocess
+
 from source.rune.predict_target.predict_target import PredictTarget
+from source.rune.preprocess.preprocess import Preprocess
 
 
 def display_target(frame, point):
@@ -15,7 +17,7 @@ def run_video(video_path):
     preprocess = Preprocess()
     predict_target = PredictTarget()
     cap = cv2.VideoCapture(video_path)  # load video
-    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame_bw is the image in blue, green, red
     rune_center = [0.5, 0.5]  # shooting should update the center. Assumes video starts centered
     if not ret:
         raise FileNotFoundError("video at " + str(video_path) + " not found")
@@ -28,7 +30,7 @@ def run_video(video_path):
 
         if cv2.waitKey(0) & 0xFF == ord('q'):  # press q to quit
             break
-        # get next frame
+        # get next frame_bw
         ret, frame = cap.read()
     cap.release()
     cv2.destroyAllWindows()

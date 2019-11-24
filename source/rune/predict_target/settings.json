@@ -1,5 +1,6 @@
 {
   "tracking_frames": 2,
   "frames_ahead": 1,
-  "arm_length": 0.3
+  "arm_length": 0.3,
+  "panel_states": {"inactive": 0, "activating": 1, "active": 2}
 }

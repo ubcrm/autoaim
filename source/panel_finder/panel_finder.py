@@ -1,9 +1,10 @@
-from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
-from source.panel_finder.led_finder.led_finder import LEDFinder
-from source.common.module import Module
-from source.panel_finder.find_center import find_target_center, find_dict_center
-from pathlib import Path
 import os
+from pathlib import Path
+
+from source.common.module import Module
+from source.panel_finder.find_center import find_dict_center
+from source.panel_finder.led_finder.led_finder import LEDFinder
+from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
 
 
 def combined_panel(rect_a, rect_b):

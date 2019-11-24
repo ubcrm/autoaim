@@ -1,8 +1,10 @@
-from source.common.module import Module
-from pathlib import Path
-from source.rune.predict_target.assign_panels.assign_panels import AssignPanels
 import os
+from pathlib import Path
+
 import numpy as np
+
+from source.common.module import Module
+from source.rune.predict_target.assign_panels.assign_panels import AssignPanels
 
 
 class PredictTarget(Module):
@@ -23,7 +25,7 @@ class PredictTarget(Module):
             speed = self.calculate_rotational_velocity(self.angles)
             target_arm = None
             for angle, value in self.angles[-1].items():
-                if value == "target":
+                if value == self.properties["panel_states"]["activating"]:
                     target_arm = angle
             target_angle = target_arm + speed * self.properties["frames_ahead"]
             target_point = (image.shape[0] * self.properties["arm_length"] * np.cos(target_angle) + image.shape[0] / 2,

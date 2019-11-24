@@ -1,6 +1,6 @@
-from pathlib import Path
-import os
 import json
+import os
+from pathlib import Path
 
 
 def get_json_from_file(filename):

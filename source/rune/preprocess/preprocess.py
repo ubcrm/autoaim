@@ -1,6 +1,7 @@
-from source.common.module import Module
-from pathlib import Path
 import os
+from pathlib import Path
+
+from source.common.module import Module
 
 
 class Preprocess(Module):

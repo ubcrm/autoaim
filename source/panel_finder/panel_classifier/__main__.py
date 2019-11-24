@@ -1,5 +1,5 @@
-import sys
 import argparse
+import sys
 
 from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
 
