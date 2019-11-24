@@ -5,7 +5,7 @@ from source.rune.predict_target.assign_panels.assign_panels import AssignPanels
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--image', default="assets/image-2.png", help="Specifies the path to rune image file")
+    parser.add_argument('-i', '--image', default="assets/image.png", help="Specifies the path to rune image file")
     parser.add_argument('-m', '--mode', default='debug', help="Mode to run in. Choose from 'run', 'debug'")
     args = parser.parse_args()
 
