@@ -22,7 +22,7 @@ def find_ratio(a, b):
     return a / b if a < b else b / a
 
 
-class Inference(Module):
+class OpenCVClassifier(Module):
     def __init__(self):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir)
@@ -34,13 +34,13 @@ class Inference(Module):
         :return: The loaded model
         """
         if path is None:
-            model = self.properties["load_tf_model"]
+            path = self.properties["load_tf_model"]
 
-        return cv2.dnn.readNetFromTensorflow(str(self.working_dir / model))
+        return cv2.dnn.readNetFromTensorflow(str(self.working_dir / path))
 
     @staticmethod
-    def model_predict(net, input):
-        net.setInput(input)
+    def model_predict(net, nn_input):
+        net.setInput(nn_input)
         return net.forward()
 
     @staticmethod
@@ -63,6 +63,6 @@ class Inference(Module):
 
     def process(self, leds, frame_dims):
         net = self.load_model()
-        formatted_input = np.asarray([Inference.create_nn_input(leds, frame_dims)])
+        formatted_input = np.asarray([OpenCVClassifier.create_nn_input(leds, frame_dims)])
         prediction = self.model_predict(net, formatted_input)
         return prediction[0][0]

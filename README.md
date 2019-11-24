@@ -62,5 +62,5 @@ python panel_classifier/ --mode convert
 ### Inference
 ```
 cd robomaster-vision/source
-python panel_finder/ --mode {video/webcam} --vide {video_path} --inference opencv
+python panel_finder/ --mode {video/webcam} --vide {video_path} --framework opencv
 ```

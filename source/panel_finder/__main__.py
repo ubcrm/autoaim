@@ -13,8 +13,8 @@ def display_frame(frame, panel=None):
     cv2.imshow('Press q to quit', frame)
 
 
-def run_video(video_path, inference):
-    panel_finder = PanelFinder(state=inference)  # this panel finder needs no additional properties
+def run_video(video_path, framework):
+    panel_finder = PanelFinder(state={"framework": framework})  # this panel finder needs no additional properties
     cap = cv2.VideoCapture(video_path)  # load video
     ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
@@ -31,8 +31,8 @@ def run_video(video_path, inference):
     cv2.destroyAllWindows()
 
 
-def run_live(inference):
-    panel_finder = PanelFinder(state=inference)
+def run_live(framework):
+    panel_finder = PanelFinder(state={"framework": framework})
     cap = VideoStream(src=0).start()
     frame = cap.read()
 
@@ -51,7 +51,7 @@ def run_live(inference):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inference', default="tensorflow",
+    parser.add_argument('-i', '--framework', default="tensorflow",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
     parser.add_argument('-m', '--mode', default="webcam",
                         help="Sets the mode of the classifier. Options: video, webcam")
@@ -60,9 +60,9 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     if args["mode"] == "video" and args["video"]:
-        run_video(video_path=args["video"], inference=args["inference"])
+        run_video(video_path=args["video"], framework=args["framework"])
     elif args["mode"] in ["webcam", "camera"]:
-        run_live(inference=args["inference"])
+        run_live(framework=args["framework"])
     else:
         print("No valid mode specified, Exiting.")
         exit(1)

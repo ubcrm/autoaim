@@ -14,7 +14,7 @@
   "learning": {
     "network_shape": [5,3,2],
     "input_size": 5,
-    "epochs": 1000,
+    "epochs": 500,
     "learning_rate": 0.001,
     "iterations": 10
   }

@@ -17,13 +17,13 @@ def combined_panel(rect_a, rect_b):
 
 class PanelFinder(Module):
     def __init__(self, state):
-        if state == "tensorflow":
+        if state["framework"] == "tensorflow":
             from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
-            state = {"mode": "load"}
+            state["mode"] = "load"
             self.classifier = PanelClassifier(state=state)
-        elif state == "opencv":
-            from source.panel_finder.panel_classifier.inference_opencv import Inference
-            self.classifier = Inference()
+        elif state["framework"] == "opencv":
+            from source.panel_finder.panel_classifier.inference_opencv import OpenCVClassifier
+            self.classifier = OpenCVClassifier()
             state = {}
 
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
