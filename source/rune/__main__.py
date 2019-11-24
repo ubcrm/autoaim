@@ -18,7 +18,7 @@ def run_video(video_path):
     predict_target = PredictTarget()
     cap = cv2.VideoCapture(video_path)  # load video
     ret, frame = cap.read()  # ret = 1 if the video is captured; frame_bw is the image in blue, green, red
-    rune_center = [0.5, 0.5]  # shooting should update the center. Assumes video starts centered
+    rune_center = [0.53, 0.42]  # shooting should update the center. Assumes video starts centered
     if not ret:
         raise FileNotFoundError("video at " + str(video_path) + " not found")
     while ret:
@@ -26,11 +26,10 @@ def run_video(video_path):
         cropped = preprocess.process(frame, rune_center)
         prediction = predict_target.process(cropped)
         display_target(cropped, prediction)
-        # shoot(prediction)
-
-        if cv2.waitKey(0) & 0xFF == ord('q'):  # press q to quit
+        # # shoot(prediction)
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
-        # get next frame_bw
+        # get next frame
         ret, frame = cap.read()
     cap.release()
     cv2.destroyAllWindows()

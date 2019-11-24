@@ -12,9 +12,10 @@ class Preprocess(Module):
     def process(self, frame, rune_center):
         frame = frame.copy()
         dims = frame.shape[:2]
-        top = round((dims[0] * (1 - self.properties["y_scaling"])) * rune_center[1])
-        bottom = dims[0] - top
-        left = round((dims[1] * (1 - self.properties["x_scaling"])) * rune_center[0])
-        right = dims[1] - left
+        radius = self.properties["scaling"] * dims[0] / 2
+        top = round(rune_center[1] * dims[0] - radius)
+        bottom = round(rune_center[1] * dims[0] + radius)
+        left = round(rune_center[0] * dims[1] - radius)
+        right = round(rune_center[0] * dims[1] + radius)
         crop_img = frame[top:bottom, left:right]
         return crop_img

@@ -30,7 +30,7 @@ class AssignPanels(Module):
             self.plot_lumins(lumins, states)
             cv2.imshow('Frame B&W', frame_bw)
             cv2.imshow('Frame BGR', self.frame)
-            cv2.waitKey(0)
+            cv2.waitKey(1)
 
         return states
 
