@@ -1,1 +1,5 @@
-{}
+{
+  "reference_frames": 2,
+  "seconds_ahead": 0.1,
+  "prediction_type": "linear"
+}

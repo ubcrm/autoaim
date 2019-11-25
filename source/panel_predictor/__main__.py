@@ -20,7 +20,7 @@ def run_video(video_path, framework):
         target = panel_predictor.process(frame)
         display_frame(frame, target)
 
-        if cv2.waitKey(0) & 0xFF == ord('q'):  # press q to quit
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
         # get next frame
         ret, frame = cap.read()
