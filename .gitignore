@@ -3,7 +3,7 @@ __pycache__/
 */logs/
 venv/
 tf114/
-source/panel_finder/panel_classifier/out
+source/panel_predictor/panel_finder/panel_classifier/out
 .vscode/
 out/
 
