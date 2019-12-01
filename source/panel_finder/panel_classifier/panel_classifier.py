@@ -31,7 +31,7 @@ def find_ratio(a, b):
 class PanelClassifier(Module):
     def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, parent=parent, state=state, default={"mode": "train"})
+        super().__init__(self.working_dir, parent=parent, state=state)
 
         if self.properties["mode"] == "train":
             self.data = get_json_from_path(self.working_dir / self.properties["data_path"])
