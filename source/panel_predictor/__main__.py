@@ -1,12 +1,15 @@
 from source.panel_predictor.panel_predictor import PanelPredictor
 import argparse
 import cv2
+from imutils.video import VideoStream
 
 
 def display_frame(frame, target=None):
     # Display the resulting image
     if target is not None:
+        target, confidence = target
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
+        cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
     cv2.imshow('Press q to quit', frame)
 
 
@@ -17,6 +20,7 @@ def run_video(video_path, framework):
     if not ret:
         raise FileNotFoundError("video at " + str(video_path) + " not found")
     while ret:
+        frame = cv2.pyrDown(frame)
         target = panel_predictor.process(frame)
         display_frame(frame, target)
 
@@ -29,7 +33,19 @@ def run_video(video_path, framework):
 
 
 def run_live(framework):
-    pass
+    panel_predictor = PanelPredictor(state={"framework": framework})
+    cap = VideoStream(src=0).start()
+    frame = cap.read()
+    while frame is not None:
+        frame = cv2.pyrDown(frame)
+        target = panel_predictor.process(frame)
+        display_frame(frame, target)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+            break
+        ret, frame = cap.read()  # get next frame
+    cap.release()
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
@@ -44,7 +60,7 @@ if __name__ == "__main__":
 
     if args["mode"] == "video" and args["video"]:
         run_video(video_path=args["video"], framework=args["framework"])
-    elif args["mode"] in ["webcam", "camera"]:
+    elif args["mode"] in ["webcam", "camera", "live"]:
         run_live(framework=args["framework"])
     else:
         print("No valid mode specified, Exiting.")

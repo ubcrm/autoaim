@@ -1,4 +1,4 @@
-from source.panel_predictor.panel_finder.panel_classifier import PanelClassifier
+from source.panel_predictor.panel_finder.panel_classifier.panel_classifier import PanelClassifier
 import argparse
 
 if __name__ == "__main__":

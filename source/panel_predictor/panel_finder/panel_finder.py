@@ -1,4 +1,4 @@
-from source.panel_finder.led_finder.led_finder import LEDFinder
+from source.panel_predictor.panel_finder.led_finder.led_finder import LEDFinder
 from source.common.module import Module
 from pathlib import Path
 import os
@@ -27,18 +27,18 @@ def find_dict_center(bounds):
 
 
 class PanelFinder(Module):
-    def __init__(self, state):
+    def __init__(self, parent=None, state=None):
         if state["framework"] == "tensorflow":
-            from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
+            from source.panel_predictor.panel_finder.panel_classifier.panel_classifier import PanelClassifier
             state["mode"] = "load"
             self.classifier = PanelClassifier(self, state=state)
         elif state["framework"] == "opencv":
-            from source.panel_finder.panel_classifier.inference_opencv import OpenCVClassifier
+            from source.panel_predictor.panel_finder.panel_classifier.inference_opencv import OpenCVClassifier
             self.classifier = OpenCVClassifier(self)
             state = {}
 
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
+        super().__init__(self.working_dir, parent=parent, state=state)
         self.led_finder = LEDFinder(self)
         self.panel = None
 
@@ -63,6 +63,4 @@ class PanelFinder(Module):
                 if confidence > best_pair[2]:
                     best_pair = (leds[i], leds[i + 1], confidence)
 
-            if best_pair[2] > 0.5:
-                self.panel = combined_panel(best_pair[0], best_pair[1])
-        return self.panel
+            return combined_panel(best_pair[0], best_pair[1]), best_pair[2]

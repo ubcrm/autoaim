@@ -222,4 +222,4 @@ class PanelClassifier(Module):
     def process(self, leds, frame_dims):
         formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
         prediction = self.model.predict(formatted_input)
-        return prediction[0][1]-prediction[0][0]
+        return prediction[0][1]

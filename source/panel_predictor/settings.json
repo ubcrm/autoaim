@@ -1,5 +1,8 @@
 {
-  "reference_frames": 2,
-  "seconds_ahead": 0.1,
+  "reference_frames": 5,
+  "seconds_ahead": 0.2,
+  "distance_confidence_falloff": 5,
+  "time_confidence_falloff": 0.5,
+  "model_confidence_weight": 10,
   "prediction_type": "linear"
 }

@@ -1,4 +1,4 @@
-from source.panel_predictor.panel_finder.panel_finder import PanelFinder
+from source.panel_predictor.panel_finder import PanelFinder
 from imutils.video import VideoStream
 import argparse
 import cv2
