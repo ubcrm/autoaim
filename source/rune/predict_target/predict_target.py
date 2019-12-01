@@ -16,6 +16,12 @@ class PredictTarget(Module):
         self.angles = []
 
     def process(self, image):
+        """
+        Saves the target panels for consecutive frames
+        After collecting several frames it predicts where the target will be
+        :param image: an image cropped around the power rune
+        :return: None or (x,y)
+        """
         angles = self.assign_panels.process(image)
         if angles:
             angle = self.get_activating_angle(angles)

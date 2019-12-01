@@ -9,10 +9,9 @@ from source.common.module import Module
 
 
 class AssignPanels(Module):
-    def __init__(self, parent, state=None):
+    def __init__(self, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, parent=parent, state=state)
-        # todo: obtain and set frame size here
+        super().__init__(self.working_dir, state=state)
         self.frame = None
 
     def process(self, centered_frame):
@@ -34,40 +33,10 @@ class AssignPanels(Module):
 
         return states
 
-    def calc_lumin_square(self, frame_bw, coords_center):
-        # todo: move size_frame attribute to predict_target.settings?
-        size_square = self.properties["size_square_mask"] * len(frame_bw)
-        cnt_pixels = 0
-        cnt_whites = 0
-
-        for y in range(round(coords_center[1] - size_square / 2), round(coords_center[1] + size_square / 2)):
-            for x in range(round(coords_center[0] - size_square / 2), round(coords_center[0] + size_square / 2)):
-                cnt_pixels += 1
-                if frame_bw[y][x]:
-                    cnt_whites += 1
-
-        return 255 * cnt_whites/cnt_pixels
-
-    def calc_lumins_squares(self, frame_bw):
-        # todo: move radius to parent module maybe? depends on how he does it.
-        lumins_squares = []
-        for angle in range(0, 360, self.properties["angle_increment_mask"]):
-            angle *= 3.1415 / 180
-            size_frame = len(frame_bw)
-
-            x_center = len(frame_bw) / 2 + self.properties["radius_square_mask"] * size_frame * math.sin(angle)
-            y_center = len(frame_bw) / 2 - self.properties["radius_square_mask"] * size_frame * math.cos(angle)
-            lumins_squares += [self.calc_lumin_square(frame_bw, (x_center, y_center))]
-
-            if self.properties["mode"] == 'debug':
-                self.draw_square((x_center, y_center))
-
-        return lumins_squares
-
     def calc_lumins_lines(self, frame_bw):
         lumins_lines = []
         for angle in range(0, 360, self.properties["angle_increment_mask"]):
-            angle *= 3.1415 / 180
+            angle = np.radians(angle)
             size_frame = len(frame_bw)
             cnt_pixels = 0
             cnt_whites = 0
@@ -102,7 +71,6 @@ class AssignPanels(Module):
         return peak_angles
 
     def assign_state(self, lumin):
-        # todo: fix the panel state defined by parent issue
         if lumin > self.properties["lumin_peak_border"]:
             return self.properties["panel_states"]["active"]
         elif self.properties["lumin_peak_min"] < lumin <= self.properties["lumin_peak_border"]:
@@ -150,3 +118,32 @@ class AssignPanels(Module):
             dtype=np.int32
         )
         cv2.polylines(self.frame, [points], True, self.properties["color_mask_debug"], 1)
+
+    # Additional masking functions
+    def calc_lumin_square(self, frame_bw, coords_center):
+        size_square = self.properties["size_square_mask"] * len(frame_bw)
+        cnt_pixels = 0
+        cnt_whites = 0
+
+        for y in range(round(coords_center[1] - size_square / 2), round(coords_center[1] + size_square / 2)):
+            for x in range(round(coords_center[0] - size_square / 2), round(coords_center[0] + size_square / 2)):
+                cnt_pixels += 1
+                if frame_bw[y][x]:
+                    cnt_whites += 1
+
+        return 255 * cnt_whites/cnt_pixels
+
+    def calc_lumins_squares(self, frame_bw):
+        lumins_squares = []
+        for angle in range(0, 360, self.properties["angle_increment_mask"]):
+            angle = np.radians(angle)
+            size_frame = len(frame_bw)
+
+            x_center = len(frame_bw) / 2 + self.properties["radius_square_mask"] * size_frame * math.sin(angle)
+            y_center = len(frame_bw) / 2 - self.properties["radius_square_mask"] * size_frame * math.cos(angle)
+            lumins_squares += [self.calc_lumin_square(frame_bw, (x_center, y_center))]
+
+            if self.properties["mode"] == 'debug':
+                self.draw_square((x_center, y_center))
+
+        return lumins_squares
