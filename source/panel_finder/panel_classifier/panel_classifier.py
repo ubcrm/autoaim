@@ -3,15 +3,13 @@ Reads data from Data/ and trains the Neural network on this data.
 The network is then saved to be used in led_match.py
 """
 
+from source.instance import get_json_from_path
+from source.common.module import Module
+from pathlib import Path
+import tensorflow as tf
+import numpy as np
 import datetime
 import os
-from pathlib import Path
-
-import numpy as np
-import tensorflow as tf
-
-from source.common.module import Module
-from source.instance import get_json_from_path, ROOT_DIR
 
 
 def find_ratio(a, b):
@@ -36,15 +34,17 @@ class PanelClassifier(Module):
         super().__init__(self.working_dir, state, default={"mode": "train"})
 
         if self.properties["mode"] == "train":
-            self.data = get_json_from_path(ROOT_DIR / self.properties["data_path"])
+            self.data = get_json_from_path(self.working_dir / self.properties["data_path"])
             self.shape = self.properties["learning"]["network_shape"]
             self.model = self.create_model()
             self.train_model()
             self.save_model()
-            # self.save_to_tensorflow()
 
-        elif self.properties["mode"] == "load":
+        elif self.properties["mode"] == "load" or self.properties["mode"] == "convert":
             self.model = self.load_model(self.properties["model_path"])
+
+            if self.properties["mode"] == "convert":
+                self.save_to_tensorflow()
 
     def train_model(self):
         """
@@ -57,9 +57,8 @@ class PanelClassifier(Module):
         train_x, train_y, test_x, test_y = self.create_data()
 
         # train model, update tensorboard
-        log_dir = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        log_dir = log_dir.replace("/", os.path.sep)
-        print(os.path.sep)
+        log_append = self.properties["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = Path(self.working_dir / log_append)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         self.model.fit(train_x, train_y, epochs=self.properties["learning"]["epochs"], callbacks=[tensorboard_callback],
                        class_weight={0: 1.,
@@ -85,12 +84,13 @@ class PanelClassifier(Module):
         """
         print("Saving model")
         if path is None:
-            path = self.properties["model_path"]
-        self.model.save(ROOT_DIR / path)
+            model_path = self.properties["model_path"]
+
+        self.model.save(self.working_dir / model_path)
 
     def save_to_tensorflow(self):
         frozen_graph = self.freeze_session(output_names=[out.op.name for out in self.model.outputs])
-        tf.compat.v1.train.write_graph(frozen_graph, str(self.working_dir), "my_model.pb", as_text=False)
+        tf.compat.v1.train.write_graph(frozen_graph, str(self.working_dir / self.properties["create_tf_model_path"]), "model.pb", as_text=False)
 
     def freeze_session(self, keep_var_names=None, output_names=None, clear_devices=True):
         """
@@ -132,12 +132,11 @@ class PanelClassifier(Module):
         if path is None:
             path = self.properties["model_path"]
 
-        return tf.keras.models.load_model(ROOT_DIR / path)
+        return tf.keras.models.load_model(self.working_dir / path)
 
     @staticmethod
     def model_predict(model, model_input):
         o = model.predict(model_input)
-        # print(o, o.argmax())
         return o
 
     @staticmethod
@@ -197,7 +196,7 @@ class PanelClassifier(Module):
         :return: network layers as list
         """
         return [
-            tf.keras.layers.Dense(self.shape[0], activation=tf.nn.relu),
+            tf.keras.layers.Dense(units=self.shape[0], activation=tf.nn.relu, input_shape=(self.shape[0],)),
             tf.keras.layers.Dense(self.shape[1]),
             tf.keras.layers.Dense(2, activation=tf.nn.softmax)
         ]
@@ -222,4 +221,5 @@ class PanelClassifier(Module):
 
     def process(self, leds, frame_dims):
         formatted_input = np.asarray([PanelClassifier.create_nn_input(leds, frame_dims)])
-        return self.model.predict(formatted_input)[0][0]-self.model.predict(formatted_input)[0][1]
+        prediction = self.model.predict(formatted_input)
+        return prediction[0][0]

@@ -1,8 +1,10 @@
 {
-  "mode": "webcam",
+  "mode": "train",
   "checkpoint_path": "checkpoints/",
-  "data_path": "assets/panel_finder/panel_classifier/data/pair_training_data.json",
-  "model_path": "assets/panel_finder/panel_classifier/model/saves/model.hdf5",
+  "data_path": "assets/data/pair_training_data.json",
+  "model_path": "assets/model/saves/model.hdf5",
+  "create_tf_model_path": "assets/model/saves",
+  "load_tf_model": "assets/model/saves/model.pb",
   "log_dir": "out/logs/",
   "train_test_ratio": 0.8,
   "video_dims": {
@@ -12,7 +14,7 @@
   "learning": {
     "network_shape": [5,3,2],
     "input_size": 5,
-    "epochs": 1000,
+    "epochs": 500,
     "learning_rate": 0.001,
     "iterations": 10
   }

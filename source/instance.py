@@ -11,4 +11,7 @@ def get_json_from_path(path):
     return json.loads(path.read_text())
 
 
-ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent  # project root
+class Instance:
+    state = {
+        "root_dir": Path(os.path.dirname(os.path.abspath(__file__))).parent  # project root
+    }

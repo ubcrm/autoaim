@@ -1,12 +1,10 @@
+import cv2
 import json
 import os
 import time
-
-import cv2
 import numpy as np
-
-from source.common import bit_mask, detect_shape
 from source.panel_finder.data.leds import Led, LedCombs
+from source.common import bit_mask, shape_finder
 
 leds = []
 pairs = []
@@ -78,15 +76,15 @@ def main():
     cv2.setMouseCallback("Press q to quit", click)
     ending = False
 
-    # Capture frame_bw-by-frame_bw
-    ret, frame = cap.read()  # ret = 1 if the video is captured; frame_bw is the image in blue, green, red
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
 
     # loop through frames in video
     while ret and not ending:
         start = time.time()
 
         mask = bit_mask.under_exposed_threshold(frame)
-        leds = detect_shape.find_rectangles(mask)
+        leds = shape_finder.find_rectangles(mask)
         draw_rectangles(leds)
         guess_past(past_pairs, leds)
 
@@ -117,10 +115,10 @@ def main():
         pairs = []
         image_index += 1
 
-        # get next frame_bw
+        # get next frame
         ret, frame = cap.read()
     else:
-        print("Last frame_bw reached")
+        print("Last frame reached")
 
     with open(DIR + DATA_OUT, 'w') as f:
         json.dump(pair_data, f, indent=4)
