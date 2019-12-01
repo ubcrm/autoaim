@@ -20,17 +20,16 @@ class PanelFinder(Module):
         if state["framework"] == "tensorflow":
             from source.panel_finder.panel_classifier.panel_classifier import PanelClassifier
             state["mode"] = "load"
-            self.classifier = PanelClassifier(state=state)
+            self.classifier = PanelClassifier(self, state=state)
         elif state["framework"] == "opencv":
             from source.panel_finder.panel_classifier.inference_opencv import OpenCVClassifier
-            self.classifier = OpenCVClassifier()
+            self.classifier = OpenCVClassifier(self)
             state = {}
 
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, state=state)
-        self.led_finder = LEDFinder()
+        self.led_finder = LEDFinder(self)
         self.panel = None
-            
 
     def predict_leds(self, led_a, led_b, frame_dims):
         return self.classifier.process((led_a, led_b), frame_dims)

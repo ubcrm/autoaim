@@ -6,11 +6,11 @@ import os
 
 
 class LEDFinder(Module):
-    def __init__(self, state=None):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
-        self.bitmasker = Bitmask()
-        self.shape_finder = ShapeFinder()
+        super().__init__(self.working_dir, parent=parent, state=state)
+        self.bitmasker = Bitmask(self)
+        self.shape_finder = ShapeFinder(self)
 
     def process(self, frame):
         mask = self.bitmasker.process(frame)

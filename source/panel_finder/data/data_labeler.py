@@ -12,10 +12,9 @@ from source.panel_finder.data.leds import Led, LedCombs
 
 
 class DataLabeler(Module):
-    def __init__(self, settings, state=None):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
-        super(state, self.working_dir)
+        super().__init__(self.working_dir, parent=parent, state=state)
 
     def show_feed(self, labels, rects, image):
         for label in labels.values():
