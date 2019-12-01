@@ -8,9 +8,9 @@ from source.rune.predict_target.assign_panels.assign_panels import AssignPanels
 
 
 class PredictTarget(Module):
-    def __init__(self, state=None):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
+        super().__init__(self.working_dir, parent=parent, state=state)
         self.assign_panels = AssignPanels({"mode": "not debug"})
         self.frames_calculated = 0
         self.angles = []

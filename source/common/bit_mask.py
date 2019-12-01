@@ -12,10 +12,9 @@ def under_exposed_threshold(image):
 
 
 class Bitmask(Module):
-    def __init__(self, state=None):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
+        super().__init__(self.working_dir, parent=parent, state=state)
 
     def process(self, frame):
         return under_exposed_threshold(frame)
-

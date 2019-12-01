@@ -23,9 +23,9 @@ def find_ratio(a, b):
 
 
 class OpenCVClassifier(Module):
-    def __init__(self):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir)
+        super().__init__(self.working_dir, parent=parent, state=state)
 
     def load_model(self, path=None):
         """
