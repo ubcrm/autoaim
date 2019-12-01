@@ -14,7 +14,12 @@ class Rune(Module):
         self.rune_center = self.properties["rune_center"]
 
     def process(self, frame):
+        """
+        predicts where the rune target will be
+        :param frame: an image containing the power rune
+        :return: None or (x,y) of the prediction
+        """
         cropped, left, top = self.preprocess.process(frame, self.rune_center)
         prediction = self.predict_target.process(cropped)
         if prediction is not None:
-            return [prediction[0] + left, prediction[1] + top]
+            return prediction[0] + left, prediction[1] + top
