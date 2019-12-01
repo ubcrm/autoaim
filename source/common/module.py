@@ -4,6 +4,7 @@ from source.instance import Instance
 
 class Module:
     def __init__(self, wd, state=None, default=None, parent=None):
+        self.parent = parent
         try:
             self.properties = get_json_from_path(wd / "settings.json")
         except FileNotFoundError:
