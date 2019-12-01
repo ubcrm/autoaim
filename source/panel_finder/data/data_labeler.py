@@ -1,19 +1,20 @@
-import cv2, os
-import numpy as np
 from pathlib import Path
 
-from source.instance import get_json_from_file
+import cv2
+import numpy as np
+import os
+
 from source.common.bit_mask import over_exposed_threshold
 from source.common.shape_finder import find_rectangles
 from source.common.module import Module
+from source.instance import get_json_from_file
 from source.panel_finder.data.leds import Led, LedCombs
 
 
 class DataLabeler(Module):
-    def __init__(self, settings, state=None):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
-        super(state, self.working_dir)
+        super().__init__(self.working_dir, parent=parent, state=state)
 
     def show_feed(self, labels, rects, image):
         for label in labels.values():

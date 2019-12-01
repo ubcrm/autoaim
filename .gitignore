@@ -7,8 +7,8 @@ source/panel_finder/panel_classifier/out
 .vscode/
 out/
 
-*.jpgs
+*.png
+*.jpg
 *.mov
 *.mp4
 *.pyc
-

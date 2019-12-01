@@ -1,14 +1,16 @@
-from source.instance import get_json_from_file
-from source.common.module import Module
-from pathlib import Path
-import cv2
 import os
+from pathlib import Path
+
+import cv2
+
+from source.common.module import Module
+from source.instance import get_json_from_file
 
 
 class LabelEditor(Module):
-    def __init__(self, state=None):
+    def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, state=state)
+        super().__init__(self.working_dir, parent=parent, state=state)
 
     def edit_label(self, l):
         """
