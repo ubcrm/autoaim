@@ -13,5 +13,10 @@ class LEDFinder(Module):
         self.shape_finder = ShapeFinder()
 
     def process(self, frame):
+        """
+        finds panel leds in an image
+        :param frame: bgr image that may contain panel leds
+        :return: [] list of rectangle dictionaries
+        """
         mask = self.bitmasker.process(frame)
         return self.shape_finder.process(mask)

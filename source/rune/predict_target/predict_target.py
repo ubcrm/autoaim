@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+import time
 import numpy as np
 
 from source.common.module import Module
@@ -22,19 +22,19 @@ class PredictTarget(Module):
         :param image: an image cropped around the power rune
         :return: None or (x,y)
         """
-        angles = self.assign_panels.process(image)
+        angles, t = self.assign_panels.process(image), time.time()
         if angles:
             angle = self.get_activating_angle(angles)
             if angle is None:
                 self.frames_calculated = 0
                 self.angles = []
                 return None
-            self.angles.append(angle)
+            self.angles.append((angle, t))
             self.frames_calculated += 1
         if self.frames_calculated >= self.properties["tracking_frames"]:
             speed = self.calculate_rotational_velocity(self.angles)
-            target_arm = self.angles[-1]
-            target_angle = np.radians(target_arm + speed * self.properties["frames_ahead"])
+            target_arm = self.angles[-1][0]
+            target_angle = np.radians(target_arm + speed * self.properties["seconds_ahead"])
             target_point = (
                 image.shape[0] * self.properties["arm_length"] * np.sin(target_angle) + image.shape[0] / 2,
                 image.shape[0] * self.properties["arm_length"] * -np.cos(target_angle) + image.shape[1] / 2)
@@ -50,10 +50,11 @@ class PredictTarget(Module):
             return 0
         avg_speed = 0
         for i in range(len(angles_list) - 1):
-            delta = angles_list[i + 1] - angles_list[i]
-            if delta < 0:
-                delta += 365
-            avg_speed += delta
+            delta_angle = angles_list[i + 1][0] - angles_list[i][0]
+            delta_time = angles_list[i + 1][1] - angles_list[i][1]
+            if delta_angle < 0:
+                delta_angle += 365
+            avg_speed += delta_angle / delta_time
         return avg_speed / (len(angles_list) - 1)
 
     def get_activating_angle(self, targets):
