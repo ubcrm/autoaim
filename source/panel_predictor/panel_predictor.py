@@ -1,7 +1,7 @@
 from source.common.module import Module
 from pathlib import Path
 import os
-from source.panel_predictor.panel_finder.panel_finder import PanelFinder
+from .panel_finder.panel_finder import PanelFinder
 import time
 
 
@@ -14,6 +14,11 @@ class PanelPredictor(Module):
         self.past_targets = []
 
     def process(self, frame):
+        """
+        predicts where the center of the panel will be
+        :param frame: an image that may contain a robot
+        :return: ((x,y), confidence)  coordinates of panel and confidence it will be there
+        """
         panel = self.panel_finder.process(frame)
         if panel is not None:
             panel, confidence = panel
@@ -22,11 +27,17 @@ class PanelPredictor(Module):
             self.past_targets.append((panel["x_center"], panel["y_center"], time.time(), confidence))
         if len(self.past_targets) == self.properties["reference_frames"]:
             if self.properties["prediction_type"] == "linear":
-                velocity, distance_confidence = self.average_velocity(((frame.shape[0]) ** 2 + (frame.shape[1]) ** 2) ** (1 / 2))
-                foresight_time = time.time() - self.past_targets[-1][2] + self.properties["seconds_ahead"]
-                prediction = (round(self.past_targets[-1][0] + velocity[0] * foresight_time), round(self.past_targets[-1][1] + velocity[1] * foresight_time))
-                cumulative_confidence = distance_confidence * (1 / (foresight_time * self.properties["time_confidence_falloff"] + 1))
-                return prediction, cumulative_confidence
+                return self.linear_prediction(frame)
+
+    def linear_prediction(self, frame):
+        frame_size = ((frame.shape[0]) ** 2 + (frame.shape[1]) ** 2) ** (1 / 2)
+        velocity, distance_confidence = self.average_velocity(frame_size)
+        foresight_time = time.time() - self.past_targets[-1][2] + self.properties["seconds_ahead"]
+        prediction = (round(self.past_targets[-1][0] + velocity[0] * foresight_time),
+                      round(self.past_targets[-1][1] + velocity[1] * foresight_time))
+        foresight_confidence = (1 / (foresight_time * self.properties["time_confidence_falloff"] + 1))
+        cumulative_confidence = distance_confidence * foresight_confidence
+        return prediction, cumulative_confidence
 
     def average_velocity(self, max_distance):
         avg_velocity = [0, 0]
