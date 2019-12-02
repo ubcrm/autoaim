@@ -8,7 +8,7 @@ from source.common.bit_mask import over_exposed_threshold
 from source.common.shape_finder import find_rectangles
 from source.common.module import Module
 from source.instance import get_json_from_file
-from source.panel_finder.data.leds import Led, LedCombs
+from source.panel_predictor.panel_finder.data import Led, LedCombs
 
 
 class DataLabeler(Module):

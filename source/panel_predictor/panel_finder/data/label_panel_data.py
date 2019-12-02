@@ -3,7 +3,7 @@ import json
 import os
 import time
 import numpy as np
-from source.panel_finder.data.leds import Led, LedCombs
+from source.panel_predictor.panel_finder.data import Led, LedCombs
 from source.common import bit_mask, shape_finder
 
 leds = []
