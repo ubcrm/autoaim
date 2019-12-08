@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from source.common.module import Module
+from source.module import Module
 
 
 class PreprocessRune(Module):

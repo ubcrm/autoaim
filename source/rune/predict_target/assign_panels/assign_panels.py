@@ -5,7 +5,7 @@ import math
 from pathlib import Path
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
-from source.common.module import Module
+from source.module import Module
 
 
 class AssignPanels(Module):

@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from source.common.module import Module
+from source.module import Module
 from source.rune.predict_target.predict_target import PredictTarget
 from source.rune.preprocess_rune.preprocess_rune import PreprocessRune
 

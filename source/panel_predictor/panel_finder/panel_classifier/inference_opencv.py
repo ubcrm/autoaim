@@ -1,5 +1,5 @@
 from source.instance import get_json_from_path
-from source.common.module import Module
+from source.module import Module
 from pathlib import Path
 import numpy as np
 import cv2
@@ -65,4 +65,4 @@ class OpenCVClassifier(Module):
         net = self.load_model()
         formatted_input = np.asarray([OpenCVClassifier.create_nn_input(leds, frame_dims)])
         prediction = self.model_predict(net, formatted_input)
-        return prediction[0][0]
+        return prediction[0][1]

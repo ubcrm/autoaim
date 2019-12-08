@@ -3,7 +3,7 @@ from pathlib import Path
 import time
 import numpy as np
 
-from source.common.module import Module
+from source.module import Module
 from source.rune.predict_target.assign_panels.assign_panels import AssignPanels
 
 

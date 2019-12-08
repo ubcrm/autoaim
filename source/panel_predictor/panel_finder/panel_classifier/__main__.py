@@ -1,4 +1,4 @@
-from .panel_classifier import PanelClassifier
+from panel_classifier import PanelClassifier
 import argparse
 
 if __name__ == "__main__":
@@ -9,9 +9,9 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--data',
                         help="Specifies the path to the data file to train the model")
     parser.add_argument('-m', '--mode', required=True,
-                        help="Sets the mode of the classifier. Options: train, load")
+                        help="Sets the mode of the classifier. Options: train, load, convert")
     parser.add_argument('-M', '--model',
-                        help="Specifies the path to the data file to store or load the trained model, (load, train, convert, pi)")
+                        help="Specifies the path to the data file to store or load the trained model, (load, train)")
 
     args = vars(parser.parse_args())
 
