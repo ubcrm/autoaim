@@ -26,6 +26,7 @@ class OpenCVClassifier(Module):
     def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, parent=parent, state=state)
+        self.net = self.load_model()
 
     def load_model(self, path=None):
         """
@@ -35,7 +36,8 @@ class OpenCVClassifier(Module):
         """
         if path is None:
             path = self.properties["load_tf_model"]
-
+        # print("HELLO")
+        # print(str(self.working_dir / path))
         return cv2.dnn.readNetFromTensorflow(str(self.working_dir / path))
 
     @staticmethod
@@ -62,7 +64,9 @@ class OpenCVClassifier(Module):
 
 
     def process(self, leds, frame_dims):
-        net = self.load_model()
         formatted_input = np.asarray([OpenCVClassifier.create_nn_input(leds, frame_dims)])
-        prediction = self.model_predict(net, formatted_input)
+        prediction = self.model_predict(self.net, formatted_input)
+        # if prediction[0][1] > 0.75:
+        #     print("pair")
+        # print(prediction)
         return prediction[0][1]

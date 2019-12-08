@@ -1,4 +1,4 @@
-from source.panel_predictor.panel_finder import PanelFinder
+from source.panel_predictor.panel_finder.panel_finder import PanelFinder
 from imutils.video import VideoStream
 import argparse
 import cv2
@@ -7,7 +7,7 @@ import cv2
 def display_frame(frame, panel=None):
     # Display the resulting image
     if panel is not None:
-        cv2.circle(frame, (panel["x_center"], panel["y_center"]), 3, (0, 255, 0), -1)
+        cv2.circle(frame, (panel[0]["x_center"], panel[0]["y_center"]), 3, (0, 255, 0), -1)
     cv2.imshow('Press q to quit', frame)
 
 

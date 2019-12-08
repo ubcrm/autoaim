@@ -43,6 +43,7 @@ class PanelFinder(Module):
 
     def predict_leds(self, led_a, led_b, frame_dims):
         return self.classifier.process((led_a, led_b), frame_dims)
+        # return 0.01
 
     def process(self, frame):
         """
