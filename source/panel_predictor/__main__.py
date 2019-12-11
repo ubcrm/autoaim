@@ -27,7 +27,6 @@ def run_video(framework, capture):
             break
         # get next frame
         ret, frame = capture.read()
-    print("end of input")
     capture.release()
     cv2.destroyAllWindows()
 
