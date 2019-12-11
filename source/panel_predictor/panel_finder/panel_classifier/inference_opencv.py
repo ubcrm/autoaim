@@ -1,5 +1,5 @@
 from source.instance import get_json_from_path
-from source.common.module import Module
+from source.module import Module
 from pathlib import Path
 import numpy as np
 import cv2
@@ -26,6 +26,7 @@ class OpenCVClassifier(Module):
     def __init__(self, parent, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, parent=parent, state=state)
+        self.model = self.load_model()
 
     def load_model(self, path=None):
         """
@@ -39,9 +40,9 @@ class OpenCVClassifier(Module):
         return cv2.dnn.readNetFromTensorflow(str(self.working_dir / path))
 
     @staticmethod
-    def model_predict(net, nn_input):
-        net.setInput(nn_input)
-        return net.forward()
+    def model_predict(model, nn_input):
+        model.setInput(nn_input)
+        return model.forward()
 
     @staticmethod
     def create_nn_input(leds, video_dims):
@@ -62,7 +63,6 @@ class OpenCVClassifier(Module):
 
 
     def process(self, leds, frame_dims):
-        net = self.load_model()
         formatted_input = np.asarray([OpenCVClassifier.create_nn_input(leds, frame_dims)])
-        prediction = self.model_predict(net, formatted_input)
-        return prediction[0][0]
+        prediction = self.model_predict(self.model, formatted_input)
+        return prediction[0][1]

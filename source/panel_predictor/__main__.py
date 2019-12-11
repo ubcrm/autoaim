@@ -43,7 +43,7 @@ def run_live(framework):
 
         if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
-        ret, frame = cap.read()  # get next frame
+        frame = cap.read()  # get next frame
     cap.release()
     cv2.destroyAllWindows()
 

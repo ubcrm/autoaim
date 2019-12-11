@@ -1,5 +1,5 @@
 from source.panel_predictor.panel_finder.led_finder.led_finder import LEDFinder
-from source.common.module import Module
+from source.module import Module
 from pathlib import Path
 import os
 
@@ -34,8 +34,7 @@ class PanelFinder(Module):
             self.classifier = PanelClassifier(self, state=state)
         elif state["framework"] == "opencv":
             from source.panel_predictor.panel_finder.panel_classifier.inference_opencv import OpenCVClassifier
-            self.classifier = OpenCVClassifier(self)
-            state = {}
+            self.classifier = OpenCVClassifier(self, state=state)
 
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, parent=parent, state=state)

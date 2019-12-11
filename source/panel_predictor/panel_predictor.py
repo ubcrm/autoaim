@@ -1,4 +1,4 @@
-from source.common.module import Module
+from source.module import Module
 from pathlib import Path
 import os
 from .panel_finder.panel_finder import PanelFinder

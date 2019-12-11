@@ -4,7 +4,7 @@ The network is then saved to be used in led_match.py
 """
 
 from source.instance import get_json_from_path
-from source.common.module import Module
+from source.module import Module
 from pathlib import Path
 import tensorflow as tf
 import numpy as np
@@ -29,7 +29,7 @@ def find_ratio(a, b):
 
 
 class PanelClassifier(Module):
-    def __init__(self, parent, state=None):
+    def __init__(self, parent=None, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, parent=parent, state=state)
 
