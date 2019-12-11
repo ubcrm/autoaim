@@ -3,7 +3,7 @@ import cv2
 from imutils.video import VideoStream
 import argparse
 
-from source.rune.rune import Rune
+from rune.rune import Rune
 
 
 def display_target(frame, point):
