@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    panel_finder = PanelFinder(state={"framework": framework})
+    panel_finder = PanelFinder(state={"framework": args["framework"]})
 
     if args["mode"] == "video" and args["video"]:
         run_video(panel_finder, cv2.VideoCapture(args["video"]))

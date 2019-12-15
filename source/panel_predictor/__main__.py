@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    panel_predictor = PanelPredictor(state={"framework": framework})
+    panel_predictor = PanelPredictor(state={"framework": args["framework"]})
 
     if args["mode"] == "video" and args["video"]:
         run_video(panel_predictor, cv2.VideoCapture(args["video"]))
