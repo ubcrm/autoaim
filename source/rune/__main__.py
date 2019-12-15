@@ -1,6 +1,5 @@
 import sys
 import cv2
-from imutils.video import VideoStream
 import argparse
 
 from source.rune.rune import Rune
@@ -37,9 +36,9 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     if args["mode"] == "video" and args["video"]:
-        run_video(capture=cv2.VideoCapture(args["video"]))
+        run_video(cv2.VideoCapture(args["video"]))
     elif args["mode"] in ["webcam", "camera", "live"]:
-        run_video(capture=cv2.VideoCapture(0))
+        run_video(cv2.VideoCapture(0))
     else:
         print("No valid mode specified, Exiting.")
         exit(1)

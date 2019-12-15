@@ -1,7 +1,6 @@
 from source.panel_predictor.panel_predictor import PanelPredictor
 import argparse
 import cv2
-from imutils.video import VideoStream
 
 
 def display_frame(frame, target=None):
@@ -13,8 +12,7 @@ def display_frame(frame, target=None):
     cv2.imshow('Press q to quit', frame)
 
 
-def run_video(framework, capture):
-    panel_predictor = PanelPredictor(state={"framework": framework})
+def run_video(panel_predictor, capture):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
@@ -41,10 +39,12 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
+    panel_predictor = PanelPredictor(state={"framework": framework})
+
     if args["mode"] == "video" and args["video"]:
-        run_video(framework=args["framework"], capture=cv2.VideoCapture(args["video"]))
+        run_video(panel_predictor, cv2.VideoCapture(args["video"]))
     elif args["mode"] in ["webcam", "camera", "live"]:
-        run_video(framework=args["framework"], capture=cv2.VideoCapture(0))
+        run_video(panel_predictor, cv2.VideoCapture(0))
     else:
         print("No valid mode specified, Exiting.")
         exit(1)
