@@ -9,13 +9,18 @@ def listen():
 	data_left = ser.inWaiting()
 	received_data += ser.read(data_left)
 	print(received_data)
-	#ser.write(received_data)
 
 def send():
 	data = input("Type: ")
-	ser.write(data.encode())
+	if data != "":
+		ser.write(data.encode())
+		return True
+	else:
+		print("Data must not be null")
+		return False
 
 while True:
-	send()
+	data_sent_flag = send()
 	#time.sleep(0.5)
-	listen()
+	if data_sent_flag:
+		listen()
