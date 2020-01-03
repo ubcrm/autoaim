@@ -1,0 +1,16 @@
+mode: "load"  # choose from load, train, convert
+checkpoint_path: "checkpoints/"
+data_path: "assets/data/train.json"
+model_path: "assets/model/model.hdf5"
+create_tf_model_path: "assets/model"
+log_dir: "out/logs/"
+train_test_ratio: 0.8
+
+learning:
+  network_shape: [5, 3, 2]
+  input_size: 5
+  epochs: 500
+  learning_rate: 0.001
+  iterations: 10
+
+panel_criterion: 0.75  # minimum confidence to consider a pair a panel

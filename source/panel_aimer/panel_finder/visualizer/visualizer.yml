@@ -1,0 +1,28 @@
+save:  # save labeled video
+  do: False
+  name: "assets/labeled_videos/%d.mp4"  # insert time
+  fps: 30.0  # [frame/second]
+
+colors:
+  led: [255, 180, 0]
+  not_led: [0, 180, 255]
+  panel: [0, 0, 255]
+  not_panel: [0, 220, 255]
+  target: [0, 255, 0]
+  text: [255, 255, 255]
+
+text:
+  font: 0  # based on opencv fonts
+  scale: 0.5  # [font base size]
+  scale_label: 0.46
+  position:  # [pixel]
+    led_label: [7, 4]
+    panel_label: [-15, 4]
+    distance: [-16, -16]
+
+line_thickness: 2  # [pixel]
+target_radius: 3  # [pixel]
+
+draw:  # options to show invalid objects or not
+  not_led: True
+  not_panel: False

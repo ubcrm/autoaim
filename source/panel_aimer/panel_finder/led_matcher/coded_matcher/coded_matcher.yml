@@ -1,0 +1,6 @@
+criteria:  # confidence config for a panel
+  angle_delta: [0, 0, 3, 6]  # [degree]
+  ratio_dims: [0.75, 1, 2.5, 4]
+  skew: [-1.e+6, -1.e+6, 0.5, 0.6]
+
+  panel: 0.5  # minimum confidence to consider a pair a panel

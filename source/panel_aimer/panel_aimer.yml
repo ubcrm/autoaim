@@ -1,0 +1,5 @@
+mode: "run"  # choose from: run, debug, compete
+feed_dims: [1920, 1080]  # [pixel] for input feed
+
+delay: 1  # [millisecond] choose integer bigger than 0
+key_quit: "q"

@@ -1,0 +1,10 @@
+view:  # displayed video properties
+  scale: 0.5  # frame scale factor for faster processsing
+  dims:  # assigned during runtime (see note below)
+  title_frame: "Frame"
+  title_mask: "Mask"
+
+mask:  # led mask
+  range: [[0, 0, 250], [180, 255, 255]]
+  dilation_rel: 0.0037  # [frame height] relative dilation size
+  dilation:  # [pixel] assigned during runtime based on frame height

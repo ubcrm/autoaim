@@ -1,15 +1,15 @@
-from source.instance import get_json_from_path
-from source.instance import Instance
+from pathlib import Path
+import os
+import yaml
 
 
 class Module:
-    def __init__(self, wd, state=None, parent=None):
+    def __init__(self, wd, parent, config):
         self.parent = parent
         try:
-            self.properties = get_json_from_path(wd / "settings.json")
+
+            self.config = yaml.full_load(Path(wd / ('%s.yml' % os.path.basename(wd))).read_text())
         except FileNotFoundError:
-            self.properties = {}
-        self.instance = Instance.state
-        if state:
-            # merges static settings and dynamically passed state. States override settings.
-            self.properties.update(state)
+            self.config = {}
+        # merge default configuration and passed configuration, the latter overrides
+        self.config.update(config)
