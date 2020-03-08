@@ -1,7 +1,9 @@
 from source.panel_predictor.panel_predictor import PanelPredictor
 from source.distance_predictor.distance_predictor import DistancePredictor
+from source.gimbal_angle.finder.gimbal_angle_finder import GimbalAngleFinder
 import argparse
 import cv2
+
 
 def display_frame(frame, target=None):
     # Display the resulting image
@@ -10,6 +12,7 @@ def display_frame(frame, target=None):
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
         cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
     cv2.imshow('Press q to quit', frame)
+
 
 def run(panel_predictor, capture):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
@@ -46,3 +49,9 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
+
+    distance_predictor = DistancePredictor()
+
+    gimbal_angle_finder = GimbalAngleFinder()
+
+    run(panel_predictor, cv2.VideoCapture(0), args["show"])
