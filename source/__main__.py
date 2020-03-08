@@ -1,6 +1,8 @@
-from source.panel_predictor.panel_predictor import PanelPredictor
-from source.distance_predictor.distance_predictor import DistancePredictor
+
 from source.gimbal_angle.finder.gimbal_angle_finder import GimbalAngleFinder
+from source.distance_predictor.distance_predictor import DistancePredictor
+from source.panel_predictor.panel_predictor import PanelPredictor
+from source.uart_driver import uart
 import argparse
 import cv2
 
@@ -30,15 +32,6 @@ def run(panel_predictor, capture):
     capture.release()
     cv2.destroyAllWindows()
 
-while True:
-    # Step 1 - Detect Panels
-
-    # Step 2 - Calculate Distance 
-
-    # Step 3 - Calculate angle position
-
-    # Step 4 - Send angle pos back to embedded
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -54,4 +47,4 @@ if __name__ == "__main__":
 
     gimbal_angle_finder = GimbalAngleFinder()
 
-    run(panel_predictor, cv2.VideoCapture(0), args["show"])
+    run(panel_predictor, distance_predictor, gimbal_angle_finder, cv2.VideoCapture(0), args["show"])
