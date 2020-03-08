@@ -1,5 +1,4 @@
-
-from source.gimbal_angle.finder.gimbal_angle_finder import GimbalAngleFinder
+from source.gimbal_angle_finder.gimbal_angle_finder import GimbalAngleFinder
 from source.distance_predictor.distance_predictor import DistancePredictor
 from source.panel_predictor.panel_predictor import PanelPredictor
 from source.uart_driver import uart
@@ -16,14 +15,16 @@ def display_frame(frame, target=None):
     cv2.imshow('Press q to quit', frame)
 
 
-def run(panel_predictor, capture):
+def run(panel_predictor, distance_predictor, gimbal_angle_finder, capture, display):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
     while ret:
         frame = cv2.pyrDown(frame)
         target = panel_predictor.process(frame)
-        display_frame(frame, target)
+
+        if display:
+            display_frame(frame, target)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
