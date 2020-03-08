@@ -18,9 +18,11 @@ def send():
 	else:
 		print("Data must not be null")
 		return False
+		
+if __name__ == "__main__":
 
-while True:
-	data_sent_flag = send()
-	#time.sleep(0.5)
-	if data_sent_flag:
-		listen()
+	while True:
+		data_sent_flag = send()
+		#time.sleep(0.5)
+		if data_sent_flag:
+			listen()
