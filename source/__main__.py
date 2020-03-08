@@ -1,6 +1,7 @@
 from source.gimbal_angle_finder.gimbal_angle_finder import GimbalAngleFinder
 from source.distance_predictor.distance_predictor import DistancePredictor
 from source.panel_predictor.panel_predictor import PanelPredictor
+from pivideostream import PiVideoStream
 from source.uart_driver import uart
 import argparse
 import cv2
@@ -40,13 +41,24 @@ def run(panel_predictor, distance_predictor, gimbal_angle_finder, capture, displ
     cv2.destroyAllWindows()
 
 
+class VideoStream:
+	def __init__(self, src=0, usePiCamera=False, resolution=(320, 240), framerate=32):
+		if usePiCamera:
+			# initialize the picamera stream and allow the camera sensor to warmup
+			self.stream = PiVideoStream(resolution=resolution, framerate=framerate)
+		# otherwise, we are using OpenCV so initialize the webcam stream
+		else:
+			self.stream = cv2.VideoCapture(0)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--framework', default="tensorflow",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
     parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=False)
     args = vars(parser.parse_args())
+    video_stream = VideoStream()
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     distance_predictor = DistancePredictor()
     gimbal_angle_finder = GimbalAngleFinder()
-    run(panel_predictor, distance_predictor, gimbal_angle_finder, cv2.VideoCapture(0), args["show"])
+    run(panel_predictor, distance_predictor, gimbal_angle_finder, video_stream, args["show"])
