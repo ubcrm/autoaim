@@ -57,7 +57,7 @@ if __name__ == "__main__":
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
     parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=False)
     args = vars(parser.parse_args())
-    video_stream = VideoStream()
+    video_stream = VideoStream(usePiCamera=True)
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     distance_predictor = DistancePredictor()
     gimbal_angle_finder = GimbalAngleFinder()
