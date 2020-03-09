@@ -1,5 +1,4 @@
 from source.gimbal_angle_finder.gimbal_angle_finder import GimbalAngleFinder
-from source.distance_predictor.distance_predictor import DistancePredictor
 from source.panel_predictor.panel_predictor import PanelPredictor
 from pivideostream import PiVideoStream
 from source.uart_driver import uart
@@ -24,13 +23,9 @@ def run(panel_predictor, distance_predictor, gimbal_angle_finder, capture, displ
         raise FileNotFoundError("input not found")
     while ret:
         frame = cv2.pyrDown(frame)
-        target = panel_predictor.process(frame)
-        #distance = distance_predictor.process(target)
-        distance = 0
-        #current_angle = uart.listen()
-        current_angle = 0
-        #next_angle = gimbal_angle_finder.calculate(current_angle)
-        next_angle = 0
+        target, distance, cumulative_confidence = panel_predictor.process(frame)
+        current_angle = 0   #uart.listen()
+        next_angle = 0      #gimbal_angle_finder.calculate(current_angle)
         if display:
             display_frame(frame, distance, next_angle, target)
         #uart.send(next_angle)
@@ -59,6 +54,5 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     video_stream = VideoStream(usePiCamera=True)
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
-    distance_predictor = DistancePredictor()
     gimbal_angle_finder = GimbalAngleFinder()
-    run(panel_predictor, distance_predictor, gimbal_angle_finder, video_stream, args["show"])
+    run(panel_predictor, gimbal_angle_finder, video_stream, args["show"])
