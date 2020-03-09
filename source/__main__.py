@@ -1,6 +1,6 @@
 from source.gimbal_angle_finder.gimbal_angle_finder import GimbalAngleFinder
 from source.panel_predictor.panel_predictor import PanelPredictor
-from imutils.video.pivideostream import PiVideoStream
+from imutils.video import VideoStream
 from source.uart_driver import uart
 import argparse
 import cv2
@@ -17,7 +17,7 @@ def display_frame(frame, distance, angle, target=None):
     cv2.imshow('Press q to quit', frame)
 
 
-def run(panel_predictor, distance_predictor, gimbal_angle_finder, capture, display):
+def run(panel_predictor, gimbal_angle_finder, capture, display=False):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
@@ -36,23 +36,13 @@ def run(panel_predictor, distance_predictor, gimbal_angle_finder, capture, displ
     cv2.destroyAllWindows()
 
 
-class VideoStream:
-	def __init__(self, src=0, usePiCamera=False, resolution=(320, 240), framerate=32):
-		if usePiCamera:
-			# initialize the picamera stream and allow the camera sensor to warmup
-			self.stream = PiVideoStream(resolution=resolution, framerate=framerate)
-		# otherwise, we are using OpenCV so initialize the webcam stream
-		else:
-			self.stream = cv2.VideoCapture(0)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--framework', default="tensorflow",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
     parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=False)
     args = vars(parser.parse_args())
-    video_stream = VideoStream(usePiCamera=True)
+    video_stream = VideoStream(usePiCamera=True).start()
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     gimbal_angle_finder = GimbalAngleFinder()
     run(panel_predictor, gimbal_angle_finder, video_stream, args["show"])
