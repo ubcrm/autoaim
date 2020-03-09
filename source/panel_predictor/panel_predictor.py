@@ -31,13 +31,14 @@ class PanelPredictor(Module):
 
     def linear_prediction(self, frame):
         frame_size = ((frame.shape[0]) ** 2 + (frame.shape[1]) ** 2) ** (1 / 2)
+        distance = 1 / max(1e-3, frame.shape[1] / self.properties["distance_1m_height_rel"] / 1080)
         velocity, distance_confidence = self.average_velocity(frame_size)
         foresight_time = time.time() - self.past_targets[-1][2] + self.properties["seconds_ahead"]
-        prediction = (round(self.past_targets[-1][0] + velocity[0] * foresight_time),
+        target = (round(self.past_targets[-1][0] + velocity[0] * foresight_time),
                       round(self.past_targets[-1][1] + velocity[1] * foresight_time))
         foresight_confidence = (1 / (foresight_time * self.properties["time_confidence_falloff"] + 1))
         cumulative_confidence = distance_confidence * foresight_confidence
-        return prediction, cumulative_confidence
+        return target, distance, cumulative_confidence
 
     def average_velocity(self, max_distance):
         avg_velocity = [0, 0]
