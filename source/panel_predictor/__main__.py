@@ -6,9 +6,10 @@ import cv2
 def display_frame(frame, target=None):
     # Display the resulting image
     if target is not None:
-        target, confidence = target
+        target, distance, confidence = target
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
         cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
+        #cv2.putText(frame, str(int(distance * 100)) + "m", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
     cv2.imshow('Press q to quit', frame)
 
 
