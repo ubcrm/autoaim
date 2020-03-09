@@ -5,5 +5,5 @@
   "time_confidence_falloff": 0.5,
   "model_confidence_weight": 10,
   "prediction_type": "linear",
-  "distance_1m_height_rel": 0.078,
+  "distance_1m_height_rel": 0.078
 }
