@@ -1,0 +1,9 @@
+range: [[0, 0, 250], [180, 255, 255]]
+
+dilate:  # dilation size
+  rel: 0.0037  # [resized frame height]
+  abs:  # [pixel]
+
+morph:  # mask morphing size
+  rel: [0.0025, 0.008]  # [resized frame height]
+  abs:  # [pixel]

@@ -1,0 +1,4 @@
+state:
+  robot: 0
+  rune: 1
+  quit: 2
