@@ -1,6 +1,7 @@
 from source.module import Module
 from pathlib import Path
 import os
+import math
 
 
 class GimbalAngleFinder(Module):
@@ -12,8 +13,8 @@ class GimbalAngleFinder(Module):
     def process(self, x, y, frame_dims):
         adj_x = x - (frame_dims[0] / 2)
         adj_y = y - (frame_dims[1] / 2)
-        horiz_angle = (adj_x / (frame_dims[0] / 2)) * self.properties["horiz_fov"]
-        vert_angle = (adj_y / (frame_dims[1] / 2)) * self.properties["vert_fov"]
+        horiz_angle = math.radians((adj_x / (frame_dims[0] / 2)) * self.properties["horiz_fov"])
+        vert_angle = math.radians((adj_y / (frame_dims[1] / 2)) * self.properties["vert_fov"])
         return horiz_angle, vert_angle
 
 
