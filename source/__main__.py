@@ -38,11 +38,17 @@ def run(panel_predictor, gimbal_angle_finder, capture, display=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--framework', default="tensorflow",
+    parser.add_argument('c', "--camera", default="raspberry", help="Which camera to use, e.g. raspberry, webcam")
+    parser.add_argument('-i', '--framework', default="opencv",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
     parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=False)
     args = vars(parser.parse_args())
-    video_stream = VideoStream(usePiCamera=True).start()
+
+    if args["camera"] == "webcam":
+        video_stream = VideoStream(usePiCamera=False).start()
+    else:
+        video_stream = VideoStream(usePiCamera=True).start()
+
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     gimbal_angle_finder = GimbalAngleFinder()
     run(panel_predictor, gimbal_angle_finder, video_stream, args["show"])
