@@ -1,6 +1,7 @@
 from source.gimbal_angle_finder.gimbal_angle_finder import GimbalAngleFinder
 from source.panel_predictor.panel_predictor import PanelPredictor
 from imutils.video import VideoStream
+from source.uart_driver import uart
 import argparse
 import cv2
 
