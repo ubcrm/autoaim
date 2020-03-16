@@ -23,9 +23,10 @@ def run(panel_predictor, gimbal_angle_finder, capture, display=False):
         raise FileNotFoundError("input not found")
     while ret:
         frame = cv2.pyrDown(frame)
+        frame_shape = frame.shape[:2]
         target, distance, cumulative_confidence = panel_predictor.process(frame)
         current_angle = 0   #uart.listen()
-        next_angle = 0      #gimbal_angle_finder.calculate(current_angle)
+        next_angle = current_angle + gimbal_angle_finder.process(target[0], target[1], frame_shape)
         if display:
             display_frame(frame, distance, next_angle, target)
         #uart.send(next_angle)
