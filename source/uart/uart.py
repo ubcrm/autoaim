@@ -22,6 +22,8 @@ class Uart(Module):
 		time.sleep(0.03)
 		data_left = self.ser.inWaiting()
 		received_data += self.ser.read(data_left)
+		if received_data[-2] == '\\' and received_data[-1] == 'r':
+			received_data = received_data[:-2]
 		print(received_data)
 		return received_data
 
