@@ -28,11 +28,12 @@ class Uart(Module):
 	def send_string(self, data_out=None):
 		if data_out is None:
 			data = input("Type: ")
+			if data == "":
+				print("Data must not be null")
+				return False
+			else:
+				self.ser.write(data.encode())
 		else:
-			data = data_out
-		if data != "":
-			self.ser.write(data.encode())
-			return True
-		else:
-			print("Data must not be null")
-		return False
+			self.ser.write(data_out.encode())
+		return True
+
