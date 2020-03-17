@@ -21,7 +21,9 @@ class Gimbal(Module):
 				print('bit index out of range')
 		if checksum == 19:
 			return True 
-		return False
+		else:
+			print("checksum failed with " + str(checksum) + " bits counted")
+			return False
 
 	# Processes screen coords and frame and converts them to a set of angles
 	def process(self, x, y, frame_dims):
