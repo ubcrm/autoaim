@@ -34,6 +34,20 @@ class Gimbal(Module):
 		vert_angle = math.radians((adjusted_y / (frame_dims[1] / 2)) * self.properties["vert_fov"])
 		return horiz_angle, vert_angle
 
+	def construct_angle(self, bit_stream):
+		decimal = 0
+		integer = 0
+
+		for i in range(20): #bits 1-19 are data bits (indicies 0-19)
+			if (i <= 10):
+				decimal += int(bit_stream[i])
+				decimal = decimal << 1
+			if (i > 10):
+				integer = int(bit_stream[i])
+				integer = integer << 1		
+		
+		return integer + float(decimal)/1000
+
 	'''
 	Angle parameter is a floating point number with value between 0.000 and 512.999
 	'''

@@ -25,15 +25,16 @@ def run(panel_predictor, gimbal, uart, capture, display=False):
         frame = cv2.pyrDown(frame)
         frame_shape = frame.shape[:2]
         target, distance, cumulative_confidence = panel_predictor.process(frame)
-        current_angle = uart.read_buffer()
+        received_bits = uart.read_buffer()  #TEST
 
-        if gimbal.validate_current_angle(current_angle):
+        if gimbal.validate_current_angle(received_bits):
+            current_angle = gimbal.construct_angle(received_bits)
             next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
-            uart.send_string(str(next_angle))
-            if display:
+            uart.send_string('%.3f'%(next_angle))
+            if display:  #TO-DO
                 display_frame(frame, distance, next_angle, target)
-            if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-                break
+                if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+                    break
         else:
             uart.send_string('%.3f'%(400.000))
         ret, frame = capture.read()  # get next frame
@@ -46,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument('-c', "--camera", default="webcam", help="Which camera to use, e.g. raspberry, webcam")
     parser.add_argument('-i', '--framework', default="opencv",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
-    parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=True)
+    parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=False)
     args = vars(parser.parse_args())
 
     if args["camera"] == "webcam":
