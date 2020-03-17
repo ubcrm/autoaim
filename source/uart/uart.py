@@ -29,7 +29,7 @@ class Uart(Module):
 		str_num = self.read_buffer()
 		hex_num_str = '0x'+(str_num.rstrip("\n\r"))
 		hex_num = int(hex_num_str, 16)
-		print(hex_num_str + ": " + hex_num)
+		print(hex_num_str + ": " + str(hex_num))
 		return hex_num
 
 	def send_string(self, data_out=None):
