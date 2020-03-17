@@ -26,7 +26,7 @@ def run(panel_predictor, gimbal, uart, capture, display=False):
         frame_shape = frame.shape[:2]
         target, distance, cumulative_confidence = panel_predictor.process(frame)
 
-        current_angle = int(uart.read_buffer())  #converts 4 characters into integer
+        current_angle = int(uart.read_buffer(),16)  #converts 4 characters into integer
         next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
         uart.send_string(next_angle)
 

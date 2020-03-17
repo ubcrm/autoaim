@@ -28,7 +28,6 @@ class Uart(Module):
 	def read_hex(self):
 		str_num = self.read_buffer()
 		hex_num = '0x'+(str_num.rstrip("\n\r"))
-		print(hex_num)
 		return hex_num
 
 	def send_string(self, data_out=None):
