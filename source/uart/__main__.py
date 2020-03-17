@@ -7,5 +7,5 @@ from source.uart.uart import Uart
 uart = Uart()
 
 while True:
-    if uart.string():
+    if uart.send_string():
         uart.read_buffer()
