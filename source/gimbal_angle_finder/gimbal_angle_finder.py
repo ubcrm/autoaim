@@ -9,6 +9,15 @@ class GimbalAngleFinder(Module):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, parent=parent, state=state)
 
+    def validate_current_angle(self, bits):
+        checksum = 0
+        for i in range(19,24): #bits 20-24 are checksum (indicies 19-23)
+            checksum += bits[i]
+            checksum = checksum << 1
+        if checksum == 19:
+            return True 
+        return False
+
     # Processes screen coords and frame and converts them to a set of angles
     def process(self, x, y, frame_dims):
         adjusted_x = (frame_dims[0] / 2) - x
