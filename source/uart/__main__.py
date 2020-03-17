@@ -1,5 +1,5 @@
 '''
-Uart driver for sending data to embedded board and receiving corresponding echo
+Uart driver for quickly testing the uart
 '''
 
 from source.uart.uart import Uart
@@ -7,5 +7,4 @@ from source.uart.uart import Uart
 uart = Uart()
 
 while True:
-    if uart.send_string():
-        uart.read_buffer()
+    uart.send_string()
