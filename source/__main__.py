@@ -34,7 +34,8 @@ def run(panel_predictor, gimbal, uart, capture, display=False):
                 display_frame(frame, distance, next_angle, target)
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
                 break
-            
+        else:
+            uart.send_string(str(400.000))
         ret, frame = capture.read()  # get next frame
     capture.release()
     cv2.destroyAllWindows()
