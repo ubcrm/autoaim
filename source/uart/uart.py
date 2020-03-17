@@ -25,6 +25,12 @@ class Uart(Module):
 		print(received_data.decode())
 		return received_data.decode()
 
+	def read_hex(self):
+		str_num = self.read_buffer()
+		hex_num = '0x'+(str_num.rstrip("\n\r"))
+		print(hex_num)
+		return hex_num
+
 	def send_string(self, data_out=None):
 		if data_out is None:
 			data = input("Type: ")
