@@ -25,18 +25,16 @@ def run(panel_predictor, gimbal, uart, capture, display=False):
         frame = cv2.pyrDown(frame)
         frame_shape = frame.shape[:2]
         target, distance, cumulative_confidence = panel_predictor.process(frame)
-        received_bits = uart.read_buffer()  #TEST
 
-        if gimbal.validate_current_angle(received_bits):
-            current_angle = gimbal.construct_angle(received_bits)
-            next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
-            uart.send_string('%.3f'%(next_angle))
-            if display:  #TO-DO
-                display_frame(frame, distance, next_angle, target)
-                if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-                    break
-        else:
-            uart.send_string('%.3f'%(400.000))
+        current_angle = uart.read_buffer()
+        next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
+        uart.send_string(next_angle)
+
+        if display:  #TO-DO
+            display_frame(frame, distance, next_angle, target)
+            if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+                break
+
         ret, frame = capture.read()  # get next frame
     capture.release()
     cv2.destroyAllWindows()
