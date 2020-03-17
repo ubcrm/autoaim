@@ -25,12 +25,17 @@ class Uart(Module):
 		print(received_data.decode())
 		return received_data.decode()
 
+	#TO-DO add error checking
 	def read_hex(self):
 		str_num = self.read_buffer()
 		hex_num_str = '0x'+(str_num.rstrip("\n\r"))
 		hex_num = int(hex_num_str, 16)
-		print(hex_num_str + ": " + str(hex_num))
+		#print(hex_num_str + ": " + str(hex_num))
 		return hex_num
+
+	def send_hex(self, angle):
+		print(hex(angle))
+		self.send_string(hex(angle))
 
 	def send_string(self, data_out=None):
 		if data_out is None:
