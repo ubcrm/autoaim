@@ -1,7 +1,7 @@
-from source.gimbal_angle_finder.gimbal_angle_finder import GimbalAngleFinder
 from source.panel_predictor.panel_predictor import PanelPredictor
+from source.gimbal.gimbal import Gimbal
 from imutils.video import VideoStream
-from source.uart_driver import uart
+from source.uart.uart import Uart
 import argparse
 import cv2
 
@@ -17,7 +17,7 @@ def display_frame(frame, distance, angle, target=None):
     cv2.imshow('Press q to quit', frame)
 
 
-def run(panel_predictor, gimbal_angle_finder, capture, display=False):
+def run(panel_predictor, gimbal, uart, capture, display=False):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
@@ -27,9 +27,9 @@ def run(panel_predictor, gimbal_angle_finder, capture, display=False):
         target, distance, cumulative_confidence = panel_predictor.process(frame)
         current_angle = uart.read_buffer()
 
-        if gimbal_angle_finder.validate_current_angle(current_angle):
-            next_angle = current_angle + gimbal_angle_finder.process(target[0], target[1], frame_shape)
-            uart.send(next_angle)
+        if gimbal.validate_current_angle(current_angle):
+            next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
+            uart.send_string(str(next_angle))
             if display:
                 display_frame(frame, distance, next_angle, target)
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
@@ -54,5 +54,6 @@ if __name__ == "__main__":
         video_stream = VideoStream(usePiCamera=True).start()
 
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
-    gimbal_angle_finder = GimbalAngleFinder()
-    run(panel_predictor, gimbal_angle_finder, video_stream, args["show"])
+    gimbal = Gimbal()
+    uart = Uart()
+    run(panel_predictor, gimbal, uart, video_stream, args["show"])

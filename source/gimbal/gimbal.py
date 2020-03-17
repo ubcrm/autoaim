@@ -1,37 +1,34 @@
+from source.uart.uart import Uart
 from source.module import Module
 from pathlib import Path
-import serial
-import time
 import os
+import math
 
 
-class Uart(Module):
+class Gimbal(Module):
     def __init__(self, parent=None, state=None):
         self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         super().__init__(self.working_dir, parent=parent, state=state)
-		self.ser = serial.Serial("/dev/ttyS0", 115200)
+		self.uart = Uart()
 
-	def read_buffer(self):
-		received_data = ser.read()
-		time.sleep(0.03)
-		data_left = ser.inWaiting()
-		received_data += ser.read(data_left)
-		print(received_data)
-		return received_data
+    def validate_current_angle(self, bits):
+        checksum = 0
+        for i in range(19,24): #bits 20-24 are checksum (indicies 19-23)
+            checksum += bits[i]
+            checksum = checksum << 1
+        if checksum == 19:
+            return True 
+        return False
 
-	def send_string(self, data_out=None):
-		if data_out is None:
-			data = input("Type: ")
-		else:
-			data = data_out
-		if data != "":
-			ser.write(data.encode())
-			return True
-		else:
-			print("Data must not be null")
-			return False
+    # Processes screen coords and frame and converts them to a set of angles
+    def process(self, x, y, frame_dims):
+        adjusted_x = (frame_dims[0] / 2) - x
+        adjusted_y = (frame_dims[1] / 2) - y
+        horiz_angle = math.radians((adjusted_x / (frame_dims[0] / 2)) * self.properties["horiz_fov"])
+        vert_angle = math.radians((adjusted_y / (frame_dims[1] / 2)) * self.properties["vert_fov"])
+        return horiz_angle, vert_angle
 
-	'''
+    '''
 	Angle parameter is a floating point number with value between 0.000 and 512.999
 	'''
 	def send_angle(self, angle):
@@ -66,6 +63,6 @@ class Uart(Module):
 		packet2 = bit_string[8:16]
 		packet3 = bit_string[16:24]
 
-		Uart.send(packet1)
-		Uart.send(packet1)
-		Uart.send(packet1)
+		uart.send(packet1)
+		uart.send(packet1)
+		uart.send(packet1)
