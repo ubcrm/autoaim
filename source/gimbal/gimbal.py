@@ -14,8 +14,11 @@ class Gimbal(Module):
 	def validate_current_angle(self, bits):
 		checksum = 0
 		for i in range(19,24): #bits 20-24 are checksum (indicies 19-23)
-			checksum += bits[i]
-			checksum = checksum << 1
+			try:
+				checksum += int(bits[i])
+				checksum = checksum << 1
+			except:
+				print('bit index out of range')
 		if checksum == 19:
 			return True 
 		return False
