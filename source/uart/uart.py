@@ -6,9 +6,9 @@ import os
 
 
 class Uart(Module):
-    def __init__(self, parent=None, state=None):
-        self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        super().__init__(self.working_dir, parent=parent, state=state)
+	def __init__(self, parent=None, state=None):
+		self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+		super().__init__(self.working_dir, parent=parent, state=state)
 		self.ser = serial.Serial("/dev/ttyS0", 115200)
 
 	def read_buffer(self):
@@ -29,4 +29,4 @@ class Uart(Module):
 			return True
 		else:
 			print("Data must not be null")
-			return False
+		return False

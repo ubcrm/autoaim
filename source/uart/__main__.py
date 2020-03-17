@@ -2,7 +2,7 @@
 Uart driver for sending data to embedded board and receiving corresponding echo
 '''
 
-from .uart import Uart
+from source.uart.uart import Uart
 
 uart = Uart()
 
