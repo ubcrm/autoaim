@@ -38,11 +38,11 @@ def run(panel_predictor, capture):
         target = panel_predictor.process(frame)
         #current_angle = uart.read_hex()
         #next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
-        #try:
-            #delta_angle = gimbal.process(target[0], target[1], frame_shape)
+        try:
+            delta_angle = gimbal.process(target[0], target[1], frame_shape)
             #uart.send_hex(delta_angle)
-        #except:
-            #print("delta angle failure")
+        except:
+            print("delta angle failure")
             #print("target0: "+ target[0])
             #print("target1: " + target[1])
         
