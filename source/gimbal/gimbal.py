@@ -15,6 +15,6 @@ class Gimbal(Module):
 	def process(self, x, y, frame_dims):
 		adjusted_x = (frame_dims[0] / 2) - x
 		adjusted_y = (frame_dims[1] / 2) - y
-		horiz_angle = math.degrees((adjusted_x / (frame_dims[0] / 2)) * self.properties["horiz_fov"])
-		vert_angle = math.degrees((adjusted_y / (frame_dims[1] / 2)) * self.properties["vert_fov"])
+		horiz_angle = math.radians((adjusted_x / (frame_dims[0] / 2)) * self.properties["horiz_fov"])
+		vert_angle = math.radians((adjusted_y / (frame_dims[1] / 2)) * self.properties["vert_fov"])
 		return horiz_angle, vert_angle
