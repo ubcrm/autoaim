@@ -15,10 +15,10 @@ import cv2
         #cv2.putText(frame, str(int(angle * 100)) + "degrees", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
     #cv2.imshow('Press q to quit', frame)
 
-def display_frame(frame, target=None):
+def display_frame(frame, prediction=None):
     # Display the resulting image
-    if target is not None:
-        target, distance, confidence = target
+    if prediction is not None:
+        target, distance, confidence = prediction
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
         cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
         #cv2.putText(frame, str(int(distance * 100)) + "m", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
@@ -40,11 +40,11 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
             delta_angle = gimbal.process(target[0], target[1], frame_shape)
             uart.send_hex(int(delta_angle[0]))
         
-            if display:  #TO-DO
-            #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
-                display_frame(frame,target)
-                if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-                    break
+        if display:  #TO-DO
+        #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
+            display_frame(frame, prediction)
+            if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+                break
         ret, frame = capture.read()  # get next frame
     capture.release()
     cv2.destroyAllWindows()
