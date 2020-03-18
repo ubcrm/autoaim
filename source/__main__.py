@@ -24,18 +24,16 @@ def display_frame(frame, target=None):
         #cv2.putText(frame, str(int(distance * 100)) + "m", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
     cv2.imshow('Press q to quit', frame)
 
-#def run(panel_predictor, gimbal, uart, capture, display=True):
-def run(panel_predictor, capture, display=True):
+def run(panel_predictor, gimbal, uart, capture, display=True):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
     while ret:
         frame = cv2.pyrDown(frame)
-
-        #frame_shape = frame.shape[:2]
+        frame_shape = frame.shape[:2]
         
-        #target, distance, cumulative_confidence = panel_predictor.process(frame)
-        target = panel_predictor.process(frame)
+        target, distance, cumulative_confidence = panel_predictor.process(frame)
+        #target = panel_predictor.process(frame)
         
         if target is not None:
             #current_angle = uart.read_hex()
@@ -67,7 +65,7 @@ if __name__ == "__main__":
         #video_stream = VideoStream(usePiCamera=True).start()
 
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
-    #gimbal = Gimbal()
-    #uart = Uart()
-    #run(panel_predictor, gimbal, uart, cv2.VideoCapture(0), args["show"])
-    run(panel_predictor, cv2.VideoCapture(0))
+    gimbal = Gimbal()
+    uart = Uart()
+    run(panel_predictor, gimbal, uart, cv2.VideoCapture(0), args["show"])
+    #run(panel_predictor, cv2.VideoCapture(0))
