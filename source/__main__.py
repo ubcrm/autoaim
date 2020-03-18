@@ -56,10 +56,10 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=True)
     args = vars(parser.parse_args())
 
-    if args["camera"] == "webcam":
-        video_stream = VideoStream(src=0).start()
-    else:
-        video_stream = VideoStream(usePiCamera=True).start()
+    #if args["camera"] == "webcam":
+        #video_stream = VideoStream(src=0).start()
+    #else:
+        #video_stream = VideoStream(usePiCamera=True).start()
 
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     gimbal = Gimbal()
