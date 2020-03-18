@@ -38,7 +38,8 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
             #next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
             target, distance, cumulative_confidence = prediction
             delta_angle = gimbal.process(target[0], target[1], frame_shape)
-            uart.send_hex(int(delta_angle[0]))
+            print(delta_angle)
+            #uart.send_hex(int(delta_angle[0]))
         
         if display:  #TO-DO
         #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
