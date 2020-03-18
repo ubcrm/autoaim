@@ -6,10 +6,9 @@ import argparse
 import cv2
 
 
-def display_frame(frame, distance, angle, target=None):
+def display_frame(frame, distance, angle, target):
     # Display the resulting image
     if target is not None:
-        target, confidence = target
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
         cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
         #cv2.putText(frame, str(int(distance * 100)) + "m", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
@@ -22,8 +21,6 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
     if not ret:
         raise FileNotFoundError("input not found")
     while ret:
-    #while True:
-        frame = capture.read()
         frame = cv2.pyrDown(frame)
         frame_shape = frame.shape[:2]
         target, distance, cumulative_confidence = panel_predictor.process(frame)
@@ -33,10 +30,10 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
         delta_angle = gimbal.process(target[0], target[1], frame_shape)
         uart.send_hex(delta_angle)
 
-        if display:  #TO-DO
-            display_frame(frame, distance, delta_angle, target)
-            if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-                break
+        #if display:  #TO-DO
+        display_frame(frame, distance, delta_angle, target)
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+            break
 
         ret, frame = capture.read()  # get next frame
     capture.release()
