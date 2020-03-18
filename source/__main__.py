@@ -17,7 +17,7 @@ def display_frame(frame, distance, angle, target=None):
     cv2.imshow('Press q to quit', frame)
 
 
-def run(panel_predictor, gimbal, uart, capture, display=False):
+def run(panel_predictor, gimbal, uart, capture, display=True):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
