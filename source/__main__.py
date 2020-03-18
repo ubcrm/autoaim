@@ -50,7 +50,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     if args["camera"] == "webcam":
-        video_stream = VideoStream(usePiCamera=False).start()
+        video_stream = VideoStream(src=0).start()
     else:
         video_stream = VideoStream(usePiCamera=True).start()
 
