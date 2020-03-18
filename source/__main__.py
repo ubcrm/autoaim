@@ -40,6 +40,8 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
             uart.send_hex(delta_angle)
         except:
             print("delta angle failure")
+            print("target0: "+ target[0])
+            print("target1: " + target[1])
         
         #if display:  #TO-DO
         #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
