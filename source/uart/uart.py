@@ -56,7 +56,7 @@ class Uart(Module):
 		#hex_str = "{0:b}".format(angle)
 		#print(hex(self.twos_complement(angle))) 
 		#self.send_string(hex(self.twos_complement(angle)))
-		print(hex_str)
+		#print(hex_str)
 		self.send_string(hex_str + '\r\n')
 
 	def send_string(self, data_out=None):
