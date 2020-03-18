@@ -6,7 +6,7 @@ import argparse
 import cv2
 
 
-def display_frame(frame, distance, angle, target):
+def display_frame(frame, distance, confidence, angle, target):
     # Display the resulting image
     if target is not None:
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
@@ -31,7 +31,7 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
         uart.send_hex(delta_angle)
 
         #if display:  #TO-DO
-        display_frame(frame, distance, delta_angle, target)
+        display_frame(frame, distance, cumulative_confidence, delta_angle, target)
         if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
 
