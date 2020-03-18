@@ -35,8 +35,9 @@ class PanelPredictor(Module):
         distance = 1 / max(1e-3, frame.shape[1] / self.properties["distance_1m_height_rel"] / 1080)
         velocity, distance_confidence = self.average_velocity(frame_size)
         foresight_time = time.time() - self.past_targets[-1][2] + self.properties["seconds_ahead"]
-        target = (round(self.past_targets[-1][0] + velocity[0] * foresight_time),
-                      round(self.past_targets[-1][1] + velocity[1] * foresight_time))
+        #target = (round(self.past_targets[-1][0] + velocity[0] * foresight_time),
+                      #round(self.past_targets[-1][1] + velocity[1] * foresight_time))
+        target = (round(self.past_targets[-1][0]), round(self.past_targets[-1][1]))
         foresight_confidence = (1 / (foresight_time * self.properties["time_confidence_falloff"] + 1))
         cumulative_confidence = distance_confidence * foresight_confidence
         return target, distance, cumulative_confidence
