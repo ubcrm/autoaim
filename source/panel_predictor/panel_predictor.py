@@ -18,7 +18,7 @@ class PanelPredictor(Module):
         predicts where the center of the panel will be
         :param frame: an image that may contain a robot
         :return: ((x,y), confidence)  coordinates of panel and confidence it will be there
-        """
+        
         panel = self.panel_finder.process(frame)
         if panel is not None:
             panel, confidence = panel
@@ -28,6 +28,8 @@ class PanelPredictor(Module):
         if len(self.past_targets) == self.properties["reference_frames"]:
             if self.properties["prediction_type"] == "linear":
                 return self.linear_prediction(frame)
+        """
+        return self.panel_finder.process(frame)
 
     def linear_prediction(self, frame):
         frame_size = ((frame.shape[0]) ** 2 + (frame.shape[1]) ** 2) ** (1 / 2)

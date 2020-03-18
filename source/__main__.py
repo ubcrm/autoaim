@@ -6,15 +6,23 @@ import argparse
 import cv2
 
 
-def display_frame(frame, distance, confidence, angle, target):
+#def display_frame(frame, distance, confidence, angle, target):
+    # Display the resulting image
+    #if target is not None:
+        #cv2.circle(frame, target, 3, (0, 255, 0), -1)
+        #cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
+        #cv2.putText(frame, str(int(distance * 100)) + "m", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
+        #cv2.putText(frame, str(int(angle * 100)) + "degrees", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
+    #cv2.imshow('Press q to quit', frame)
+
+def display_frame(frame, target=None):
     # Display the resulting image
     if target is not None:
+        target, distance, confidence = target
         cv2.circle(frame, target, 3, (0, 255, 0), -1)
         cv2.putText(frame, str(int(confidence * 100)) + "%", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
         #cv2.putText(frame, str(int(distance * 100)) + "m", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
-        #cv2.putText(frame, str(int(angle * 100)) + "degrees", target, cv2.FONT_HERSHEY_PLAIN, 0.9, (255, 255, 255))
     cv2.imshow('Press q to quit', frame)
-
 
 def run(panel_predictor, gimbal, uart, capture, display=True):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
@@ -23,18 +31,18 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
     while ret:
         frame = cv2.pyrDown(frame)
         frame_shape = frame.shape[:2]
-        target, distance, cumulative_confidence = panel_predictor.process(frame)
-
+        #target, distance, cumulative_confidence = panel_predictor.process(frame)
+        target = panel_predictor.process(frame)
         #current_angle = uart.read_hex()
         #next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
         delta_angle = gimbal.process(target[0], target[1], frame_shape)
         uart.send_hex(delta_angle)
 
         #if display:  #TO-DO
-        display_frame(frame, distance, cumulative_confidence, delta_angle, target)
+        #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
+        display_frame(frame,target)
         if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
             break
-
         ret, frame = capture.read()  # get next frame
     capture.release()
     cv2.destroyAllWindows()
