@@ -48,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument('-c', "--camera", default="webcam", help="Which camera to use, e.g. raspberry, webcam")
     parser.add_argument('-i', '--framework', default="opencv",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
-    parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=False)
+    parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=True)
     args = vars(parser.parse_args())
 
     if args["camera"] == "webcam":
