@@ -49,11 +49,15 @@ class Uart(Module):
 		return s_hex_num
 
 	def send_hex(self, angle):
+		if angle < 0:
+			hex_str = hex(65536-angle)
+		else:
+			hex_str = hex(angle)
 		#hex_str = "{0:b}".format(angle)
 		#print(hex(self.twos_complement(angle))) 
 		#self.send_string(hex(self.twos_complement(angle)))
-		self.send_string(hex(angle))
-		return hex(angle)
+		print(hex_str)
+		self.send_string(hex_str)
 
 	def send_string(self, data_out=None):
 		if data_out is None:
