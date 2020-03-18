@@ -31,13 +31,12 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
     while ret:
         frame = cv2.pyrDown(frame)
         frame_shape = frame.shape[:2]
+        prediction = panel_predictor.process(frame)
         
-        target, distance, cumulative_confidence = panel_predictor.process(frame)
-        #target = panel_predictor.process(frame)
-        
-        if target is not None:
+        if prediction is not None:
             #current_angle = uart.read_hex()
             #next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
+            target, distance, cumulative_confidence = prediction
             delta_angle = gimbal.process(target[0], target[1], frame_shape)
             uart.send_hex(delta_angle)
         
