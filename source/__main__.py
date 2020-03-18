@@ -34,8 +34,9 @@ def run(panel_predictor, capture):
 
         #frame_shape = frame.shape[:2]
         
-        target, distance, cumulative_confidence = panel_predictor.process(frame)
-        #target = panel_predictor.process(frame)
+        #target, distance, cumulative_confidence = panel_predictor.process(frame)
+        target = panel_predictor.process(frame)
+        print(target)
         #current_angle = uart.read_hex()
         #next_angle = current_angle + gimbal.process(target[0], target[1], frame_shape)
         try:
