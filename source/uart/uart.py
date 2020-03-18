@@ -50,7 +50,7 @@ class Uart(Module):
 
 	def send_hex(self, angle):
 		if angle < 0:
-			hex_str = hex(65536-angle)
+			hex_str = hex(65536+angle)
 		else:
 			hex_str = hex(angle)
 		#hex_str = "{0:b}".format(angle)
