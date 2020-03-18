@@ -34,12 +34,18 @@ class Uart(Module):
 	#TO-DO add error checking
 	def read_hex(self):
 		str_num = self.read_buffer()
+		
+		if len(str_num) == 0:
+			print("buffer empty")
+			return 0
+		
 		stripped_chars = str_num.rstrip("\n\r")
 		num_bits = len(stripped_chars)*4
 		#hex_num_str = '0x'+()
 		#hex_num = int(hex_num_str, 16)
 		s_hex_num = self.twos_complement(stripped_chars, num_bits)
 		#print(hex_num_str + ": " + str(hex_num))
+		print(s_hex_num)
 		return s_hex_num
 
 	def send_hex(self, angle):
