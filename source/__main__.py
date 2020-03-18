@@ -40,11 +40,11 @@ def run(panel_predictor, gimbal, uart, capture, display=True):
             delta_angle = gimbal.process(target[0], target[1], frame_shape)
             uart.send_hex(delta_angle)
         
-        if display:  #TO-DO
-        #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
-            display_frame(frame,target)
-            if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
-                break
+            if display:  #TO-DO
+            #display_frame(frame, distance, cumulative_confidence, delta_angle, target)
+                display_frame(frame,target)
+                if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+                    break
         ret, frame = capture.read()  # get next frame
     capture.release()
     cv2.destroyAllWindows()
