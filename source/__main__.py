@@ -18,11 +18,11 @@ def display_frame(frame, distance, angle, target=None):
 
 
 def run(panel_predictor, gimbal, uart, capture, display=False):
-    #ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
-    #if not ret:
-        #raise FileNotFoundError("input not found")
-    #while ret:
-    while True:
+    ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
+    if not ret:
+        raise FileNotFoundError("input not found")
+    while ret:
+    #while True:
         frame = capture.read()
         frame = cv2.pyrDown(frame)
         frame_shape = frame.shape[:2]
@@ -38,7 +38,7 @@ def run(panel_predictor, gimbal, uart, capture, display=False):
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
                 break
 
-        #ret, frame = capture.read()  # get next frame
+        ret, frame = capture.read()  # get next frame
     capture.release()
     cv2.destroyAllWindows()
 
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     gimbal = Gimbal()
     uart = Uart()
-    run(panel_predictor, gimbal, uart, video_stream, args["show"])
+    run(panel_predictor, gimbal, uart, cv2.VideoCapture(0), args["show"])
