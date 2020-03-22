@@ -19,6 +19,7 @@ class Gimbal(Module):
 		return angle
 
 	# Processes screen coords and frame and converts them to a set of angles
+	# returns delta angles
 	def process(self, x, y, frame_dims):
 		adjusted_x = (frame_dims[0] / 2) - x
 		adjusted_y = (frame_dims[1] / 2) - y

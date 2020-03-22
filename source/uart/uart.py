@@ -31,21 +31,16 @@ class Uart(Module):
 			value -= 1 << bits
 		return value
 
-	#TO-DO add error checking
 	def read_hex(self):
 		str_num = self.read_buffer()
-		
+
 		if len(str_num) == 0:
 			print("buffer empty")
 			return 0
-		
+
 		stripped_chars = str_num.rstrip("\n\r")
 		num_bits = len(stripped_chars)*4
-		#hex_num_str = '0x'+()
-		#hex_num = int(hex_num_str, 16)
 		s_hex_num = self.twos_complement(stripped_chars, num_bits)
-		#print(hex_num_str + ": " + str(hex_num))
-		print(s_hex_num)
 		return s_hex_num
 
 	def send_hex(self, angle):
@@ -53,10 +48,6 @@ class Uart(Module):
 			hex_str = hex(65536+angle)
 		else:
 			hex_str = hex(angle)
-		#hex_str = "{0:b}".format(angle)
-		#print(hex(self.twos_complement(angle))) 
-		#self.send_string(hex(self.twos_complement(angle)))
-		#print(hex_str)
 		self.send_string(hex_str + '\r\n')
 
 	def send_string(self, data_out=None):
@@ -70,4 +61,3 @@ class Uart(Module):
 		else:
 			self.ser.write(data_out.encode())
 		return True
-
