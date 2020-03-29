@@ -22,13 +22,13 @@ pip install -r requirements/requirements.txt
 
 ### Training
 ```
-cd vision/source/panel_finder/
+cd vision/source/panel_predictor/panel_finder/
 python panel_classifier/ --mode train
 ```
 
 ### Inference
 ```
-cd vision/source
+cd vision/source/panel_predictor
 python panel_finder --mode {video/webcam} --video {video_path}
 ```
 
@@ -47,7 +47,7 @@ pip install requirements_convert.txt
 
 ### Convert 
 ```
-cd source/panel_finder/
+cd source/panel_predictor/panel_finder/
 python panel_classifier/ --mode convert
 ```
 
@@ -60,6 +60,6 @@ python panel_classifier/ --mode convert
 
 ### Inference
 ```
-cd vision/source
+cd vision/source/panel_predictor
 python panel_finder/ --mode {video/webcam} --vide {video_path} --framework opencv
 ```
