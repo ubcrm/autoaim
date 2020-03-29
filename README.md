@@ -1,4 +1,4 @@
-# robomaster-vision
+# vision
 
 ## Armour Panel Detection
 
@@ -6,7 +6,6 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 ```
 1. Preprocess Image
 2. Bitmask LEDs
-3. Locate LED rectangles
 4. Match target LEDs
 5. Compute center of panel
 ```
@@ -15,7 +14,7 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 
 ### Set-up the virtual environment
 ```
-cd robobomaster-vision
+cd vision
 virtualenv -p python3 venv
 source venv/bin/activate
 pip install -r requirements/requirements.txt
@@ -23,13 +22,13 @@ pip install -r requirements/requirements.txt
 
 ### Training
 ```
-cd robomaster-vision/source/panel_finder/
+cd vision/source/panel_finder/
 python panel_classifier/ --mode train
 ```
 
 ### Inference
 ```
-cd robomaster-vision/source
+cd vision/source
 python panel_finder --mode {video/webcam} --video {video_path}
 ```
 
@@ -40,7 +39,7 @@ to do this if we want to use OpenCV DNN*
 
 ### Set up Tensorflow 1.14 virtual environment
 ```
-cd robomaster-vision/requirements
+cd vision/requirements
 virtualenv -p python3 tf114
 source tf114/bin/activate
 pip install requirements_convert.txt
@@ -61,6 +60,6 @@ python panel_classifier/ --mode convert
 
 ### Inference
 ```
-cd robomaster-vision/source
+cd vision/source
 python panel_finder/ --mode {video/webcam} --vide {video_path} --framework opencv
 ```
