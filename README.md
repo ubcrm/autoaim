@@ -15,10 +15,10 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 
 ### Set-up the virtual environment
 ```
-cd robobomaster-vision/requirements
+cd robobomaster-vision
 virtualenv -p python3 venv
 source venv/bin/activate
-pip install requirements.txt
+pip install -r requirements/requirements.txt
 ```
 
 ### Training
