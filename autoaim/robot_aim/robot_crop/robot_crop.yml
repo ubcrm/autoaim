@@ -1,0 +1,2 @@
+scale: 0.5  # frame scale factor for faster processsing
+dims:  # [pixel] assigned during runtime

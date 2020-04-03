@@ -1,4 +1,0 @@
-feed: 0  # capture device number
-delay: 50  # [millisecond] to check for state when in quit state
-focus_span: 20  # number of frames to process before rechecking state
-feed_dims: [1920, 1080]  # [pixel] for input feed

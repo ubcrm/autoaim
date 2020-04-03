@@ -1,0 +1,8 @@
+feed: 0  # capture device number
+feed_dims: [1920, 1080]  # [pixel] for input feed
+
+delay: 50  # [millisecond] to check for communication when in sleep mode
+
+mode_sleep: 0  # sleep mode identifier
+mode_robot: 1  # robot mode identifier
+mode_rune: 2  # rune mode identifier

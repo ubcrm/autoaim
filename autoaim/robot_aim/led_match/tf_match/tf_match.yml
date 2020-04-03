@@ -1,0 +1,2 @@
+model_path: "assets/model.hdf5"
+panel_criterion: 0.75  # minimum confidence to consider a pair a target
