@@ -1,10 +1,12 @@
 '''
 Uart driver for quickly testing the uart
+
+sudo python uart/ -m listen
 '''
 
+from source.uart.uart import Uart
 import argparse
 import time
-from source.uart.uart import Uart
 
 def listen(uart):
     while True:
