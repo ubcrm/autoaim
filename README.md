@@ -10,6 +10,14 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 5. Compute center of panel
 ```
 
+## Run-time arguments
+```
+parser.add_argument('-c', "--camera", default="webcam", help="Which camera to use, e.g. raspberry, webcam")
+parser.add_argument('-i', '--framework', default="opencv",
+                        help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
+parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=True)
+```
+
 ## Training the model with Keras + Tensorflow 2.0 and performing inference of the model
 
 ### Set-up the virtual environment
