@@ -11,15 +11,14 @@ class Uart(Module):
 		super().__init__(self.working_dir, parent=parent, state=state)
 		self.platform = state["platform"]
 
-		#if (self.platform == "laptop"):
-			#self.port = "COM4"
-		#else:
-			#self.port = '/dev/serial0'
+		if (self.platform == "laptop"):
+			self.port = "COM4"
+		else:
+			self.port = '/dev/serial0'
 
 		self.ser = serial.Serial(
-			#port=self.port ,\
-			port= '/dev/ttyS3',\
-			baudrate=115200,\
+			port=self.port ,\
+						baudrate=115200,\
 			parity=serial.PARITY_NONE,\
 			stopbits=serial.STOPBITS_ONE,\
 			bytesize=serial.EIGHTBITS,\
@@ -30,7 +29,7 @@ class Uart(Module):
 		time.sleep(0.03)
 		data_left = self.ser.inWaiting()
 		received_data += self.ser.read(data_left)
-		print(received_data.decode())
+		#print(received_data.decode())
 		return received_data.decode()
 
 	def twos_complement(self, hexstr, bits):

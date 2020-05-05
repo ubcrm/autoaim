@@ -10,7 +10,9 @@ import time
 
 def listen(uart):
     while True:
-        uart.read_buffer()
+        received = uart.read_buffer()
+        if received is not None:
+            print(received)
         time.sleep(1)
 
 def write(uart):
