@@ -1,7 +1,6 @@
 '''
 Uart driver for quickly testing the uart
 
-sudo python uart/ -m listen
 '''
 
 from source.uart.uart import Uart
@@ -11,7 +10,7 @@ import time
 def listen(uart):
     while True:
         received = uart.read_buffer()
-        if received is not None:
+        if received is not '':
             print(received)
         time.sleep(1)
 

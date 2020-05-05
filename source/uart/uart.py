@@ -18,7 +18,7 @@ class Uart(Module):
 
 		self.ser = serial.Serial(
 			port=self.port ,\
-						baudrate=115200,\
+			baudrate=115200,\
 			parity=serial.PARITY_NONE,\
 			stopbits=serial.STOPBITS_ONE,\
 			bytesize=serial.EIGHTBITS,\
@@ -29,7 +29,7 @@ class Uart(Module):
 		time.sleep(0.03)
 		data_left = self.ser.inWaiting()
 		received_data += self.ser.read(data_left)
-		#print(received_data.decode())
+		#print(received_data)
 		return received_data.decode()
 
 	def twos_complement(self, hexstr, bits):
