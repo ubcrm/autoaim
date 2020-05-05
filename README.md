@@ -12,9 +12,12 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 
 ## Run-time arguments
 ```
+parser.add_argument('-m', "--mode", default="predict", help="Options: predict, find, rune")
+parser.add_argument('-i', "--input", default="webcam", help="Options: webcam, video")
+parser.add_argument("-v", "--video", help="Path to video")
 parser.add_argument('-c', "--camera", default="webcam", help="Which camera to use, e.g. raspberry, webcam")
-parser.add_argument('-i', '--framework', default="opencv",
-                        help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
+parser.add_argument('-f', '--framework', default="opencv",
+                    help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
 parser.add_argument('-s', '--show', type=bool, help='Conditonal for displaying frame', default=True)
 ```
 ### Example: run on raspberry pi with USB webcam without display
