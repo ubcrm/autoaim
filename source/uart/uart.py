@@ -11,8 +11,8 @@ class Uart(Module):
 		super().__init__(self.working_dir, parent=parent, state=state)
 		self.platform = state["platform"]
 
-		if (platform == "laptop"):
-			self.port = "COM3"
+		if (self.platform == "laptop"):
+			self.port = "COM4"
 		else:
 			self.port = '/dev/serial0'
 
