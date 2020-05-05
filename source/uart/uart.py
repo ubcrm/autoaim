@@ -9,8 +9,15 @@ class Uart(Module):
 	def __init__(self, parent=None, state=None):
 		self.working_dir = Path(os.path.dirname(os.path.abspath(__file__)))
 		super().__init__(self.working_dir, parent=parent, state=state)
+		self.platform = state["platform"]
+
+		if (platform == "laptop"):
+			self.port = "COM3"
+		else:
+			self.port = '/dev/serial0'
+
 		self.ser = serial.Serial(
-			port='/dev/serial0' ,\
+			port=self.port ,\
 			baudrate=115200,\
 			parity=serial.PARITY_NONE,\
 			stopbits=serial.STOPBITS_ONE,\

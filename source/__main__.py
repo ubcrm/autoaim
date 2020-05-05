@@ -71,6 +71,7 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('-p', "--platform", default="laptop", help="Options: laptop, nano, pi")
     parser.add_argument('-m', "--mode", default="predict", help="Options: predict, find, rune")
     parser.add_argument('-i', "--input", default="webcam", help="Options: webcam, video")
     parser.add_argument("-v", "--video", help="Path to video")
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     panel_finder = PanelFinder(state={"framework": args["framework"]})
     panel_predictor = PanelPredictor(state={"framework": args["framework"]})
     gimbal = Gimbal()
-    uart = Uart()
+    uart = Uart(state={"platform": args["platform"]})
 
     if args["input"] == "video" and args["video"]:
         input_stream = cv2.VideoCapture(args["video"])
