@@ -12,7 +12,7 @@ class Uart(Module):
 		self.platform = state["platform"]
 
 		if (self.platform == "laptop"):
-			self.port = "COM4"
+			self.port = '/dev/ttyUSB0'
 		else:
 			self.port = '/dev/serial0'
 
