@@ -69,18 +69,19 @@ def display_panel_finder(frame, confidence=None, target=None, frame_shape=(0,0),
     return frame
 
 
-def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False):
+def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False, make_video=False, save_image=False):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
-    #log_file = create_angle_log_file()
     pause_flag = False
-    #count = 0
-    # Define the codec and create VideoWriter object
-    resized_frame = cv2.pyrDown(frame)
-    frame_shape = resized_frame.shape[:2]   #(rows,cols)
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('output.avi',fourcc, 20.0, (frame_shape[1],frame_shape[0]))
+    count = 0
+
+    if make_video:
+        # Define the codec and create VideoWriter object
+        resized_frame = cv2.pyrDown(frame)
+        frame_shape = resized_frame.shape[:2]   #(rows,cols)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('output.avi',fourcc, 20.0, (frame_shape[1],frame_shape[0]))
 
     while ret:
         if not pause_flag:
@@ -96,25 +97,22 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False)
                         uart.send_string(str(delta_angles[0]) + '\r')
                     except:
                         print("uart failed")
-                #log_file.write("{}        {}".format(delta_angles[0], delta_angles[1]))
-
         if display:
             image = display_panel_finder(resized_frame, confidence, target, frame_shape, delta_angles)
-
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
                 break
             if cv2.waitKey(1) & 0xFF == ord(' '):
                 pause_flag = not(pause_flag)
-            #cv2.imwrite("images/debug" + str(count) + ".png", image)
-            #count+=1
-
-            #save = cv2.flip(image,0)
-            # write the flipped frame
-            out.write(image)
+            if save_image:
+                cv2.imwrite("images/debug" + str(count) + ".png", image)
+                count+=1
+            if make_video:
+                out.write(image)
 
         if not pause_flag:
             ret, frame = capture.read()
-    out.release()
+    if make_video:
+        out.release()
     capture.release()
     cv2.destroyAllWindows()
 
