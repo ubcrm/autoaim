@@ -50,6 +50,7 @@ class PanelFinder(Module):
         :param frame: an image that may contain a robot
         :return: a dict describing a rotated rectangle
         """
+        confidence = 0
         frame_dims = frame.shape[:2]
         leds = self.led_finder.process(frame)
         leds = sorted(leds, key=lambda x: x['angle'])

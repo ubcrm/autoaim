@@ -54,39 +54,54 @@ def create_angle_log_file():
     return new_file
 
 
-def display_panel_finder(frame, confidence=None, target=None):
+def display_panel_finder(frame, confidence=None, target=None, frame_shape=(0,0), delta_angles=(0,0)):
     # Display the resulting image
     if target is not None:
         cv2.circle(frame, (target["x_center"], target["y_center"]), 6, (0, 255, 0), -1)
         cv2.putText(frame, str(int(confidence * 100)) + "%", (target["x_center"], target["y_center"]), 
                 cv2.FONT_HERSHEY_PLAIN, 1.5, (255, 255, 255))
+        origin = (int(frame_shape[1] / 2), int(frame_shape[0] / 2,))
+        cv2.arrowedLine(frame, origin, (target["x_center"], target["y_center"]), (0,0,255), 5)
+        cv2.putText(frame, "yaw: {}".format(int(delta_angles[0])), (frame_shape[1]-160, 40), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0),2)
+        cv2.putText(frame, "pitch: {}".format(int(delta_angles[1])), (frame_shape[1]-160, 70), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0),2)
     cv2.imshow('Press q to quit', frame)
+    return frame
 
 
 def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
-    log_file = create_angle_log_file()
+    #log_file = create_angle_log_file()
+    pause_flag = False
+    count = 0
     while ret:
-        frame = cv2.pyrDown(frame)
-        frame_shape = frame.shape[:2]
-        confidence, target, _ = panel_finder.process(frame)
-        
-        if target is not None:
-            delta_angles = gimbal.process(target["x_center"], target["y_center"], frame_shape)
-            if serial:
-                try:
-                    uart.send_string(str(delta_angles[0]) + '\r')
-                except:
-                    print("uart failed")
-            log_file.write("{}        {}".format(delta_angles[0], delta_angles[1]))
-        
+        if not pause_flag:
+            resized_frame = cv2.pyrDown(frame)
+            frame_shape = resized_frame.shape[:2]   #(rows,cols)
+            confidence, target, _ = panel_finder.process(resized_frame)
+
+            if target is not None:
+                delta_angles = gimbal.process(target["x_center"], target["y_center"], frame_shape)
+                print(delta_angles)
+                if serial:
+                    try:
+                        uart.send_string(str(delta_angles[0]) + '\r')
+                    except:
+                        print("uart failed")
+                #log_file.write("{}        {}".format(delta_angles[0], delta_angles[1]))
+
         if display:
-            display_panel_finder(frame, confidence, target)
+            image = display_panel_finder(resized_frame, confidence, target, frame_shape, delta_angles)
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
                 break
-        ret, frame = capture.read()  # get next frame
+            if cv2.waitKey(1) & 0xFF == ord(' '):
+                pause_flag = not(pause_flag)
+            cv2.imwrite("images/debug" + str(count) + ".png", image)
+            count+=1
+
+        if not pause_flag:
+            ret, frame = capture.read()
     capture.release()
     cv2.destroyAllWindows()
 

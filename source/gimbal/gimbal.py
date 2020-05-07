@@ -19,8 +19,8 @@ class Gimbal(Module):
 	# Processes screen coords and frame and converts them to a set of angles
 	# returns delta angles
 	def process(self, x, y, frame_dims):
-		adjusted_x = (frame_dims[0] / 2) - x
-		adjusted_y = (frame_dims[1] / 2) - y
+		adjusted_x = (frame_dims[1] / 2) - x
+		adjusted_y = (frame_dims[0] / 2) - y
 		horiz_angle = (adjusted_x / (frame_dims[0] / 2)) * self.properties["horiz_fov"]
 		vert_angle = (adjusted_y / (frame_dims[1] / 2)) * self.properties["vert_fov"]
 		return self.truncate_angle(horiz_angle), self.truncate_angle(vert_angle)
