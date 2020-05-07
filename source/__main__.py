@@ -3,6 +3,7 @@ from source.panel_predictor.panel_finder.panel_finder import PanelFinder
 from source.gimbal.gimbal import Gimbal
 from source.uart.uart import Uart
 import argparse
+import numpy as np
 import cv2
 import os
 
@@ -74,7 +75,13 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False)
         raise FileNotFoundError("input not found")
     #log_file = create_angle_log_file()
     pause_flag = False
-    count = 0
+    #count = 0
+    # Define the codec and create VideoWriter object
+    resized_frame = cv2.pyrDown(frame)
+    frame_shape = resized_frame.shape[:2]   #(rows,cols)
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    out = cv2.VideoWriter('output.avi',fourcc, 20.0, (frame_shape[1],frame_shape[0]))
+
     while ret:
         if not pause_flag:
             resized_frame = cv2.pyrDown(frame)
@@ -93,15 +100,21 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False)
 
         if display:
             image = display_panel_finder(resized_frame, confidence, target, frame_shape, delta_angles)
+
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
                 break
             if cv2.waitKey(1) & 0xFF == ord(' '):
                 pause_flag = not(pause_flag)
-            cv2.imwrite("images/debug" + str(count) + ".png", image)
-            count+=1
+            #cv2.imwrite("images/debug" + str(count) + ".png", image)
+            #count+=1
+
+            #save = cv2.flip(image,0)
+            # write the flipped frame
+            out.write(image)
 
         if not pause_flag:
             ret, frame = capture.read()
+    out.release()
     capture.release()
     cv2.destroyAllWindows()
 
