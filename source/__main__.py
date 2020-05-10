@@ -4,6 +4,7 @@ from source.gimbal.gimbal import Gimbal
 from source.uart.uart import Uart
 import argparse
 import numpy as np
+import time
 import cv2
 import os
 
@@ -69,7 +70,7 @@ def display_panel_finder(frame, confidence=None, target=None, frame_shape=(0,0),
     return frame
 
 
-def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False, make_video=False, save_image=False):
+def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=True, make_video=False, save_image=False):
     ret, frame = capture.read()  # ret = 1 if the video is captured; frame is the image in blue, green, red
     if not ret:
         raise FileNotFoundError("input not found")
@@ -87,7 +88,10 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False,
         if not pause_flag:
             resized_frame = cv2.pyrDown(frame)
             frame_shape = resized_frame.shape[:2]   #(rows,cols)
-            confidence, target, _ = panel_finder.process(resized_frame)
+            panel = panel_finder.process(resized_frame)
+
+            if panel is not None:
+                confidence, target, _ = panel
 
             if target is not None:
                 delta_angles = gimbal.process(target["x_center"], target["y_center"], frame_shape)
@@ -95,10 +99,14 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=False,
                 if serial:
                     try:
                         uart.send_string(str(delta_angles[0]) + '\r')
+                        time.sleep(1)
                     except:
                         print("uart failed")
         if display:
-            image = display_panel_finder(resized_frame, confidence, target, frame_shape, delta_angles)
+            if panel:
+                image = display_panel_finder(resized_frame, confidence, target, frame_shape, delta_angles)
+            else:
+                display_panel_finder(resized_frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
                 break
             if cv2.waitKey(1) & 0xFF == ord(' '):
@@ -147,4 +155,4 @@ if __name__ == "__main__":
     if args["mode"] == 'predict':
         predict_panels(panel_predictor, gimbal, uart, input_stream, args["show"])
     elif args["mode"] == 'find':
-        find_panels(panel_finder, gimbal, uart, input_stream, args["show"])
+        find_panels(panel_finder, gimbal, uart, capture=input_stream)

@@ -18,8 +18,13 @@ def run_video(framework, capture):
     if not ret:
         raise FileNotFoundError("input not found")
     while ret:
-        confidence, target, _ = panel_finder.process(frame)
-        display_frame(frame, confidence, target)
+        frame = cv2.pyrDown(frame)
+        panel = panel_finder.process(frame)
+        if panel is not None:
+            confidence, target, _ = panel
+            display_frame(frame, confidence, target)
+        else:
+            display_frame(frame)
 
         if cv2.waitKey(1) & 0xFF == ord(' '):
             pause_flag = not(pause_flag)
@@ -37,7 +42,7 @@ def run_video(framework, capture):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--framework', default="tensorflow",
+    parser.add_argument('-i', '--framework', default="opencv",
                         help="Specifies which framework to use as inference, e.g. opencv, tensorflow")
     parser.add_argument('-m', '--mode', default="webcam",
                         help="Sets the mode of the classifier. Options: video, webcam")

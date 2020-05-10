@@ -64,3 +64,4 @@ class PanelFinder(Module):
                     best_pair = (leds[i], leds[i + 1], confidence)
 
             return confidence, combined_panel(best_pair[0], best_pair[1]), best_pair[2]
+    
