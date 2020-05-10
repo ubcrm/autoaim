@@ -32,30 +32,6 @@ class Uart(Module):
 		#print(received_data)
 		return received_data.decode()
 
-	def twos_complement(self, hexstr, bits):
-		value = int(hexstr,16)
-		if value & (1 << (bits-1)):
-			value -= 1 << bits
-		return value
-
-	def read_hex(self):
-		str_num = self.read_buffer()
-
-		if len(str_num) == 0:
-			print("buffer empty")
-			return 0
-
-		stripped_chars = str_num.rstrip("\n\r")
-		num_bits = len(stripped_chars)*4
-		s_hex_num = self.twos_complement(stripped_chars, num_bits)
-		return s_hex_num
-
-	def send_hex(self, angle):
-		if angle < 0:
-			hex_str = hex(65536+angle)
-		else:
-			hex_str = hex(angle)
-		self.send_string(hex_str + '\r\n')
 
 	def send_string(self, data_out=None):
 		if data_out is None:

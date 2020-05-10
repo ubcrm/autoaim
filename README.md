@@ -12,8 +12,10 @@ This approach uses a pipeline of computer vision and machine learning algorithms
 
 ## Run-time arguments
 ```
+parser = argparse.ArgumentParser()
 parser.add_argument('-p', "--platform", default="laptop", help="Options: laptop, nano, pi")
 parser.add_argument('-m', "--mode", default="predict", help="Options: predict, find, rune")
+parser.add_argument('-t', "--transmit", default=False, help="Enable UART conditional")
 parser.add_argument('-i', "--input", default="webcam", help="Options: webcam, video")
 parser.add_argument("-v", "--video", help="Path to video")
 parser.add_argument('-c', "--camera", default="webcam", help="Which camera to use, e.g. raspberry, webcam")

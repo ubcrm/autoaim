@@ -89,6 +89,7 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=True, 
             resized_frame = cv2.pyrDown(frame)
             frame_shape = resized_frame.shape[:2]   #(rows,cols)
             panel = panel_finder.process(resized_frame)
+            target = None
 
             if panel is not None:
                 confidence, target, _ = panel
@@ -99,7 +100,7 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=True, 
                 if serial:
                     try:
                         uart.send_string(str(delta_angles[0]) + '\r')
-                        time.sleep(1)
+                        #time.sleep(1)
                     except:
                         print("uart failed")
         if display:
@@ -128,7 +129,7 @@ def find_panels(panel_finder, gimbal, uart, capture, display=True, serial=True, 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', "--platform", default="laptop", help="Options: laptop, nano, pi")
-    parser.add_argument('-m', "--mode", default="predict", help="Options: predict, find, rune")
+    parser.add_argument('-m', "--mode", default="find", help="Options: predict, find, rune")
     parser.add_argument('-t', "--transmit", default=False, help="Enable UART conditional")
     parser.add_argument('-i', "--input", default="webcam", help="Options: webcam, video")
     parser.add_argument("-v", "--video", help="Path to video")
