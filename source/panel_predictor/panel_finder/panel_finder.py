@@ -50,6 +50,7 @@ class PanelFinder(Module):
         :param frame: an image that may contain a robot
         :return: a dict describing a rotated rectangle
         """
+        confidence = 0
         frame_dims = frame.shape[:2]
         leds = self.led_finder.process(frame)
         leds = sorted(leds, key=lambda x: x['angle'])
@@ -62,4 +63,5 @@ class PanelFinder(Module):
                 if confidence > best_pair[2]:
                     best_pair = (leds[i], leds[i + 1], confidence)
 
-            return combined_panel(best_pair[0], best_pair[1]), best_pair[2]
+            return confidence, combined_panel(best_pair[0], best_pair[1]), best_pair[2]
+    
