@@ -5,3 +5,10 @@ Apart from in-code comments, we host [our documentation](https://ubcrobomaster.s
 * [Raspberry Pi Setup](https://ubcrobomaster.slite.com/app/channels/dA4dO1hHij/notes/dBspLGe9VC) for how to setup a Pi to run our source code.
 
 More documentation is always welcome!
+
+
+Rules
+* module
+    - module_assets
+    - module.py
+    - module.yml
