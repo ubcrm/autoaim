@@ -8,7 +8,7 @@ import os
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--video', type=os.path.abspath, help='input video path')
-    parser.add_argument('-s', '--source', default=CONFIG.DEFAULT_SOURCE, help='video device number')
+    parser.add_argument('-s', '--source', type=int, default=CONFIG.DEFAULT_SOURCE, help='video device number')
     parser.add_argument('-d', '--debug', nargs='?', const=True, default=CONFIG.DEFAULT_DEBUG, help='debug mode')
     args = parser.parse_args()
 
