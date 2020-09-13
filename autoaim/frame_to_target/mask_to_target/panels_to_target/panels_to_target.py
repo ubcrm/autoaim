@@ -3,6 +3,9 @@ import cv2
 
 
 def panels_to_target(panels, debug_frame=None):
+    if len(panels) == 0:
+        return None
+
     target_panel = panels[0]
     if debug_frame is not None:
         draw_target(debug_frame, target_panel)

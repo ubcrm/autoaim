@@ -18,7 +18,7 @@ def mask_to_leds(mask, debug_frame=None):
 
 class BoundingRect:
     def __init__(self, rect, label):
-        self.label = label
+        self.label = str(label)
         self.center = (round(rect[0][0]), round(rect[0][1]))
         self.width = round(min(rect[1]))
         self.height = round(max(rect[1]))
