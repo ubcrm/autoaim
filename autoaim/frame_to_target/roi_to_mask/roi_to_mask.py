@@ -12,4 +12,8 @@ def roi_to_mask(roi, debug_frame=None):
     mask = cv2.dilate(mask, np.ones((dilate_dim, dilate_dim)))
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, morph_dims)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+    if debug_frame is not None:
+        masked_frame = cv2.bitwise_and(roi, roi, mask=mask)
+        debug_frame[:] = cv2.addWeighted(masked_frame, CONFIG.DEBUG_MASK_WEIGHT, roi, 1 - CONFIG.DEBUG_MASK_WEIGHT, 0)
     return mask
