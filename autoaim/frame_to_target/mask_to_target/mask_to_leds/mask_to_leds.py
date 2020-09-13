@@ -47,7 +47,7 @@ class BoundingRect:
 
     def find_corners(self):
         (x, y), hw, hh, a = self.center, self.width / 2, self.height / 2, self.angle
-        sina, cosa = np.sin(a), np.cos(a)
+        sina, cosa = np.sin(np.deg2rad(a)), np.cos(np.deg2rad(a))
         topleft = (round(x - hw * cosa + hh * sina), round(y - hh * cosa - hw * sina))
         topright = (round(x + hw * cosa + hh * sina), round(y - hh * cosa + hw * sina))
         bottomright = (round(x + hw * cosa - hh * sina), round(y + hh * cosa + hw * sina))
