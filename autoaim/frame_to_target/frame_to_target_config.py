@@ -10,4 +10,4 @@ DEFAULT_SOURCE = 0
 DEFAULT_DEBUG = True
 
 WIN_TITLE = 'Debug Output'
-FRAME_DELAY = 50  # (ms)
+FRAME_DELAY = 40  # (ms)
