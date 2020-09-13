@@ -1,24 +1,24 @@
 import autoaim_config as CONFIG
-from find_target.find_target import FindTarget
-from map_coords.map_coords import MapCoords
-from send_coords.send_coords import SendCoords
+from frame_to_target.frame_to_target import frame_to_target
+from target_to_coords.target_to_coords import target_to_coords
+from predict_coords.predict_coords import predict_coords
+from send_coords.send_coords import send_coords
 import cv2
 
 
-class Autoaim:
-    def __init__(self):
-        self.find_target = FindTarget()
-        self.map_coords = MapCoords()
-        self.send_coords = SendCoords()
-        self.count_frame = 0
+def autoaim(source):
+    frame_count = 0
+    capture = cv2.VideoCapture(source)
 
-    def run(self, capture_device):
-        feed = cv2.VideoCapture(capture_device)
+    successful, frame = capture.read()
+    while successful:
+        frame_count += 1
+        run_frame(frame)
+        successful, frame = capture.read()
 
-        while True:
-            _, frame = feed.read()
-            self.count_frame += 1
 
-            target = self.find_target.run(frame)
-            coords = self.map_coords.run(target)
-            self.send_coords.run(coords)
+def run_frame(frame):
+    target = frame_to_target(frame)
+    coords = target_to_coords(target)
+    coords = predict_coords(coords)
+    send_coords.run(coords)

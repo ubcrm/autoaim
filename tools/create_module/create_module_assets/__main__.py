@@ -1,4 +1,5 @@
-from template import Template
+import template_config as CONFIG
+from template import template
 import argparse
 
 
@@ -7,5 +8,4 @@ if __name__ == '__main__':
     parser.add_argument()
     args = parser.parse_args()
 
-    template = Template()
-    template.run()
+    template()
