@@ -8,8 +8,11 @@ Apart from in-code comments, we host [guides and documentation](https://ubcrobom
 More documentation is always welcome!
 
 
-# Notes
-* This codebase requires Python 3.8 or above
-* Run `pip install requirements.txt -r` to install required packages
+## Getting Started
+* Install Python 3.8 or above
+* Run `pip install -r requirements.txt` to obtain required packages
+* Run autoaim on your camera feed or a video obtained from Drive
+
+## Notes
 * If using conda, run `conda install -c menpo opencv` to install OpenCV
 * If using PyCharm, mark all module directories as Sources Root to avoid import errors
