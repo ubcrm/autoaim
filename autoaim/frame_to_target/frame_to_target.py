@@ -5,11 +5,15 @@ from mask_to_target.mask_to_target import mask_to_target
 import cv2
 
 
+feedback_panels = []
+
+
 def frame_to_target(frame, debug=CONFIG.DEFAULT_DEBUG):
+    global feedback_panels
     debug_frame = frame.copy() if debug else None
-    roi = frame_to_roi(frame, debug_frame=debug_frame)
+    roi = frame_to_roi(frame, feedback_panels, debug_frame=debug_frame)
     mask = roi_to_mask(roi, debug_frame=debug_frame)
-    target = mask_to_target(mask, debug_frame=debug_frame)
+    target, feedback_panels = mask_to_target(mask, debug_frame=debug_frame)
 
     if debug:
         cv2.imshow(CONFIG.WIN_TITLE, debug_frame)

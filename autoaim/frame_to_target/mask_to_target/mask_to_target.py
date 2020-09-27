@@ -8,4 +8,4 @@ def mask_to_target(mask, debug_frame=None):
     leds = mask_to_leds(mask, debug_frame=debug_frame)
     panels = leds_to_panels(leds, debug_frame=debug_frame)
     target = panels_to_target(panels, debug_frame=debug_frame)
-    return target
+    return target, panels
