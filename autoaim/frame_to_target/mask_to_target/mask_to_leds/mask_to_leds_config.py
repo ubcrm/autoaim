@@ -11,7 +11,7 @@ EPSILON = 1E-5
 
 
 class CRITERIA:
-    DISTANCE = (0.4, 3)
+    DISTANCE = (0, 100)  # (0.4, 3) todo: fix temporary distance criteria patch
     DIMS_RATIO = (2, 10)
     ANGLE = (-15, 15)
 
