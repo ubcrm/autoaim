@@ -16,6 +16,9 @@ if __name__ == '__main__':
     capture = cv2.VideoCapture(source)
     successful, frame = capture.read()
 
+    if not successful:
+        raise RuntimeError(CONFIG.CAPTURE_ERROR.format(source))
+
     while successful:
         frame_to_target(frame, debug=args.debug)
         successful, frame = capture.read()
