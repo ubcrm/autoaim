@@ -8,10 +8,11 @@ ASSETS_DIR = DIR / f'{NAME}_assets'
 
 EPSILON = 1E-5
 LABEL_FORMAT = '{}-{}'
+DRAW_NOT_PANELS = False
 
 
 class CRITERIA:
-    ANGLE_DIFF = (0, 4)
+    ANGLE_DIFF = (0, 3)
     ASPECT_RATIO = (0.9, 3)
     RATIO_LEDS = (0.67, 1.5)
 

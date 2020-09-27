@@ -30,6 +30,7 @@ class LedPair:
         self.center = tuple([round(sum(p) / 2) for p in zip(led1.center, led2.center)])
         self.distance = (led1.distance + led2.distance) / 2
         self.is_panel = self._check_panel()
+        self._corners = None
 
     def _check_panel(self):
         angle_diff = abs(self.led_left.angle - self.led_right.angle)
@@ -41,17 +42,21 @@ class LedPair:
         return is_panel
 
     def draw(self, frame):
-        corners = self.find_corners()
+        should_draw = self.is_panel or CONFIG.DRAW_NOT_PANELS
+        if not should_draw:
+            return
+
         color = CONFIG.DRAW.COLOR_PANEL if self.is_panel else CONFIG.DRAW.COLOR_NOT_PANEL
         label_position = tuple([sum(p) for p in zip(self.center, CONFIG.DRAW.LABEL_OFFSET)])
-
-        cv2.polylines(frame, [corners], True, color, CONFIG.DRAW.THICKNESS)
+        cv2.polylines(frame, [self.get_corners()], True, color, CONFIG.DRAW.THICKNESS)
         cv2.putText(frame, self.label, label_position, CONFIG.DRAW.FONT, CONFIG.DRAW.FONT_SIZE, color)
 
-    def find_corners(self):
-        topleft, _, _, bottomleft = self.led_left.corners
-        _, topright, bottomright, _ = self.led_right.corners
-        return np.array([topleft, topright, bottomright, bottomleft])
+    def get_corners(self):
+        if self._corners is None:
+            topleft, _, _, bottomleft = self.led_left.get_corners()
+            _, topright, bottomright, _ = self.led_right.get_corners()
+            self._corners = np.array([topleft, topright, bottomright, bottomleft])
+        return self._corners
 
     @staticmethod
     def is_between(value, range_):
