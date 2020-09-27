@@ -29,6 +29,7 @@ class BoundingRect:
                 self.angle -= 180
         self.distance = 1 / max(CONFIG.EPSILON, self.height / CONFIG.HEIGHT_1M_REL + CONFIG.DISTANCE_OFFSET)
         self.is_led = self._check_led()
+        self._corners = None
 
     def _check_led(self):
         dims_ratio = self.height / max(CONFIG.EPSILON, self.width)
@@ -38,21 +39,23 @@ class BoundingRect:
         return is_led
 
     def draw(self, frame):
-        corners = self.find_corners()
+        corners = self.get_corners()
         color = CONFIG.DRAW.COLOR_LED if self.is_led else CONFIG.DRAW.COLOR_NOT_LED
         label_position = tuple([sum(p) for p in zip(self.center, CONFIG.DRAW.LABEL_OFFSET)])
 
         cv2.polylines(frame, [corners], True, color, CONFIG.DRAW.THICKNESS)
         cv2.putText(frame, self.label, label_position, CONFIG.DRAW.FONT, CONFIG.DRAW.FONT_SIZE, color)
 
-    def find_corners(self):
-        (x, y), hw, hh, a = self.center, self.width / 2, self.height / 2, self.angle
-        sina, cosa = np.sin(np.deg2rad(a)), np.cos(np.deg2rad(a))
-        topleft = (round(x - hw * cosa + hh * sina), round(y - hh * cosa - hw * sina))
-        topright = (round(x + hw * cosa + hh * sina), round(y - hh * cosa + hw * sina))
-        bottomright = (round(x + hw * cosa - hh * sina), round(y + hh * cosa + hw * sina))
-        bottomleft = (round(x - hw * cosa - hh * sina), round(y + hh * cosa - hw * sina))
-        return np.array([topleft, topright, bottomright, bottomleft])
+    def get_corners(self):
+        if self._corners is None:
+            (x, y), hw, hh, a = self.center, self.width / 2, self.height / 2, self.angle
+            sina, cosa = np.sin(np.deg2rad(a)), np.cos(np.deg2rad(a))
+            topleft = (round(x - hw * cosa + hh * sina), round(y - hh * cosa - hw * sina))
+            topright = (round(x + hw * cosa + hh * sina), round(y - hh * cosa + hw * sina))
+            bottomright = (round(x + hw * cosa - hh * sina), round(y + hh * cosa + hw * sina))
+            bottomleft = (round(x - hw * cosa - hh * sina), round(y + hh * cosa - hw * sina))
+            self._corners = np.array([topleft, topright, bottomright, bottomleft])
+        return self._corners
 
     @staticmethod
     def is_between(value, range_):
