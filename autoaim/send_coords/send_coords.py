@@ -1,4 +1,4 @@
-import send_coords_config as CONFIG
+from send_coords_config import *
 
 
 def send_coords(coords):

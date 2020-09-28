@@ -1,4 +1,4 @@
-import panels_to_target_config as CONFIG
+from panels_to_target_config import *
 import cv2
 
 
@@ -13,7 +13,7 @@ def panels_to_target(panels, debug_frame=None):
 
 
 def draw_target(frame, panel):
-    distance_position = tuple([sum(p) for p in zip(panel.center, CONFIG.DRAW.DISTANCE_OFFSET)])
-    cv2.circle(frame, panel.center, CONFIG.DRAW.TARGET_RADIUS, CONFIG.DRAW.TARGET_COLOR, -1)
-    cv2.putText(frame, CONFIG.DRAW.DISTANCE_FORMAT.format(panel.distance),
-                distance_position, CONFIG.DRAW.FONT, CONFIG.DRAW.FONT_SIZE, CONFIG.DRAW.TEXT_COLOR)
+    distance_position = tuple([sum(p) for p in zip(panel.center, DRAW.DISTANCE_OFFSET)])
+    cv2.circle(frame, panel.center, DRAW.TARGET_RADIUS, DRAW.TARGET_COLOR, -1)
+    cv2.putText(frame, DRAW.DISTANCE_FORMAT.format(panel.distance),
+                distance_position, DRAW.FONT, DRAW.FONT_SIZE, DRAW.TEXT_COLOR)

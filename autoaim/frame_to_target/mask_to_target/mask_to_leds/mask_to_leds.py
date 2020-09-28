@@ -1,4 +1,4 @@
-import mask_to_leds_config as CONFIG
+from mask_to_leds_config import *
 import cv2
 import numpy as np
 
@@ -27,24 +27,24 @@ class BoundingRect:
             self.angle += 90
             if self.angle >= 90:
                 self.angle -= 180
-        self.distance = 1 / max(CONFIG.EPSILON, self.height / CONFIG.HEIGHT_1M_REL + CONFIG.DISTANCE_OFFSET)
+        self.distance = 1 / max(EPSILON, self.height / HEIGHT_1M_REL + DISTANCE_OFFSET)
         self.is_led = self._check_led()
         self._corners = None
 
     def _check_led(self):
-        dims_ratio = self.height / max(CONFIG.EPSILON, self.width)
-        is_led = all([self.is_between(self.distance, CONFIG.CRITERIA.DISTANCE),
-                      self.is_between(self.angle, CONFIG.CRITERIA.ANGLE),
-                      self.is_between(dims_ratio, CONFIG.CRITERIA.DIMS_RATIO)])
+        dims_ratio = self.height / max(EPSILON, self.width)
+        is_led = all([self.is_between(self.distance, CRITERIA.DISTANCE),
+                      self.is_between(self.angle, CRITERIA.ANGLE),
+                      self.is_between(dims_ratio, CRITERIA.DIMS_RATIO)])
         return is_led
 
     def draw(self, frame):
         corners = self.get_corners()
-        color = CONFIG.DRAW.COLOR_LED if self.is_led else CONFIG.DRAW.COLOR_NOT_LED
-        label_position = tuple([sum(p) for p in zip(self.center, CONFIG.DRAW.LABEL_OFFSET)])
+        color = DRAW.COLOR_LED if self.is_led else DRAW.COLOR_NOT_LED
+        label_position = tuple([sum(p) for p in zip(self.center, DRAW.LABEL_OFFSET)])
 
-        cv2.polylines(frame, [corners], True, color, CONFIG.DRAW.THICKNESS)
-        cv2.putText(frame, self.label, label_position, CONFIG.DRAW.FONT, CONFIG.DRAW.FONT_SIZE, color)
+        cv2.polylines(frame, [corners], True, color, DRAW.THICKNESS)
+        cv2.putText(frame, self.label, label_position, DRAW.FONT, DRAW.FONT_SIZE, color)
 
     def get_corners(self):
         if self._corners is None:

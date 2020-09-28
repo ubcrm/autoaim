@@ -1,4 +1,4 @@
-import frame_to_roi_config as CONFIG
+from frame_to_roi_config import *
 import itertools
 import cv2
 from numpy import linalg
@@ -6,7 +6,7 @@ from numpy import linalg
 
 def frame_to_roi(roi, panels, debug_frame=None):
     height, width, _ = roi.shape
-    resize_dims = (round(width * CONFIG.SCALE), round(height * CONFIG.SCALE))
+    resize_dims = (round(width * SCALE), round(height * SCALE))
     roi = cv2.resize(roi, resize_dims)
 
     # TODO
@@ -24,10 +24,10 @@ def frame_to_roi(roi, panels, debug_frame=None):
     # if no panels, do not crop
     # crop with extra wide margin
     if len(panels) == 1:
-        top_left = [max(panels[0].center[0] - CONFIG.CROP.MARGIN_LARGE, 0),
-                    max(panels[0].center[1] - CONFIG.CROP.MARGIN_LARGE, 0)]
-        bottom_right = [min(panels[0].center[0] + CONFIG.CROP.MARGIN_LARGE, width),
-                        min(panels[0].center[1] + CONFIG.CROP.MARGIN_LARGE, height)]
+        top_left = [max(panels[0].center[0] - CROP.MARGIN_LARGE, 0),
+                    max(panels[0].center[1] - CROP.MARGIN_LARGE, 0)]
+        bottom_right = [min(panels[0].center[0] + CROP.MARGIN_LARGE, width),
+                        min(panels[0].center[1] + CROP.MARGIN_LARGE, height)]
 
     # find furthest panels, crop with margin
     elif len(panels) > 1:
@@ -49,16 +49,16 @@ def frame_to_roi(roi, panels, debug_frame=None):
         if top_panel > bottom_panel:
             top_panel, bottom_panel = bottom_panel, top_panel
 
-        top_left = [max(left_panel - CONFIG.CROP.MARGIN_SMALL, 0),
-                    max(top_panel - CONFIG.CROP.MARGIN_SMALL, 0)]
-        bottom_right = [min(right_panel + CONFIG.CROP.MARGIN_SMALL, width),
-                        min(bottom_panel + CONFIG.CROP.MARGIN_SMALL, height)]
+        top_left = [max(left_panel - CROP.MARGIN_SMALL, 0),
+                    max(top_panel - CROP.MARGIN_SMALL, 0)]
+        bottom_right = [min(right_panel + CROP.MARGIN_SMALL, width),
+                        min(bottom_panel + CROP.MARGIN_SMALL, height)]
 
     cropped_roi = roi[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
 
     if debug_frame is not None:
         debug_frame.resize(roi.shape, refcheck=False)
         debug_frame[:] = roi
-        cv2.rectangle(debug_frame, tuple(top_left), tuple(bottom_right), CONFIG.DEBUG.COLOUR, CONFIG.DEBUG.THICKNESS)
+        cv2.rectangle(debug_frame, tuple(top_left), tuple(bottom_right), DEBUG.COLOUR, DEBUG.THICKNESS)
 
     return roi

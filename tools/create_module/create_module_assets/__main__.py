@@ -1,4 +1,4 @@
-import template_config as CONFIG
+from template_config import *
 from template import template
 import argparse
 

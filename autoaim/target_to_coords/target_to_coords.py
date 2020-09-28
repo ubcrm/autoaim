@@ -1,4 +1,4 @@
-import target_to_coords_config as CONFIG
+from target_to_coords_config import *
 
 
 def target_to_coords(target):

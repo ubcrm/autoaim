@@ -1,4 +1,4 @@
-import leds_to_panels_config as CONFIG
+from leds_to_panels_config import *
 import itertools
 import numpy as np
 import cv2
@@ -21,7 +21,7 @@ class LedPair:
         switch_leds = led1.center[0] < led2.center[0]
         self.led_left = led1 if switch_leds else led2
         self.led_right = led2 if switch_leds else led1
-        self.label = CONFIG.LABEL_FORMAT.format(self.led_left.label, self.led_right.label)
+        self.label = LABEL_FORMAT.format(self.led_left.label, self.led_right.label)
 
         delta_x = self.led_right.center[0] - self.led_left.center[0]
         delta_y = self.led_right.center[1] - self.led_left.center[1]
@@ -34,22 +34,22 @@ class LedPair:
 
     def _check_panel(self):
         angle_diff = abs(self.led_left.angle - self.led_right.angle)
-        aspect_ratio = self.width / max(CONFIG.EPSILON, self.height)
+        aspect_ratio = self.width / max(EPSILON, self.height)
         ratio_leds = self.led_left.height / self.led_right.height
-        is_panel = all([self.is_between(angle_diff, CONFIG.CRITERIA.ANGLE_DIFF),
-                        self.is_between(aspect_ratio, CONFIG.CRITERIA.ASPECT_RATIO),
-                        self.is_between(ratio_leds, CONFIG.CRITERIA.RATIO_LEDS)])
+        is_panel = all([self.is_between(angle_diff, CRITERIA.ANGLE_DIFF),
+                        self.is_between(aspect_ratio, CRITERIA.ASPECT_RATIO),
+                        self.is_between(ratio_leds, CRITERIA.RATIO_LEDS)])
         return is_panel
 
     def draw(self, frame):
-        should_draw = self.is_panel or CONFIG.DRAW_NOT_PANELS
+        should_draw = self.is_panel or DRAW_NOT_PANELS
         if not should_draw:
             return
 
-        color = CONFIG.DRAW.COLOR_PANEL if self.is_panel else CONFIG.DRAW.COLOR_NOT_PANEL
-        label_position = tuple([sum(p) for p in zip(self.center, CONFIG.DRAW.LABEL_OFFSET)])
-        cv2.polylines(frame, [self.get_corners()], True, color, CONFIG.DRAW.THICKNESS)
-        cv2.putText(frame, self.label, label_position, CONFIG.DRAW.FONT, CONFIG.DRAW.FONT_SIZE, color)
+        color = DRAW.COLOR_PANEL if self.is_panel else DRAW.COLOR_NOT_PANEL
+        label_position = tuple([sum(p) for p in zip(self.center, DRAW.LABEL_OFFSET)])
+        cv2.polylines(frame, [self.get_corners()], True, color, DRAW.THICKNESS)
+        cv2.putText(frame, self.label, label_position, DRAW.FONT, DRAW.FONT_SIZE, color)
 
     def get_corners(self):
         if self._corners is None:
