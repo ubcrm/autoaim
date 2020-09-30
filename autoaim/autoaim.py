@@ -1,8 +1,7 @@
-from autoaim_config import *
 from frame_to_target.frame_to_target import frame_to_target
-from target_to_coords.target_to_coords import target_to_coords
-from predict_coords.predict_coords import predict_coords
-from send_coords.send_coords import send_coords
+from target_to_coords import target_to_coords
+from predict_coords import predict_coords
+from send_coords import send_coords
 import cv2
 
 

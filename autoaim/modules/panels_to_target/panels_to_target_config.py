@@ -12,7 +12,7 @@ class DRAW:
     TEXT_COLOR = (255, 255, 255)
 
     TARGET_RADIUS = 3
-    DISTANCE_FORMAT = '%.2f'
+    DISTANCE_FORMAT = '{:.2f}'
     DISTANCE_OFFSET = (-16, -16)
     FONT = 0  # choose OpenCV font
     FONT_SIZE = 0.46

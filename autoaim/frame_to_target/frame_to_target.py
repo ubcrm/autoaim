@@ -1,6 +1,6 @@
 from frame_to_target_config import *
-from frame_to_roi.frame_to_roi import frame_to_roi
-from roi_to_mask.roi_to_mask import roi_to_mask
+from frame_to_roi import frame_to_roi
+from roi_to_mask import roi_to_mask
 from mask_to_target.mask_to_target import mask_to_target
 import cv2
 
