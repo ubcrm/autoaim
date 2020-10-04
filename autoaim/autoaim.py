@@ -11,12 +11,12 @@ import cv2
 
 
 def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
+    debugger = Debugger() if do_debug else None
     capture = cv2.VideoCapture(source)
     successful, frame = capture.read()
 
     if not successful:
         raise RuntimeError(CAPTURE_ERROR.format(source))
-    debugger = None if do_debug is None else Debugger()
 
     panels = []
     while successful:
