@@ -18,12 +18,18 @@ def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
     if not successful:
         raise RuntimeError(CAPTURE_ERROR.format(source))
 
-    panels = []
+    target = None
+    target_count = 0
     while successful:
         if do_debug:
             debugger.new_frame(frame)
 
-        roi = frame_to_roi(frame, panels, debugger)
+        target_count = (target_count + 1) % ROI_PERIOD
+        if target_count == 0:
+            target = None
+
+        target = (400, 300)     # TODO - remove this, only here for testing purposes
+        roi = frame_to_roi(frame, target, debugger)
         mask = roi_to_mask(roi, debugger)
         leds = mask_to_leds(mask, debugger)
         panels = leds_to_panels(leds, debugger)

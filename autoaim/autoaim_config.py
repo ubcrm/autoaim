@@ -12,3 +12,4 @@ CAPTURE_ERROR = 'Failed to read from video source "{}".'
 
 WIN_TITLE = 'Debug Output'
 FRAME_DELAY = 40  # (ms)
+ROI_PERIOD = 15
