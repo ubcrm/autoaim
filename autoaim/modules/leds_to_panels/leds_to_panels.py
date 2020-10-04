@@ -4,15 +4,15 @@ import numpy as np
 import cv2
 
 
-def leds_to_panels(leds, debug_frame=None):
+def leds_to_panels(leds, debugger=None):
     panels = []
 
     for led1, led2 in itertools.combinations(leds, 2):
         led_pair = LedPair(led1, led2)
         if led_pair.is_panel:
             panels.append(led_pair)
-        if debug_frame is not None:
-            led_pair.draw(debug_frame)
+        if debugger is not None:
+            led_pair.draw(debugger.frame)
     return panels
 
 

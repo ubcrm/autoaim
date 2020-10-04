@@ -1,5 +1,5 @@
 from send_coords_config import *
 
 
-def send_coords(coords):
+def send_coords(coords, debugger):
     pass

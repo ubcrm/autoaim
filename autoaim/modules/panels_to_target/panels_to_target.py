@@ -2,13 +2,13 @@ from panels_to_target_config import *
 import cv2
 
 
-def panels_to_target(panels, debug_frame=None):
+def panels_to_target(panels, debugger=None):
     if len(panels) == 0:
         return None
 
     target_panel = panels[0]
-    if debug_frame is not None:
-        draw_target(debug_frame, target_panel)
+    if debugger is not None:
+        draw_target(debugger.frame, target_panel)
     return target_panel.center
 
 

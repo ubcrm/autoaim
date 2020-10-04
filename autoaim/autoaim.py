@@ -10,31 +10,47 @@ from autoaim_config import *
 import cv2
 
 
-def autoaim(source, debug=DEFAULT_DEBUG):
-    frame_count = 0
+def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
     capture = cv2.VideoCapture(source)
-
     successful, frame = capture.read()
+
     if not successful:
         raise RuntimeError(CAPTURE_ERROR.format(source))
+    debugger = None if do_debug is None else Debugger()
 
     panels = []
-
     while successful:
-        frame_count += 1
-        debug_frame = frame.copy() if debug else None
+        if do_debug:
+            debugger.new_frame(frame)
 
-        roi = frame_to_roi(frame, panels, debug_frame)
-        mask = roi_to_mask(roi, debug_frame)
-        leds = mask_to_leds(mask, debug_frame)
-        panels = leds_to_panels(leds, debug_frame)
-        target = panels_to_target(panels, debug_frame)
-        coords = target_to_coords(target)
-        aim_coords = predict_coords(coords)
-        send_coords(aim_coords)
+        roi = frame_to_roi(frame, panels, debugger)
+        mask = roi_to_mask(roi, debugger)
+        leds = mask_to_leds(mask, debugger)
+        panels = leds_to_panels(leds, debugger)
+        target = panels_to_target(panels, debugger)
+        coords = target_to_coords(target, debugger)
+        aim_coords = predict_coords(coords, debugger)
+        send_coords(aim_coords, debugger)
 
-        if debug:
-            cv2.imshow(WIN_TITLE, debug_frame)
-            cv2.waitKey(FRAME_DELAY)
-
+        if do_debug:
+            debugger.show()
         successful, frame = capture.read()
+
+
+class Debugger:
+    def __init__(self):
+        self.frame_count = 0
+        self.frame = None
+        self.logs = None
+
+    def new_frame(self, frame):
+        self.frame_count += 1
+        self.frame = frame.copy()
+        self.logs = []
+
+    def show(self):
+        cv2.imshow(WIN_TITLE, self.frame)
+        cv2.waitKey(FRAME_DELAY)
+
+    def print(self):
+        print('\n'.join(self.logs))

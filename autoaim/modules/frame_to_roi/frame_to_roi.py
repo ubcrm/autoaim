@@ -4,7 +4,7 @@ import cv2
 from numpy import linalg
 
 
-def frame_to_roi(roi, panels, debug_frame=None):
+def frame_to_roi(roi, panels, debugger=None):
     height, width, _ = roi.shape
     resize_dims = (round(width * SCALE), round(height * SCALE))
     roi = cv2.resize(roi, resize_dims)
@@ -56,9 +56,9 @@ def frame_to_roi(roi, panels, debug_frame=None):
 
     cropped_roi = roi[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
 
-    if debug_frame is not None:
-        debug_frame.resize(roi.shape, refcheck=False)
-        debug_frame[:] = roi
-        cv2.rectangle(debug_frame, tuple(top_left), tuple(bottom_right), DEBUG.COLOUR, DEBUG.THICKNESS)
+    if debugger is not None:
+        debugger.frame.resize(roi.shape, refcheck=False)
+        debugger.frame[:] = roi
+        cv2.rectangle(debugger.frame, tuple(top_left), tuple(bottom_right), DEBUG.COLOUR, DEBUG.THICKNESS)
 
     return roi
