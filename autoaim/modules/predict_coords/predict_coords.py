@@ -1,5 +1,5 @@
 from predict_coords_config import *
 
 
-def predict_coords(coords, debugger):
+def predict_coords(coords, debug):
     return

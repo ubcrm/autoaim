@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 
-def roi_to_mask(roi, debugger=None):
+def roi_to_mask(roi, debug=None):
     height = roi.shape[0]
     dilate_dim = round(DILATE_REL * height)
     morph_dims = (round(MORPH_REL[0] * height), round(MORPH_REL[1] * height))
