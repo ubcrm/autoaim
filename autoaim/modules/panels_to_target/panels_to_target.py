@@ -8,7 +8,7 @@ def panels_to_target(panels, debug=None):
 
     target_panel = panels[0]
     if debug is not None:
-        draw_target(debug.image, target_panel)
+        draw_target(debug.frame.image, target_panel)
     return target_panel.center
 
 

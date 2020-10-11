@@ -3,8 +3,8 @@ import cv2
 import numpy as np
 
 
-def mask_to_leds(mask, debug=None):
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+def mask_to_leds(mask_frame, debug=None):
+    contours, _ = cv2.findContours(mask_frame.image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     leds = []
 
     for i, contour in enumerate(contours):
@@ -12,7 +12,7 @@ def mask_to_leds(mask, debug=None):
         if bounding_rect.is_led:
             leds.append(bounding_rect)
         if debug is not None:
-            bounding_rect.draw(debug.image)
+            bounding_rect.draw(debug.frame.image)
     return leds
 
 
