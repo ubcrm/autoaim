@@ -15,13 +15,15 @@ def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
     debug = Debug() if do_debug else None
     capture = cv2.VideoCapture(source)
     successful, image = capture.read()
-    frame = Frame(image, 1)
+    frame = Frame(image, 0)
 
     if not successful:
         raise RuntimeError(CAPTURE_ERROR.format(source))
 
     target = None
     while successful:
+        frame = Frame(image, frame.count + 1)
+
         if do_debug:
             debug.new_frame(Frame(image.copy(), frame.count))
 
@@ -37,7 +39,6 @@ def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
         if do_debug:
             debug.show()
         successful, image = capture.read()
-        frame = Frame(image, frame.count + 1)
 
 
 class Debug:
