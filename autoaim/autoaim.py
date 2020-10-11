@@ -62,8 +62,8 @@ class Frame:
     def __init__(self, image, count):
         self.image = image
         self.original_dims = np.array(image.shape[1:: -1])
-        self.dims = self.original_dims
-        self.topleft = [0, 0]
+        self.dims = self.original_dims.copy()
+        self.top_left = [0, 0]
         self.scale_factor = 1
         self.count = count
 
@@ -76,7 +76,7 @@ class Frame:
         end = self._clip(end, self.dims) + 1
         self.image = self.image[start[1]: end[1], start[0]: end[0]]
         self.dims = end - start
-        self.topleft = start
+        self.top_left = start
 
     def center_crop(self, center, width, height=None):
         '''
@@ -97,15 +97,34 @@ class Frame:
         self.scale_factor = factor
         self.image = cv2.resize(self.image, tuple(self.dims))
 
-    def to_original(self, point):
+    def to_original_point(self, point):
         point = np.array(point)
-        original = self._clip(point * self.scale_factor + self.topleft, self.original_dims)
+        original = self._clip(point * self.scale_factor + self.top_left, self.original_dims)
         return original
 
-    def to_current(self, point):
+    def to_current_point(self, point):
         point = np.array(point)
-        current = self._clip(point * self.scale_factor + self.topleft, self.dims)
+        current = self._clip(point * self.scale_factor + self.top_left, self.dims)
         return current
+
+    def to_original_image(self, pad_value=0):
+        if len(self.image.shape) == 2:
+            dims = [self.original_dims[1], self.original_dims[0]]
+        else:
+            dims = [self.original_dims[1], self.original_dims[0], self.image.shape[2]]
+
+        image = np.full(dims, pad_value, dtype=np.uint8)
+        start = self.top_left
+        end = self.top_left + self.dims * self.scale_factor
+        image[start[1]: end[1], start[0]: end[0]] = cv2.resize(self.image, tuple(self.dims * self.scale_factor))
+        return image
+
+    def to_current_image(self, image):
+        start = self.top_left
+        end = self.top_left + self.dims
+        image = image[start[1]: end[1], start[0]: end[0]]
+        image = cv2.resize(image, tuple(self.dims))
+        return image
 
     @staticmethod
     def _clip(point, dims):

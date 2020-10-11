@@ -20,11 +20,11 @@ def frame_to_roi(frame, target, debug=None):
     if debug is not None:
         debug.frame.scale(SCALE)
         #debug.frame.image[:] = frame
-        a = tuple(frame.to_original([0, 0]))
-        b = tuple(frame.to_original(frame.dims))
-        print(a)
-        print(b)
-        cv2.rectangle(debug.frame.image, tuple(frame.to_original([0, 0])), tuple(frame.to_original(frame.dims)),
+        # a = tuple(frame.to_original_point([0, 0]))
+        # b = tuple(frame.to_original_point(frame.dims))
+        # print(a)
+        # print(b)
+        cv2.rectangle(debug.frame.image, tuple(frame.to_original_point([0, 0])), tuple(frame.to_original_point(frame.dims)),
                       (0,255,0), DEBUG.THICKNESS)
 
     return frame

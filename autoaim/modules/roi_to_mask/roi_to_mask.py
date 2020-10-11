@@ -16,6 +16,7 @@ def roi_to_mask(roi_frame, debug=None):
 
     if debug is not None:
         unmasked = debug.frame.image
+        mask = debug.frame.to_current_image(roi_frame.to_original_image(pad_value=255))
         masked = cv2.bitwise_and(unmasked, unmasked, mask=mask)
         debug.frame.image = cv2.addWeighted(masked, DEBUG_MASK_WEIGHT, unmasked, 1 - DEBUG_MASK_WEIGHT, 0)
     return roi_frame
