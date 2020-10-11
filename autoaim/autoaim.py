@@ -23,7 +23,7 @@ def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
     target = None
     while successful:
         if do_debug:
-            debug.new_frame(Frame(image, frame.count))
+            debug.new_frame(Frame(image.copy(), frame.count))
 
         roi = frame_to_roi(frame, target, debug)
         mask = roi_to_mask(roi, debug)
@@ -61,7 +61,7 @@ class Debug:
 class Frame:
     def __init__(self, image, count):
         self.image = image
-        self.original_dims = image.shape[1:: -1]
+        self.original_dims = np.array(image.shape[1:: -1])
         self.dims = self.original_dims
         self.topleft = [0, 0]
         self.scale_factor = 1

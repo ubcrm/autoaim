@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import numpy as np
 
 
 DIR = Path(os.path.dirname(os.path.abspath(__file__)))
@@ -16,5 +17,5 @@ class CROP:
 
 
 class DEBUG:
-    COLOUR = (0, 255, 0)
+    COLOUR = (int(0), int(255), int(0))
     THICKNESS = 3

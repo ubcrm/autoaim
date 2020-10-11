@@ -12,7 +12,7 @@ def leds_to_panels(leds, debug=None):
         if led_pair.is_panel:
             panels.append(led_pair)
         if debug is not None:
-            led_pair.draw(debug.image)
+            led_pair.draw(debug.frame.image)
     return panels
 
 
