@@ -10,7 +10,7 @@ def frame_to_roi(capture, target):
 
     if (target is not None) and (capture.frame_count % ROI_PERIOD != 0):
         width = CROP.MARGIN_LARGE  # * target.distance
-        height = CROP.MARGIN_LARGE  # * target.distance
+        height = CROP.MARGIN_SMALL  # * target.distance
         capture.center_crop(target, width, height)
 
     if DO_DEBUG:

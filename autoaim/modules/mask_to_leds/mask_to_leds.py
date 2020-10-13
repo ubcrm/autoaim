@@ -9,7 +9,7 @@ def mask_to_leds(capture):
     leds = []
 
     for i, contour in enumerate(contours):
-        bounding_rect = BoundingRect(cv2.minAreaRect(contour), i + 1)
+        bounding_rect = BoundingRect(cv2.minAreaRect(contour), i + 1, capture)
         if bounding_rect.is_led:
             leds.append(bounding_rect)
         if DO_DEBUG:
@@ -18,7 +18,7 @@ def mask_to_leds(capture):
 
 
 class BoundingRect:
-    def __init__(self, rect, label):
+    def __init__(self, rect, label, capture):
         self.label = str(label)
         self.center = (round(rect[0][0]), round(rect[0][1]))
         self.width = round(min(rect[1]))
@@ -28,7 +28,7 @@ class BoundingRect:
             self.angle += 90
             if self.angle >= 90:
                 self.angle -= 180
-        self.distance = 1 / max(EPSILON, self.height / HEIGHT_1M_REL + DISTANCE_OFFSET)
+        self.distance = 1 / max(EPSILON, self.height * capture.scale_factor / HEIGHT_1M_REL + DISTANCE_OFFSET)
         self.is_led = self._check_led()
         self._corners = None
 

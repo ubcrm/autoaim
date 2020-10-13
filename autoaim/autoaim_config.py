@@ -13,5 +13,5 @@ CAPTURE_ERROR = 'Failed to read from video source "{}".'
 
 DEBUG_WIN_TITLE = 'Debug Output'
 DEBUG_SCALE = 2
-FRAME_DELAY = 0  # (ms)
+FRAME_DELAY = 25  # (ms)
 LEG_FRAME = '---------- Frame {} ----------'

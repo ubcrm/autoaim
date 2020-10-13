@@ -6,13 +6,13 @@ DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 NAME = os.path.basename(DIR)
 ASSETS_DIR = DIR / f'{NAME}_assets'
 
-SCALE_FRAME = 3
-ROI_PERIOD = 15
+SCALE_FRAME = 2
+ROI_PERIOD = 20
 
 
 class CROP:
-    MARGIN_SMALL = 50
-    MARGIN_LARGE = 200
+    MARGIN_SMALL = 150
+    MARGIN_LARGE = 400
 
 
 class DEBUG:

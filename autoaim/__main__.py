@@ -11,7 +11,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     autoaim_config.SOURCE = args.video if args.video is not None else args.source
-    autoaim_config.DO_DEBUG = args.debug
+    if args.debug:
+        autoaim_config.DO_DEBUG = True
+        autoaim_config.FRAME_DELAY = 0
 
     from autoaim import autoaim
     autoaim()
