@@ -6,7 +6,7 @@ DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 NAME = os.path.basename(DIR)
 ASSETS_DIR = DIR / f'{NAME}_assets'
 
-SCALE = 2
+SCALE_FRAME = 3
 ROI_PERIOD = 15
 
 
@@ -17,4 +17,4 @@ class CROP:
 
 class DEBUG:
     COLOUR = (0, 255, 0)
-    THICKNESS = 3
+    THICKNESS = 2

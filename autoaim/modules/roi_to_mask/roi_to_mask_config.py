@@ -10,4 +10,4 @@ RANGE = ((0, 0, 250), (180, 255, 255))
 DILATE_REL = 0.0037  # (roi frame height)
 MORPH_REL = (0.0025, 0.008)  # (roi frame height)
 
-DEBUG_MASK_WEIGHT = 0.7
+DEBUG_MASK = 0.7

@@ -11,71 +11,65 @@ import cv2
 import numpy as np
 
 
-def autoaim(source, do_debug=DEFAULT_DO_DEBUG):
-    debug = Debug() if do_debug else None
-    capture = cv2.VideoCapture(source)
-    successful, image = capture.read()
-    frame = Frame(image, 0)
-
-    if not successful:
-        raise RuntimeError(CAPTURE_ERROR.format(source))
-
+def autoaim():
+    capture = Capture()
     target = None
-    while successful:
-        frame = Frame(image, frame.count + 1)
 
-        if do_debug:
-            debug.new_frame(Frame(image.copy(), frame.count))
+    while capture.next_frame():
+        if DO_DEBUG:
+            print(LEG_FRAME.format(capture.frame_count))
 
-        roi = frame_to_roi(frame, target, debug)
-        mask = roi_to_mask(roi, debug)
-        leds = mask_to_leds(mask, debug)
-        panels = leds_to_panels(leds, debug)
-        target = panels_to_target(panels, debug)
-        coords = target_to_coords(target, debug)
-        aim_coords = predict_coords(coords, debug)
-        send_coords(aim_coords, debug)
+        roi = frame_to_roi(capture, target)
+        mask = roi_to_mask(roi)
+        leds = mask_to_leds(mask)
+        panels = leds_to_panels(leds, capture)
+        target = panels_to_target(panels, capture)
+        coords = target_to_coords(target, capture)
+        aim_coords = predict_coords(coords, capture)
+        send_coords(aim_coords, capture)
 
-        if do_debug:
-            debug.show()
-        successful, image = capture.read()
+        if DO_DEBUG:
+            cv2.imshow(DEBUG_WIN_TITLE, capture.debug_frame)
+            cv2.waitKey(FRAME_DELAY)
 
 
-class Debug:
+class Capture:
     def __init__(self):
+        self.capture = cv2.VideoCapture(SOURCE)
         self.frame = None
-        self.logs = None
+        self.debug_frame = None
+        self.original_dims = None
+        self.dims = None
+        self.top_left = None
+        self.scale_factor = None
+        self.frame_count = -1
 
-    def new_frame(self, frame):
+        if not self.next_frame():
+            raise RuntimeError(CAPTURE_ERROR.format(SOURCE))
+        self.original_dims = np.array(self.frame.shape[1:: -1])
+
+    def next_frame(self):
+        successful, frame = self.capture.read()
+        if not successful:
+            return False
+
         self.frame = frame
-        self.logs = []
-
-    def show(self):
-        cv2.imshow(WIN_TITLE, self.frame.image)
-        cv2.waitKey(FRAME_DELAY)
-
-    def print(self):
-        print(LOG_FRAME_FORMAT.format(self.frame.count))
-        print('\n'.join(self.logs))
-
-
-class Frame:
-    def __init__(self, image, count):
-        self.image = image
-        self.original_dims = np.array(image.shape[1:: -1])
-        self.dims = self.original_dims.copy()
-        self.top_left = [0, 0]
+        self.dims = np.array(frame.shape[1:: -1])
+        self.top_left = np.array([0, 0])
         self.scale_factor = 1
-        self.count = count
+        self.frame_count += 1
+        if DO_DEBUG:
+            self.debug_frame = cv2.resize(frame, tuple(self.dims // DEBUG_SCALE))
+        return True
 
     def crop(self, start, end):
         '''
         :param start: (x, y) of the top left crop point, inclusive
-        :param end: (x, y) of the bottom right crop point, inclusive
+        :param end: (x, y) of the bottom right crop point, exclusive
         '''
         start = self._clip(start, self.dims)
-        end = self._clip(end, self.dims) + 1
-        self.image = self.image[start[1]: end[1], start[0]: end[0]]
+        end = self._clip(end, self.dims)
+        self.frame = self.frame[start[1]: end[1], start[0]: end[0]]
         self.dims = end - start
         self.top_left = start
 
@@ -90,46 +84,44 @@ class Frame:
         delta = np.array([width // 2, height // 2])
         self.crop(center - delta, center + delta)
 
-    def scale(self, factor):
+    def scale_down(self, factor):
         '''
-        :param factor: integer factor to scale down by, factor=4 scales down by 4
+        :param factor: integer factor to scale down by (preferably divides frame dims)
         '''
         self.dims //= factor
-        self.scale_factor = factor
-        self.image = cv2.resize(self.image, tuple(self.dims))
+        self.top_left //= factor
+        self.scale_factor *= factor
+        self.frame = cv2.resize(self.frame, tuple(self.dims))
 
-    def to_original_point(self, point):
+    def point_to_debug(self, point):
+        '''
+        Obtain the original pixel coordinates of a point in current image.
+        '''
         point = np.array(point)
-        original = self._clip(point * self.scale_factor + self.top_left, self.original_dims)
-        return original
+        debug_point = self._clip(
+            (point + self.top_left) * self.scale_factor // DEBUG_SCALE,
+            self.original_dims // DEBUG_SCALE)
+        return debug_point
 
-    def to_current_point(self, point):
-        point = np.array(point)
-        current = self._clip(point * self.scale_factor + self.top_left, self.dims)
-        return current
+    def frame_to_debug(self, pad_value=0):
+        '''
+        Obtain the original version of the current image.
+        :param pad_value: value to use on the cropped regions of original image.
+        '''
+        dims = self.dims * self.scale_factor // DEBUG_SCALE
+        debug_dims = self.original_dims[1:: -1] // DEBUG_SCALE
+        if len(self.frame.shape) == 3:  # color image
+            debug_dims += [self.frame.shape[2]]
+        start = self.top_left * self.scale_factor // DEBUG_SCALE
+        end = (self.top_left + self.dims) * self.scale_factor // DEBUG_SCALE
 
-    def to_original_image(self, pad_value=0):
-        if len(self.image.shape) == 2:
-            dims = [self.original_dims[1], self.original_dims[0]]
-        else:
-            dims = [self.original_dims[1], self.original_dims[0], self.image.shape[2]]
-
-        image = np.full(dims, pad_value, dtype=np.uint8)
-        start = self.top_left
-        end = self.top_left + self.dims * self.scale_factor
-        image[start[1]: end[1], start[0]: end[0]] = cv2.resize(self.image, tuple(self.dims * self.scale_factor))
-        return image
-
-    def to_current_image(self, image):
-        start = self.top_left
-        end = self.top_left + self.dims
-        image = image[start[1]: end[1], start[0]: end[0]]
-        image = cv2.resize(image, tuple(self.dims))
-        return image
+        debug_frame = np.full(debug_dims, pad_value, dtype=np.uint8)
+        debug_frame[start[1]: end[1], start[0]: end[0]] = cv2.resize(self.frame, tuple(dims))
+        return debug_frame
 
     @staticmethod
     def _clip(point, dims):
         point = np.array([
-            np.clip(point[0], 0, dims[0] - 1),
-            np.clip(point[1], 0, dims[1] - 1)])
+            np.clip(point[0], 0, dims[0]),
+            np.clip(point[1], 0, dims[1])])
         return point

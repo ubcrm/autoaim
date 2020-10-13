@@ -1,21 +1,21 @@
+from autoaim_config import DO_DEBUG
 from frame_to_roi_config import *
 import cv2
 
 
-def frame_to_roi(frame, target, debug=None):
-    frame.scale(SCALE)
+def frame_to_roi(capture, target):
+    capture.scale_down(SCALE_FRAME)
 
     # TODO - make crop outline in the debug frame more visible after masking
 
-    if (target is not None) and ((frame.count + 1) % ROI_PERIOD != 1):
-        margin_x = CROP.MARGIN_LARGE  # * target.distance
-        margin_y = CROP.MARGIN_LARGE  # * target.distance
+    if (target is not None) and (capture.frame_count % ROI_PERIOD != 0):
+        width = CROP.MARGIN_LARGE  # * target.distance
+        height = CROP.MARGIN_LARGE  # * target.distance
+        capture.center_crop(target, width, height)
 
-        frame.center_crop(target, margin_x, margin_y)
-
-    if debug is not None:
-        debug.frame.scale(SCALE)
-        cv2.rectangle(debug.frame.image, tuple(frame.to_original([0, 0])), tuple(frame.to_original(frame.dims)),
+    if DO_DEBUG:
+        cv2.rectangle(capture.debug_frame,
+                      tuple(capture.point_to_debug([0, 0])),
+                      tuple(capture.point_to_debug(capture.dims)),
                       DEBUG.COLOUR, DEBUG.THICKNESS)
-
-    return frame
+    return capture

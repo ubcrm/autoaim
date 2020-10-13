@@ -1,18 +1,19 @@
+from autoaim_config import DO_DEBUG
 from leds_to_panels_config import *
 import itertools
 import numpy as np
 import cv2
 
 
-def leds_to_panels(leds, debug=None):
+def leds_to_panels(leds, capture):
     panels = []
 
     for led1, led2 in itertools.combinations(leds, 2):
         led_pair = LedPair(led1, led2)
         if led_pair.is_panel:
             panels.append(led_pair)
-        if debug is not None:
-            led_pair.draw(debug.frame.image)
+        if DO_DEBUG:
+            led_pair.draw(capture)
     return panels
 
 
@@ -41,15 +42,16 @@ class LedPair:
                         self.is_between(ratio_leds, CRITERIA.RATIO_LEDS)])
         return is_panel
 
-    def draw(self, frame):
+    def draw(self, capture):
         should_draw = self.is_panel or DRAW_NOT_PANELS
         if not should_draw:
             return
-
+        corners = np.array([capture.point_to_debug(p) for p in self.get_corners()])
         color = DRAW.COLOR_PANEL if self.is_panel else DRAW.COLOR_NOT_PANEL
-        label_position = tuple([sum(p) for p in zip(self.center, DRAW.LABEL_OFFSET)])
-        cv2.polylines(frame, [self.get_corners()], True, color, DRAW.THICKNESS)
-        cv2.putText(frame, self.label, label_position, DRAW.FONT, DRAW.FONT_SIZE, color)
+        label_position = tuple([sum(p) for p in zip(capture.point_to_debug(self.center), DRAW.LABEL_OFFSET)])
+
+        cv2.polylines(capture.debug_frame, [corners], True, color, DRAW.THICKNESS)
+        cv2.putText(capture.debug_frame, self.label, label_position, DRAW.FONT, DRAW.FONT_SIZE, color)
 
     def get_corners(self):
         if self._corners is None:

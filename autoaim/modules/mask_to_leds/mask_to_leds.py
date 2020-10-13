@@ -1,18 +1,19 @@
+from autoaim_config import DO_DEBUG
 from mask_to_leds_config import *
 import cv2
 import numpy as np
 
 
-def mask_to_leds(mask_frame, debug=None):
-    contours, _ = cv2.findContours(mask_frame.image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+def mask_to_leds(capture):
+    contours, _ = cv2.findContours(capture.frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     leds = []
 
     for i, contour in enumerate(contours):
         bounding_rect = BoundingRect(cv2.minAreaRect(contour), i + 1)
         if bounding_rect.is_led:
             leds.append(bounding_rect)
-        if debug is not None:
-            bounding_rect.draw(debug.frame.image)
+        if DO_DEBUG:
+            bounding_rect.draw(capture)
     return leds
 
 
@@ -38,23 +39,23 @@ class BoundingRect:
                       self.is_between(dims_ratio, CRITERIA.DIMS_RATIO)])
         return is_led
 
-    def draw(self, frame):
-        corners = self.get_corners()
+    def draw(self, capture):
+        corners = np.array([capture.point_to_debug(p) for p in self.get_corners()])
         color = DRAW.COLOR_LED if self.is_led else DRAW.COLOR_NOT_LED
-        label_position = tuple([sum(p) for p in zip(self.center, DRAW.LABEL_OFFSET)])
+        label_position = tuple([sum(p) for p in zip(capture.point_to_debug(self.center), DRAW.LABEL_OFFSET)])
 
-        cv2.polylines(frame, [corners], True, color, DRAW.THICKNESS)
-        cv2.putText(frame, self.label, label_position, DRAW.FONT, DRAW.FONT_SIZE, color)
+        cv2.polylines(capture.debug_frame, [corners], True, color, DRAW.THICKNESS)
+        cv2.putText(capture.debug_frame, self.label, label_position, DRAW.FONT, DRAW.FONT_SIZE, color)
 
     def get_corners(self):
         if self._corners is None:
             (x, y), hw, hh, a = self.center, self.width / 2, self.height / 2, self.angle
             sina, cosa = np.sin(np.deg2rad(a)), np.cos(np.deg2rad(a))
-            topleft = (round(x - hw * cosa + hh * sina), round(y - hh * cosa - hw * sina))
-            topright = (round(x + hw * cosa + hh * sina), round(y - hh * cosa + hw * sina))
-            bottomright = (round(x + hw * cosa - hh * sina), round(y + hh * cosa + hw * sina))
-            bottomleft = (round(x - hw * cosa - hh * sina), round(y + hh * cosa - hw * sina))
-            self._corners = np.array([topleft, topright, bottomright, bottomleft])
+            top_left = (round(x - hw * cosa + hh * sina), round(y - hh * cosa - hw * sina))
+            top_right = (round(x + hw * cosa + hh * sina), round(y - hh * cosa + hw * sina))
+            bottom_right = (round(x + hw * cosa - hh * sina), round(y + hh * cosa + hw * sina))
+            bottom_left = (round(x - hw * cosa - hh * sina), round(y + hh * cosa - hw * sina))
+            self._corners = np.array([top_left, top_right, bottom_right, bottom_left])
         return self._corners
 
     @staticmethod
