@@ -6,8 +6,6 @@ import cv2
 def frame_to_roi(capture, target):
     capture.scale_down(SCALE_FRAME)
 
-    # todo: fix circular target cropping
-
     if (target is not None) and (capture.frame_count % ROI_PERIOD != 0):
         width = CROP.MARGIN_LARGE  # * target.distance
         height = CROP.MARGIN_SMALL  # * target.distance

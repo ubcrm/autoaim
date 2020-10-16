@@ -10,7 +10,7 @@ def panels_to_target(panels, capture):
     target_panel = panels[0]
     if DO_DEBUG:
         draw_target(capture, target_panel)
-    return target_panel.center
+    return capture.point_to_debug(target_panel.center)
 
 
 def draw_target(capture, panel):
