@@ -1,5 +1,4 @@
-import autoaim_config as CONFIG
-from autoaim import autoaim
+import autoaim_config
 import argparse
 import os
 
@@ -7,8 +6,15 @@ import os
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--video', type=os.path.abspath, help='input video path')
-    parser.add_argument('-s', '--source', type=int, default=CONFIG.DEFAULT_SOURCE, help='video device number')
+    parser.add_argument('-s', '--source', type=int, default=autoaim_config.SOURCE, help='video device number')
+    parser.add_argument('-d', '--debug', nargs='?', const=True, default=autoaim_config.DO_DEBUG, help='debug mode')
     args = parser.parse_args()
 
-    source = args.video if args.video is not None else args.source
-    autoaim(source)
+    autoaim_config.SOURCE = args.video if args.video is not None else args.source
+    if args.debug:
+        autoaim_config.DO_DEBUG = True
+        autoaim_config.FRAME_DELAY = 0
+
+    from autoaim import autoaim
+    autoaim()
+

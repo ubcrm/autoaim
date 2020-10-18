@@ -6,8 +6,8 @@ DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 NAME = os.path.basename(DIR)
 ASSETS_DIR = DIR / f'{NAME}_assets'
 
-DEFAULT_SOURCE = 0
-DEFAULT_DEBUG = True
+RANGE = ((0, 0, 250), (180, 255, 255))
+DILATE_REL = 0.0037  # (roi frame height)
+MORPH_REL = (0.0025, 0.008)  # (roi frame height)
 
-WIN_TITLE = 'Debug Output'
-FRAME_DELAY = 40  # (ms)
+DEBUG_MASK = 0.7

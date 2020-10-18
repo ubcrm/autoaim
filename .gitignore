@@ -10,3 +10,4 @@ venv/
 *.mov
 *.mp4
 *.pyc
+*.zip
