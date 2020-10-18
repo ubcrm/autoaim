@@ -7,15 +7,21 @@ def panels_to_target(panels, capture):
     if len(panels) == 0:
         return None
 
-    target_panel = panels[0]
+    target = Target(capture, panels[0])
     if DO_DEBUG:
-        draw_target(capture, target_panel)
-    return capture.point_to_debug(target_panel.center)
+        target.draw(capture)
+    return target
 
 
-def draw_target(capture, panel):
-    distance_position = tuple([sum(p) for p in zip(capture.point_to_debug(panel.center), DRAW.DISTANCE_OFFSET)])
-    cv2.circle(capture.debug_frame, tuple(capture.point_to_debug(panel.center)),
-               DRAW.TARGET_RADIUS, DRAW.TARGET_COLOR, -1)
-    cv2.putText(capture.debug_frame, DRAW.DISTANCE_FORMAT.format(panel.distance),
-                distance_position, DRAW.FONT, DRAW.FONT_SIZE, DRAW.TEXT_COLOR)
+class Target:
+    def __init__(self, capture, panel):
+        self.loc = panel.center
+        self.loc_debug = tuple(capture.point_to_debug(panel.center))
+        self.distance = panel.distance
+
+    def draw(self, capture):
+        distance_position = tuple([sum(p) for p in zip(self.loc_debug, DRAW.DISTANCE_OFFSET)])
+        cv2.circle(capture.debug_frame, self.loc_debug,
+                   DRAW.TARGET_RADIUS, DRAW.TARGET_COLOR, -1)
+        cv2.putText(capture.debug_frame, DRAW.DISTANCE_FORMAT.format(self.distance),
+                    distance_position, DRAW.FONT, DRAW.FONT_SIZE, DRAW.TEXT_COLOR)
