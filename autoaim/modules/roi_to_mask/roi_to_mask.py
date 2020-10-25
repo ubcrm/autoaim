@@ -9,7 +9,7 @@ def roi_to_mask(capture):
     dilate_dim = round(DILATE_REL * scaled_height)
     morph_dims = (round(MORPH_REL[0] * scaled_height), round(MORPH_REL[1] * scaled_height))
 
-    mask = cv2.inRange(capture.frame, *RANGE)
+    mask = cv2.inRange(cv2.cvtColor(capture.frame, cv2.COLOR_BGR2HSV), *RANGE)
     mask = cv2.dilate(mask, np.ones((dilate_dim, dilate_dim)))
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, morph_dims)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
