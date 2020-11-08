@@ -30,7 +30,7 @@ def target_to_coords(target, debug):
         # get z in Catrsian coords of target in real world relative to camera using pythagorean theorem
         # z direction in cartesian coords is the direction that the camera is pointing at
 
-        phi_cylindrical = arctan(x_cartesian / y_cartesian)
+        phi_cylindrical = arctan(x_cartesian / z_cartesian)
         rho_cylindrical = z_cartesian
         z_cylindrical = y_cartesian
         # convert Catrsian coords to Cyliderical coords
