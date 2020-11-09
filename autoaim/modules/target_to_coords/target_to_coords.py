@@ -8,17 +8,25 @@ from target_to_coords_config import *
 # produce rho,phi,z (cyliderical coords) raltevie to camera
 
 def target_to_coords(target, debug):
-    print("target_to_coords starts")
+    #print("target_to_coords starts")
     if target is not None:
         x,y = target.loc
         distance = target.distance;
         # get x,y,distance from target,  x=0 and y=0 is the upper left conrer of image
         # x and y are the row and columu number of position on the vedio, distance is the actual distance to target
-
-        x -= TOTAL_NUMBER_OF_PIXELS_IN_X_AXIS / 2
-        y -= TOTAL_NUMBER_OF_PIXELS_IN_Y_AXIS / 2
+        print(x)
+        print(y)
+        x -= TOTAL_NUMBER_OF_PIXELS_IN_X_AXIS_IN_VEDIO / 2
+        y = TOTAL_NUMBER_OF_PIXELS_IN_Y_AXIS_IN_VEDIO / 2  - y
+        #print(x)
+        #print(y)
         # making x,y relative to the center of image (so that x=0 and y=0 is the center of image, for example)
+        x*=TOTAL_NUMBER_OF_PIXELS_IN_X_AXIS_OF_CAMERA/TOTAL_NUMBER_OF_PIXELS_IN_X_AXIS_IN_VEDIO
+        y*=TOTAL_NUMBER_OF_PIXELS_IN_Y_AXIS_OF_CAMERA/TOTAL_NUMBER_OF_PIXELS_IN_Y_AXIS_IN_VEDIO
+        #the vedio might be compressed
 
+        #print(x)
+        #print(y)
         x_image_size = x * PIXEL_SIZE
         y_image_size = y * PIXEL_SIZE
         # get the actual image size on the camera using pixel size
@@ -38,7 +46,7 @@ def target_to_coords(target, debug):
         cylindrical_coords_phi_rho_z = (phi_cylindrical, rho_cylindrical, z_cylindrical)
 
         #temp print
-        print("finished target_to_coords and return")
+        #print("finished target_to_coords and return")
         print(cylindrical_coords_phi_rho_z)
 
         return cylindrical_coords_phi_rho_z
