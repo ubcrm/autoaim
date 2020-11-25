@@ -1,8 +1,8 @@
-from create_module_config import *
 from create_module import create_module
 import argparse
 import os
 
+DEFAULT_CREATE_MAIN = False
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a template module.')
